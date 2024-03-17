@@ -40,8 +40,6 @@ open class Form(
     val onSubmit: (List<String>) -> Unit
 )
 
-interface FormValidationResult
-
 enum class FormError {
     Required,
     InvalidFormat,
