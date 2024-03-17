@@ -1,3 +1,25 @@
 <resources>
-    <string name="app_name">FoodBoxApp</string>
+    <string name="app_name">FoodBox</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="forgotten_password">Forgotten password</string>
+
+    <string name="client">Client</string>
+    <string name="new_order">New Order</string>
+    <string name="order_history">Order History</string>
+    <string name="acc_stats">Account Stats</string>
+    <string name="app_settings">App Settings</string>
+    <string name="log_out">Log out</string>
+    <string name="network_error">Network error</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="field_error_required">This field is required</string>
+    <string name="field_error_invalid_format">Invalid format</string>
+    <string name="field_error_must_be_integer">Must be a whole number</string>
+
+
+
+
+
 </resources>
