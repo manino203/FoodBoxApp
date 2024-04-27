@@ -22,25 +22,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodboxapp.R
+import com.example.foodboxapp.form.FilledRegistrationForm
 import com.example.foodboxapp.form.LoginForm
+import com.example.foodboxapp.form.RegistrationForm
 import com.example.foodboxapp.ui.composables.AutoErrorBox
 import com.example.foodboxapp.ui.composables.FormComposable
 import com.example.foodboxapp.ui.composables.rememberFormState
-import com.example.foodboxapp.viewmodels.LoginUiState
 import com.example.foodboxapp.viewmodels.LoginViewModel
+import com.example.foodboxapp.viewmodels.RegistrationUiState
+import com.example.foodboxapp.viewmodels.RegistrationViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 
 @Composable
-fun LoginScreen(
+fun RegistrationScreen(
     toolbarViewModel: ToolbarViewModel,
-    defaultUsername: String = "",
-    actionForgottenPassword: () -> Unit
+    alreadyHaveAccountAction: () -> Unit
 ) {
-    val viewModel: LoginViewModel = viewModel()
-    val title = stringResource(id = R.string.login)
+    val viewModel: RegistrationViewModel = viewModel()
+    val title = stringResource(id = R.string.register)
 
     LaunchedEffect(title) {
         toolbarViewModel.updateTitle(title)
@@ -48,81 +51,77 @@ fun LoginScreen(
     LaunchedEffect(Unit) {
         toolbarViewModel.updateLoading(false)
     }
-    LoginScreen(
+    RegistrationScreen(
         uiState = viewModel.uiState.value,
-        defaultUsername = defaultUsername,
-        { username, password ->
-            viewModel.login(username, password)
+        { form->
+            viewModel.register(form)
         }
     ){
-        actionForgottenPassword()
+        alreadyHaveAccountAction()
     }
 }
-
 @Composable
-private fun LoginScreen(
-    uiState: LoginUiState,
-    defaultUsername: String?,
-    actionLogin: (String, String) -> Unit = { _, _ -> },
-    actionForgottenPassword: () -> Unit = {}
-){
-
+private fun RegistrationScreen(
+    uiState: RegistrationUiState,
+    actionRegister: (FilledRegistrationForm) -> Unit,
+    actionBackToLogin: () -> Unit
+) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(20.dp)
-            .fillMaxHeight()
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.spacedBy(20.dp),
+    modifier = Modifier
+        .verticalScroll(rememberScrollState())
+        .padding(20.dp)
+        .fillMaxHeight()
     ) {
-//        Image(painter = painterResource(id = R.drawable.ic_logo_attack), "Attack logo")
+    //        Image(painter = painterResource(id = R.drawable.ic_logo_attack), "Attack logo")
 
         AutoErrorBox(uiState.error)
 
-        val loginFormState = rememberFormState(
-            LoginForm(
-                username = defaultUsername.orEmpty(),
+        val registrationFormState = rememberFormState(
+            RegistrationForm(
+                username = "",
+                email = "",
                 password = "",
                 actionSubmit = {
-                    actionLogin(it.username, it.password)
+                    actionRegister(it)
                 },
             )
         )
         Box(Modifier.animateContentSize()) {
-            Crossfade(targetState = uiState.isLoggingIn, label = "") {
+            Crossfade(targetState = uiState.loading, label = "") {
                 if (it) {
                     Box(
                         Modifier
                             .fillMaxWidth()
                             .height(150.dp)
-                            .wrapContentSize()) {
+                            .wrapContentSize()
+                    ) {
                         CircularProgressIndicator()
                     }
                 } else {
-                    FormComposable(loginFormState)
+                    FormComposable(registrationFormState)
                 }
             }
         }
 
         Text(
-            stringResource(R.string.forgotten_password),
+            stringResource(R.string.already_have_account),
             color = MaterialTheme.colorScheme.primary,
             textDecoration = TextDecoration.Underline,
             modifier = Modifier.clickable {
-                actionForgottenPassword()
+                actionBackToLogin()
             })
+}
+}
 
-//        Divider()
+@Preview
+@Composable
+private fun RegistrationScreenPreview(){
+    RegistrationScreen(
+        RegistrationUiState(),
+        {_ ->}
+    ) {
 
-//        Text(
-//            Strings.login_as_demo.translate(context),
-//            color = MaterialTheme.colorScheme.primary,
-//            textDecoration = TextDecoration.Underline,
-//            modifier = Modifier.clickable {
-//                loginFormState.values[0].value = DEMO_ACCOUNT_USERNAME
-//                loginFormState.values[1].value = DEMO_ACCOUNT_PASSWORD
-//
-//                actionLogin(DEMO_ACCOUNT_USERNAME, DEMO_ACCOUNT_PASSWORD)
-//            })
     }
 }

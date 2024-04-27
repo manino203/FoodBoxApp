@@ -2,9 +2,13 @@ package com.example.foodboxapp.ui
 
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ContentTransform
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,41 +26,60 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodboxapp.R
+import com.example.foodboxapp.navigation.ScreenDestination
 import com.example.foodboxapp.ui.composables.FoodBoxThemeWithSurface
 import com.example.foodboxapp.ui.composables.NavigationDrawer
 import com.example.foodboxapp.ui.screens.DestinationScreen
 import com.example.foodboxapp.viewmodels.MainViewModel
+import com.example.foodboxapp.viewmodels.NavDrawerViewModel
 import com.example.foodboxapp.viewmodels.ToolbarUiState
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
+import dev.olshevski.navigation.reimagined.AnimatedNavHost
+import dev.olshevski.navigation.reimagined.NavAction
+import dev.olshevski.navigation.reimagined.NavController
+import dev.olshevski.navigation.reimagined.rememberNavController
 import kotlinx.coroutines.launch
 
 
 class MainActivity: AppCompatActivity(){
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         val viewModel: MainViewModel by viewModels()
         val toolbarViewModel: ToolbarViewModel by viewModels()
+        val navDrawerViewModel: NavDrawerViewModel by viewModels()
         setContent{
+            val navController: NavController<ScreenDestination> = rememberNavController(
+                startDestination = ScreenDestination.Login("")
+            )
             FoodBoxThemeWithSurface{
-                MainActivityContent(viewModel = viewModel, toolbarViewModel = toolbarViewModel)
+                MainActivityContent(viewModel = viewModel, toolbarViewModel = toolbarViewModel, navDrawerViewModel, navController = navController)
             }
         }
     }
 }
 
 @Composable
-private fun MainActivityContent(viewModel: MainViewModel, toolbarViewModel: ToolbarViewModel){
-    val drawerState = rememberDrawerState(initialValue =DrawerValue.Closed)
+private fun MainActivityContent(
+    viewModel: MainViewModel,
+    toolbarViewModel: ToolbarViewModel,
+    navDrawerViewModel: NavDrawerViewModel,
+    navController: NavController<ScreenDestination>
+){
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent ={
-            NavigationDrawer {
+            NavigationDrawer(
+                navDrawerViewModel.uiState.value
+            ) {
                 scope.launch {
                     drawerState.apply {
                         close()
@@ -76,8 +99,27 @@ private fun MainActivityContent(viewModel: MainViewModel, toolbarViewModel: Tool
                         }
                     }
                 },
-                content = {
-                    DestinationScreen(toolbarViewModel, Modifier.padding(it))
+                content = { padding ->
+                    AnimatedNavHost(
+                        modifier = Modifier.padding(padding),
+                        controller = navController,
+                        transitionSpec = { action, _, _ ->
+                            val direction = if (action == NavAction.Pop) {
+                                AnimatedContentTransitionScope.SlideDirection.End
+                            } else {
+                                AnimatedContentTransitionScope.SlideDirection.Start
+                            }
+
+                            ContentTransform(
+                                slideIntoContainer(direction),
+                                slideOutOfContainer(direction)
+                            )
+                        }
+                    ) {
+                        Box(modifier = Modifier.padding(padding)){
+                            DestinationScreen(toolbarViewModel, viewModel, navController)
+                        }
+                    }
                 }
             )
         }
@@ -112,5 +154,10 @@ fun Toolbar(uiState: ToolbarUiState, onMenuOpen: () -> Unit){
 private fun MainActivityContentPreview(){
     val viewModel: MainViewModel = viewModel()
     val toolbarViewModel: ToolbarViewModel = viewModel()
-    MainActivityContent(viewModel, toolbarViewModel)
+    val navDrawerViewModel: NavDrawerViewModel = viewModel()
+
+    val navController: NavController<ScreenDestination> = rememberNavController(
+        startDestination = ScreenDestination.Login("")
+    )
+    MainActivityContent(viewModel, toolbarViewModel, navDrawerViewModel, navController)
 }

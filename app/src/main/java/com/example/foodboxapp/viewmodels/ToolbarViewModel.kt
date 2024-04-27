@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 
 data class ToolbarUiState(
     val loading: Boolean = false,
-    val title: String = "FoodBox"
+    val title: String = "?+"
     )
 class ToolbarViewModel: ViewModel() {
     val uiState = mutableStateOf(ToolbarUiState())

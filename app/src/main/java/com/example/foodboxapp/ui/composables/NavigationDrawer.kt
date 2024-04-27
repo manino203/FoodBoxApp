@@ -34,9 +34,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.foodboxapp.R
+import com.example.foodboxapp.backend.AccountType
+import com.example.foodboxapp.viewmodels.NavDrawerUiState
+
 
 @Composable
 fun NavigationDrawer(
+    uiState: NavDrawerUiState,
     actionClose: () -> Unit
 ) {
     BoxWithConstraints {
@@ -53,7 +57,7 @@ fun NavigationDrawer(
                         .requiredSize(32.dp)
                 )
             }
-            Header(image = R.drawable.ic_launcher_foreground, title = "Account", subtitle = "Client")
+            Header(image = R.drawable.ic_launcher_foreground, title = "Account", subtitle = stringResource(uiState.accType.title))
             MenuItem(label = stringResource(id = R.string.new_order), selected = false, onClick = { /*TODO*/ }, icon ={
                 Icon(Icons.Default.Add, contentDescription = "Add")
             })
