@@ -32,6 +32,7 @@ import com.example.foodboxapp.ui.composables.rememberFormState
 import com.example.foodboxapp.viewmodels.LoginUiState
 import com.example.foodboxapp.viewmodels.LoginViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginScreen(
@@ -39,7 +40,7 @@ fun LoginScreen(
     defaultUsername: String = "",
     actionForgottenPassword: () -> Unit
 ) {
-    val viewModel: LoginViewModel = viewModel()
+    val viewModel: LoginViewModel = koinViewModel()
     val title = stringResource(id = R.string.login)
 
     LaunchedEffect(title) {

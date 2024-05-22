@@ -41,6 +41,7 @@ import com.example.foodboxapp.viewmodels.NavDrawerUiState
 @Composable
 fun NavigationDrawer(
     uiState: NavDrawerUiState,
+    actionLogout: () -> Unit,
     actionClose: () -> Unit
 ) {
     BoxWithConstraints {
@@ -72,9 +73,17 @@ fun NavigationDrawer(
                 MenuItem(label = stringResource(id = R.string.app_settings), selected = false, onClick = { /*TODO*/ }, icon = {
                     Icon(Icons.Default.Settings, contentDescription = "App Settings")
                 })
-                MenuItem(label = stringResource(id = R.string.log_out), selected = false, onClick = { /*TODO*/ }, icon = {
-                    Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Log Out")
-                })
+                MenuItem(
+                    label = stringResource(id = R.string.log_out),
+                    selected = false,
+                    onClick = {
+                        actionLogout()
+                        actionClose()
+                    },
+                    icon = {
+                        Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Log Out")
+                    }
+                )
             }
         }
     }

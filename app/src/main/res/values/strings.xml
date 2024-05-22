@@ -22,7 +22,14 @@
     <string name="field_error_required">This field is required</string>
     <string name="field_error_invalid_format">Invalid format</string>
     <string name="field_error_must_be_integer">Must be a whole number</string>
-    <string name="title_activity_main2">MainActivity2</string>
+
+    <string name="cart_screen_title">Your Cart</string>
+    <string name="cart_empty">Your cart is empty.</string>
+    <string name="cart_total">Total</string>
+    <string name="cart_checkout">Checkout</string>
+
+
+
 
 
 </resources>
