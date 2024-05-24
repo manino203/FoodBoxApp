@@ -68,4 +68,10 @@ class CartViewModel(
         }
     }
 
+    fun deleteItem(item: CartItem){
+        viewModelScope.launch(Dispatchers.IO){
+            cartRepo.deleteCartItem(item)
+        }
+    }
+
 }

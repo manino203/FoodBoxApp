@@ -12,11 +12,14 @@ interface CartRepository {
     suspend fun attemptRetrieveCartItems(): Result<List<CartItem>>
     suspend fun saveCartItemsPersistent()
     suspend fun saveCartItems(items: List<CartItem>)
+    suspend fun addCartItem(item: CartItem)
+    suspend fun deleteCartItem(item: CartItem)
+
 }
 
-class CartRepositoryImpl(): CartRepository{
+class CartRepositoryImpl() : CartRepository {
 
-    private val _cartItems = MutableStateFlow(dummyCartItems)
+    private val _cartItems = MutableStateFlow(emptyList<CartItem>())
     override val cartItems: StateFlow<List<CartItem>>
         get() = _cartItems.asStateFlow()
 
@@ -35,12 +38,29 @@ class CartRepositoryImpl(): CartRepository{
         saveCartItemsPersistent()
     }
 
-}
+    override suspend fun addCartItem(item: CartItem) {
+        saveCartItems(_cartItems.value.indexOfFirst {
+            it.product == item.product
+        }.takeIf {
+            it != -1
+        }?.let { index ->
+            _cartItems.value.toMutableList().also {
+                it[index] =
+                    it[index].copy(quantity = it[index].quantity + item.quantity)
+            }
+        } ?: _cartItems.value.toMutableList().apply { add(item) })
+    }
 
-private val dummyCartItems = dummyProductLists["Tesco"]?.map {
-    CartItem(
-        it,
-        1,
-        it.price
-    )
-}?: emptyList()
+    override suspend fun deleteCartItem(item: CartItem) {
+        _cartItems.value.indexOfFirst {
+            it.product == item.product
+        }.takeIf {
+            it != -1
+        }?.let{
+            saveCartItems(
+                _cartItems.value.toMutableList().apply{ removeAt(it) }
+            )
+        }
+    }
+
+}

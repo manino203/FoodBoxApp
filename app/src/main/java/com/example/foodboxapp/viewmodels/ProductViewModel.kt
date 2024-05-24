@@ -3,6 +3,7 @@ package com.example.foodboxapp.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodboxapp.backend.CartRepository
 import com.example.foodboxapp.backend.Product
 import com.example.foodboxapp.backend.ProductRepository
 import com.example.foodboxapp.backend.Store
@@ -16,7 +17,8 @@ data class ProductUiState(
     val products: List<Product> = emptyList()
 )
 class ProductViewModel(
-    private val productRepo: ProductRepository
+    private val productRepo: ProductRepository,
+    private val cartRepo: CartRepository
 ): ViewModel() {
 
     val uiState = mutableStateOf(ProductUiState())
@@ -29,6 +31,18 @@ class ProductViewModel(
             }
         }
 
+    }
+
+    fun addProductToCart(product: Product, quantity: Int){
+        viewModelScope.launch(Dispatchers.Default){
+            cartRepo.addCartItem(
+                CartItem(
+                    product,
+                    quantity,
+                    product.price * quantity
+                )
+            )
+        }
     }
 
 }

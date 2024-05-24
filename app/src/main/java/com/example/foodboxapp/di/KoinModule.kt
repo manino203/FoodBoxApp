@@ -19,6 +19,7 @@ import com.example.foodboxapp.viewmodels.LoginViewModel
 import com.example.foodboxapp.viewmodels.MainViewModel
 import com.example.foodboxapp.viewmodels.ProductViewModel
 import com.example.foodboxapp.viewmodels.StoreViewModel
+import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -35,8 +36,9 @@ val appModule = module {
     single<CartRepository> {CartRepositoryImpl()}
 
     viewModel { MainViewModel(get()) }
+    viewModel { ToolbarViewModel(get()) }
     viewModel { LoginViewModel(get()) }
     viewModel { StoreViewModel(get()) }
-    viewModel { ProductViewModel(get()) }
+    viewModel { ProductViewModel(get(), get()) }
     viewModel { CartViewModel(get()) }
 }

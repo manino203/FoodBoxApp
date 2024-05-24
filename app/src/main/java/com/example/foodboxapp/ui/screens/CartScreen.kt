@@ -13,10 +13,15 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.Product
+import com.example.foodboxapp.ui.composables.Price
 import com.example.foodboxapp.viewmodels.Action
 import com.example.foodboxapp.viewmodels.CartItem
 import com.example.foodboxapp.viewmodels.CartUiState
@@ -64,7 +70,10 @@ fun CartScreen(
 
     CartScreen(
         viewModel.uiState.value,
-        actionCheckout = {}
+        actionCheckout = {},
+        actionDeleteItem = {
+            viewModel.deleteItem(it)
+        }
     ){ product, value ->
         viewModel.changeQuantity(product, value)
     }
@@ -74,6 +83,7 @@ fun CartScreen(
 private fun CartScreen(
     uiState: CartUiState,
     actionCheckout: () -> Unit,
+    actionDeleteItem: (CartItem) -> Unit,
     actionChangeItemQuantity: (Product, Int) -> Unit
 ){
     Scaffold(
@@ -94,7 +104,12 @@ private fun CartScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(uiState.items) { item ->
-                    CartItem(item = item) {
+                    CartItem(
+                        item = item,
+                        actionDeleteItem = {
+                            actionDeleteItem(item)
+                        }
+                    ) {
                         actionChangeItemQuantity(item.product, it)
                     }
                 }
@@ -115,19 +130,19 @@ private fun CartScreen(
 @Composable
 private fun CartItem(
     item: CartItem,
+    actionDeleteItem: () -> Unit,
     actionChangeItemQuantity: (Int) -> Unit
 ){
-    Row(
-        Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-
-    ) {
-        Card(
-            Modifier.weight(0.75f),
-            elevation = CardDefaults.elevatedCardElevation()
+    Card(
+        modifier = Modifier,
+        elevation = CardDefaults.elevatedCardElevation()
+    ){
+        Row(
+            Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ){
             Row(
-                Modifier.padding(16.dp),
+                Modifier.weight(0.75f),
                 verticalAlignment = Alignment.CenterVertically
             ){
                 AsyncImage(
@@ -143,9 +158,9 @@ private fun CartItem(
                         text = item.product.title,
                         fontWeight = FontWeight.Bold
                     )
-                    Text(
-                        color = Color.Gray,
-                        text = "${item.product.price}$"
+                    Price(
+                        item.product.price,
+                        color = Color.Gray
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -157,7 +172,7 @@ private fun CartItem(
                                 .height(24.dp)
                                 .alpha(0.8f),
                             contentPadding = PaddingValues(0.dp),
-                            onClick = { actionChangeItemQuantity(-1)},
+                            onClick = { actionChangeItemQuantity(-1) },
                         ) {
                             Text(text = "-")
 
@@ -178,14 +193,23 @@ private fun CartItem(
                     }
                 }
             }
+            // todo: vertical divider
+            Price(
+                item.totalPrice,
+                modifier = Modifier.weight(0.25f),
+                textAlign = TextAlign.Center,
+                fontSize = 16.sp
+            )
+            IconButton(onClick = actionDeleteItem) {
+                Icon(
+                    imageVector = Icons.Filled.Clear,
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
         }
-        Text(
-            modifier = Modifier.weight(0.25f),
-            text = "${item.totalPrice}$",
-            textAlign = TextAlign.Center,
-            fontSize = 16.sp
-        )
     }
+
 }
 
 @Composable
@@ -214,14 +238,16 @@ private fun CheckoutBar(
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
-                Text(
-                    text = "$total$",
+                Price(
+                    total,
                     fontSize = 20.sp
                 )
             }
+
             Button(
                 modifier = Modifier.padding(16.dp, 8.dp),
                 shape = RoundedCornerShape(50),
+                enabled = total > 0,
                 onClick = actionCheckout
             ) {
                 Text(
@@ -245,5 +271,5 @@ private fun CartScreenPreview(){
             1,
             2.50f
     )
-    )), {}) { _, _ -> }
+    )),{}, {}) { _, _ -> }
 }

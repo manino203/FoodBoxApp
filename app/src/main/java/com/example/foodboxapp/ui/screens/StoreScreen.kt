@@ -123,5 +123,6 @@ fun StoreItem(
 @Composable
 @Preview
 private fun HomeScreenPreview(){
-    StoreScreen(toolbarViewModel = ToolbarViewModel()){}
+    val vm: ToolbarViewModel = koinViewModel()
+    StoreScreen(toolbarViewModel = vm){}
 }
