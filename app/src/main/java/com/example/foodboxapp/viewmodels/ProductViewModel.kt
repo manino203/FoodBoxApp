@@ -3,6 +3,7 @@ package com.example.foodboxapp.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodboxapp.backend.CartItem
 import com.example.foodboxapp.backend.CartRepository
 import com.example.foodboxapp.backend.Product
 import com.example.foodboxapp.backend.ProductRepository
@@ -30,7 +31,6 @@ class ProductViewModel(
                     uiState.value.copy(products = dummyProductLists[store.title] ?: emptyList())
             }
         }
-
     }
 
     fun addProductToCart(product: Product, quantity: Int){

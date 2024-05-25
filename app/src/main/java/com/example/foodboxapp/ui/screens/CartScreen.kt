@@ -39,10 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.foodboxapp.R
+import com.example.foodboxapp.backend.CartItem
 import com.example.foodboxapp.backend.Product
 import com.example.foodboxapp.ui.composables.Price
 import com.example.foodboxapp.viewmodels.Action
-import com.example.foodboxapp.viewmodels.CartItem
 import com.example.foodboxapp.viewmodels.CartUiState
 import com.example.foodboxapp.viewmodels.CartViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
@@ -74,8 +74,8 @@ fun CartScreen(
         actionDeleteItem = {
             viewModel.deleteItem(it)
         }
-    ){ product, value ->
-        viewModel.changeQuantity(product, value)
+    ){ product, count ->
+        viewModel.changeQuantity(product, count)
     }
 }
 
@@ -172,7 +172,7 @@ private fun CartItem(
                                 .height(24.dp)
                                 .alpha(0.8f),
                             contentPadding = PaddingValues(0.dp),
-                            onClick = { actionChangeItemQuantity(-1) },
+                            onClick = { actionChangeItemQuantity(item.quantity - 1) },
                         ) {
                             Text(text = "-")
 
@@ -186,7 +186,7 @@ private fun CartItem(
                                 .height(24.dp)
                                 .alpha(0.8f),
                             contentPadding = PaddingValues(0.dp),
-                            onClick = { actionChangeItemQuantity(1) }
+                            onClick = { actionChangeItemQuantity(item.quantity + 1) }
                         ) {
                             Text(text = "+")
                         }

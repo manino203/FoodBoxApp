@@ -3,17 +3,12 @@ package com.example.foodboxapp.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodboxapp.backend.CartItem
 import com.example.foodboxapp.backend.CartRepository
 import com.example.foodboxapp.backend.Product
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
-data class CartItem(
-    val product: Product,
-    val quantity: Int,
-    val totalPrice: Float
-)
 data class CartUiState(
     val items: List<CartItem> = emptyList(),
     val loading: Boolean = false,
@@ -45,26 +40,11 @@ class CartViewModel(
             }
         }
     }
-    fun changeQuantity(product: Product, changeBy: Int){
+    fun changeQuantity(product: Product, count: Int){
         viewModelScope.launch(Dispatchers.IO){
-            cartRepo.saveCartItems(
-                uiState.value.items.let { itemList ->
-                    itemList.toMutableList().also { list ->
-                        list.indexOfFirst { product == it.product }.also { index ->
-                            list[index].also { item ->
-                                if (item.quantity + changeBy > 0) {
-                                    list[index] = item.copy(
-                                        quantity = item.quantity + changeBy,
-                                        totalPrice = item.product.price * (item.quantity + changeBy)
-                                    )
-                                } else {
-                                    list.removeAt(index)
-                                }
-                            }
-                        }
-                    }
-                }
-            )
+            uiState.value.items.find { it.product == product }?.let {
+                cartRepo.changeItemQuantity(it, count)
+            }
         }
     }
 
