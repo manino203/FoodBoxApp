@@ -50,6 +50,10 @@ fun DestinationScreen(
             ScreenDestination.Cart -> factory{
                 CartScreen(toolbarViewModel)
             }
+
+            ScreenDestination.Settings -> factory{
+                SettingsScreen(toolbarViewModel)
+            }
         }
     }
     screen()

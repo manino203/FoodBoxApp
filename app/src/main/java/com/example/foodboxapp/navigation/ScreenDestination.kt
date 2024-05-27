@@ -7,4 +7,6 @@ sealed interface ScreenDestination {
     data object Main: ScreenDestination
     data class Store(val store: com.example.foodboxapp.backend.Store): ScreenDestination
     data object Cart: ScreenDestination
+
+    data object Settings: ScreenDestination
 }

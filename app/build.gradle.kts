@@ -77,4 +77,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.composeUiTooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
 }

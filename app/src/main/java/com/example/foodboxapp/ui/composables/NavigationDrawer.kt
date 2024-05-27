@@ -34,13 +34,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.foodboxapp.R
-import com.example.foodboxapp.backend.AccountType
+import com.example.foodboxapp.navigation.ScreenDestination
 import com.example.foodboxapp.viewmodels.NavDrawerUiState
+import dev.olshevski.navigation.reimagined.NavController
+import dev.olshevski.navigation.reimagined.navigate
 
 
 @Composable
 fun NavigationDrawer(
     uiState: NavDrawerUiState,
+    navController: NavController<ScreenDestination>,
     actionLogout: () -> Unit,
     actionClose: () -> Unit
 ) {
@@ -48,7 +51,8 @@ fun NavigationDrawer(
         ModalDrawerSheet(
             Modifier
                 .height(maxHeight)
-                .verticalScroll(rememberScrollState())) {
+                .verticalScroll(rememberScrollState())
+        ) {
             IconButton(actionClose) {
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
@@ -58,21 +62,51 @@ fun NavigationDrawer(
                         .requiredSize(32.dp)
                 )
             }
-            Header(image = R.drawable.ic_launcher_foreground, title = "Account", subtitle = stringResource(uiState.accType.title))
-            MenuItem(label = stringResource(id = R.string.new_order), selected = false, onClick = { /*TODO*/ }, icon ={
-                Icon(Icons.Default.Add, contentDescription = "Add")
-            })
-            MenuItem(label = stringResource(id = R.string.order_history), selected = false, onClick = { /*TODO*/ }, icon = {
-                Icon(painter = painterResource(id = R.drawable.history), contentDescription = "App Settings")
-            })
-            MenuItem(label = stringResource(id = R.string.acc_stats), selected = false, onClick = { /*TODO*/ }, icon = {
-                Icon(painter = painterResource(id = R.drawable.bar_chart), contentDescription = "App Settings")
-            })
+            Header(
+                image = R.drawable.ic_launcher_foreground,
+                title = "Account",
+                subtitle = stringResource(uiState.accType.title)
+            )
+            MenuItem(label = stringResource(id = R.string.new_order), selected = false, onClick = {
+                navController.navigate(ScreenDestination.Main)
+                actionClose()
+            },
+                icon = {
+                    Icon(Icons.Default.Add, contentDescription = "Add")
+                }
+            )
+//            MenuItem(
+//                label = stringResource(id = R.string.order_history),
+//                selected = false,
+//                onClick = { /*TODO*/ },
+//                icon = {
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.history),
+//                        contentDescription = "App Settings"
+//                    )
+//                })
+//            MenuItem(
+//                label = stringResource(id = R.string.acc_stats),
+//                selected = false,
+//                onClick = { /*TODO*/ },
+//                icon = {
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.bar_chart),
+//                        contentDescription = "App Settings"
+//                    )
+//                })
             Spacer(modifier = Modifier.weight(1f))
             Column {
-                MenuItem(label = stringResource(id = R.string.app_settings), selected = false, onClick = { /*TODO*/ }, icon = {
-                    Icon(Icons.Default.Settings, contentDescription = "App Settings")
-                })
+                MenuItem(
+                    label = stringResource(R.string.settings),
+                    selected = false,
+                    onClick = {
+                        navController.navigate(ScreenDestination.Settings)
+                        actionClose()
+                    },
+                    icon = {
+                        Icon(Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
+                    })
                 MenuItem(
                     label = stringResource(id = R.string.log_out),
                     selected = false,
@@ -81,7 +115,9 @@ fun NavigationDrawer(
                         actionClose()
                     },
                     icon = {
-                        Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Log Out")
+                        Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = stringResource(
+                            id = R.string.log_out
+                        ))
                     }
                 )
             }
@@ -113,10 +149,11 @@ private fun Header(
     subtitle: String,
     modifier: Modifier = Modifier
 ) {
-    Row(modifier = modifier
-        .padding(vertical = 10.dp)
-        .wrapContentHeight()
-        .wrapContentWidth(Alignment.Start)
+    Row(
+        modifier = modifier
+            .padding(vertical = 10.dp)
+            .wrapContentHeight()
+            .wrapContentWidth(Alignment.Start)
 
     ) {
         Image(

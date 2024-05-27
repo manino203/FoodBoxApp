@@ -91,6 +91,7 @@ private fun MainActivityContent(
         drawerContent ={
             NavigationDrawer(
                 navDrawerViewModel.uiState.value,
+                navController,
                 actionLogout
             ) {
                 scope.launch {
