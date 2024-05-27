@@ -89,28 +89,7 @@ private fun ProductScreen(
     actionAddToCart: (Product, Int) -> Unit
 ){
     val listState = rememberLazyListState()
-    var sheetProduct by remember{
-        mutableStateOf<Product?>(null)
-    }
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true, )
-    val coroScope = rememberCoroutineScope()
-
-    sheetProduct?.let{prod ->
-        AddToCartSheet(
-            product = prod,
-            sheetState = sheetState,
-            actionClose = {
-                coroScope.launch {
-                    sheetState.hide()
-                }.invokeOnCompletion {
-                    sheetProduct = null
-                }
-            }
-        ) {
-            actionAddToCart(prod, it)
-        }
-    }
     LazyColumn(
         Modifier
             .fillMaxSize(),
@@ -118,28 +97,52 @@ private fun ProductScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(uiState.products){
-            ProductItem(product = it){
-                sheetProduct = it
-                coroScope.launch{
-                    sheetState.show()
-                }
-            }
+            ProductItem(product = it, actionAddToCart)
+
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProductItem(
     product: Product,
-    actionOpenSheet: () -> Unit
+    actionAddToCart: (Product, Int) -> Unit
 ) {
+
+    var sheetOpen by remember{
+        mutableStateOf(false)
+    }
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true, )
+    val coroScope = rememberCoroutineScope()
+
+    if(sheetOpen){
+        AddToCartSheet(
+            product = product,
+            sheetState = sheetState,
+            actionClose = {
+                coroScope.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    sheetOpen = false
+                }
+            }
+        ) {
+            actionAddToCart(product, it)
+        }
+    }
+
     Card(
         modifier = Modifier
             .padding(16.dp, 0.dp)
             .fillMaxWidth()
             .wrapContentHeight()
             .clickable {
-                actionOpenSheet()
+                sheetOpen = true
+                coroScope.launch {
+                    sheetState.show()
+                }
             },
         border = BorderStroke(1.dp, Color.Gray)
     ) {
