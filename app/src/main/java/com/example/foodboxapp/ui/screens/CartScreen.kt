@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.foodboxapp.R
-import com.example.foodboxapp.backend.CartItem
-import com.example.foodboxapp.backend.Product
+import com.example.foodboxapp.backend.repositories.CartItem
+import com.example.foodboxapp.backend.repositories.Product
 import com.example.foodboxapp.ui.composables.Price
 import com.example.foodboxapp.viewmodels.Action
 import com.example.foodboxapp.viewmodels.CartUiState

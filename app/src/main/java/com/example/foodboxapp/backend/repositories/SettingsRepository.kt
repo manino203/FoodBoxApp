@@ -1,6 +1,7 @@
-package com.example.foodboxapp.backend
+package com.example.foodboxapp.backend.repositories
 
 import com.example.foodboxapp.R
+import com.example.foodboxapp.backend.data_sources.SettingsDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +16,7 @@ interface SettingsRepository {
 
 class SettingsRepositoryImpl(
     private val dataSource: SettingsDataSource
-): SettingsRepository{
+): SettingsRepository {
     companion object {
         const val KEY_LANGUAGE = "language"
         const val KEY_THEME = "theme"
@@ -45,10 +46,11 @@ class SettingsRepositoryImpl(
                 KEY_THEME,
                 state.value.theme.stringRep
                 )
-            it.putString(
+            .putString(
                 KEY_LANGUAGE,
                 state.value.language.stringRep
             )
+            it.commit()
         }
     }
 
@@ -96,7 +98,7 @@ data class SettingsState(
         val stringRep: String
         val label: Int
     }
-    sealed class Theme: ChoiceSetting{
+    sealed class Theme: ChoiceSetting {
         data object System: Theme(){
             override val stringRep = "system"
             override val label = R.string.settings_system_theme
@@ -113,7 +115,7 @@ data class SettingsState(
         }
     }
 
-    sealed class Language: ChoiceSetting{
+    sealed class Language: ChoiceSetting {
         data object System: Language(){
             override val label = R.string.settings_system_language
             override val stringRep = "system"

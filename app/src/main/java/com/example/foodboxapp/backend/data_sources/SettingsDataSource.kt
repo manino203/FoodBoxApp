@@ -1,9 +1,9 @@
-package com.example.foodboxapp.backend
+package com.example.foodboxapp.backend.data_sources
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
 
-const val settingsPrefsName = "app_settings"
+const val SETTINGS_PREFS_NAME = "app_settings"
 interface SettingsDataSource {
     fun edit(update: (SharedPreferences.Editor) -> Unit)
     fun get(key: String, defValue: String = ""): String?
@@ -12,7 +12,7 @@ interface SettingsDataSource {
 
 class SettingsDataSourceImpl(
     private val settingsPrefs: SharedPreferences
-): SettingsDataSource{
+): SettingsDataSource {
     override fun edit(update: (SharedPreferences.Editor) -> Unit) {
         settingsPrefs.edit {
             update(this)

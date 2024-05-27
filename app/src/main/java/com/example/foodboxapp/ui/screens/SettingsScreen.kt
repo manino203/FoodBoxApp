@@ -33,9 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.foodboxapp.R
-import com.example.foodboxapp.backend.SettingsRepositoryImpl
-import com.example.foodboxapp.backend.SettingsRepositoryImpl.Companion.THEME_CHOICES
-import com.example.foodboxapp.backend.SettingsState
+import com.example.foodboxapp.backend.repositories.SettingsRepositoryImpl
+import com.example.foodboxapp.backend.repositories.SettingsRepositoryImpl.Companion.THEME_CHOICES
+import com.example.foodboxapp.backend.repositories.SettingsState
 import com.example.foodboxapp.viewmodels.SettingsViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import kotlinx.coroutines.launch

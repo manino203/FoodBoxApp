@@ -3,8 +3,8 @@ package com.example.foodboxapp.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodboxapp.backend.Store
-import com.example.foodboxapp.backend.StoreRepository
+import com.example.foodboxapp.backend.repositories.Store
+import com.example.foodboxapp.backend.repositories.StoreRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

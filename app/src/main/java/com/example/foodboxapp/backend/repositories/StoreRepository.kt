@@ -1,6 +1,6 @@
-package com.example.foodboxapp.backend
+package com.example.foodboxapp.backend.repositories
 
-import kotlinx.coroutines.delay
+import com.example.foodboxapp.backend.data_sources.StoreDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -45,7 +45,7 @@ interface StoreRepository{
 
 class StoreRepositoryImpl(
     private val dataSource: StoreDataSource
-): StoreRepository{
+): StoreRepository {
     private val _stores = MutableStateFlow(emptyList<Store>())
     override val stores: StateFlow<List<Store>>
         get() = _stores.asStateFlow()

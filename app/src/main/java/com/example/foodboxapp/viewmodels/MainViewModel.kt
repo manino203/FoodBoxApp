@@ -1,20 +1,14 @@
 package com.example.foodboxapp.viewmodels
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodboxapp.backend.SessionDataSourceImpl
-import com.example.foodboxapp.backend.SessionRepository
-import com.example.foodboxapp.backend.SessionRepositoryImpl
-import com.example.foodboxapp.backend.SessionState
+import com.example.foodboxapp.backend.repositories.SessionRepository
+import com.example.foodboxapp.backend.repositories.SessionState
 import com.example.foodboxapp.navigation.ScreenDestination
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.io.Closeable
 
 
 data class MainUiState(

@@ -3,9 +3,9 @@ package com.example.foodboxapp.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodboxapp.backend.SettingsRepository
-import com.example.foodboxapp.backend.SettingsRepositoryImpl.Companion.LANGUAGE_CHOICES
-import com.example.foodboxapp.backend.SettingsRepositoryImpl.Companion.THEME_CHOICES
+import com.example.foodboxapp.backend.repositories.SettingsRepository
+import com.example.foodboxapp.backend.repositories.SettingsRepositoryImpl.Companion.LANGUAGE_CHOICES
+import com.example.foodboxapp.backend.repositories.SettingsRepositoryImpl.Companion.THEME_CHOICES
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

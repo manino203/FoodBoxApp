@@ -3,12 +3,12 @@ package com.example.foodboxapp.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodboxapp.backend.CartItem
-import com.example.foodboxapp.backend.CartRepository
-import com.example.foodboxapp.backend.Product
-import com.example.foodboxapp.backend.ProductRepository
-import com.example.foodboxapp.backend.Store
-import com.example.foodboxapp.backend.dummyProductLists
+import com.example.foodboxapp.backend.repositories.CartItem
+import com.example.foodboxapp.backend.repositories.CartRepository
+import com.example.foodboxapp.backend.repositories.Product
+import com.example.foodboxapp.backend.repositories.ProductRepository
+import com.example.foodboxapp.backend.repositories.Store
+import com.example.foodboxapp.backend.repositories.dummyProductLists
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

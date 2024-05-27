@@ -1,5 +1,6 @@
-package com.example.foodboxapp.backend
+package com.example.foodboxapp.backend.repositories
 
+import com.example.foodboxapp.backend.data_sources.SessionDataSource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +18,7 @@ interface SessionRepository{
 
 class SessionRepositoryImpl(
     private val dataSource: SessionDataSource
-): SessionRepository{
+): SessionRepository {
     private val _state = MutableStateFlow(SessionState.NOT_LOADED)
     override val state: StateFlow<SessionState> get() = _state.asStateFlow()
     override fun login(username: String, password: String) {

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.serialization)
     kotlin("kapt")
 }
 
@@ -73,6 +74,9 @@ dependencies {
     implementation(libs.viewmodel)
     implementation(libs.activity)
     implementation(libs.navigation)
+
+    implementation(libs.serialization)
+
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.composeUiTooling)

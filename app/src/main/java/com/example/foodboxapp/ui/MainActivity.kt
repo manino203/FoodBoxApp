@@ -49,7 +49,7 @@ class MainActivity: AppCompatActivity(){
             val navDrawerViewModel: NavDrawerViewModel by viewModels()
             val viewModel: MainViewModel = koinViewModel()
             LaunchedEffect(toolbarViewModel) {
-                toolbarViewModel.collectCartItemCount()
+                toolbarViewModel.loadCart()
             }
             LaunchedEffect(viewModel) {
                 viewModel.collectSessionState()

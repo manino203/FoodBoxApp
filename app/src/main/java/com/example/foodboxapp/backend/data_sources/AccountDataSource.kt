@@ -1,6 +1,14 @@
-package com.example.foodboxapp.backend
+package com.example.foodboxapp.backend.data_sources
 
 import com.example.foodboxapp.R
+
+
+interface AccountDataSource {
+}
+
+class AccountDataSourceImpl(): AccountDataSource{
+
+}
 
 sealed class AccountType{
     abstract val title:  Int

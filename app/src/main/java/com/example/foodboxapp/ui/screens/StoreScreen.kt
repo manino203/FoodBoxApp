@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.foodboxapp.R
-import com.example.foodboxapp.backend.Store
+import com.example.foodboxapp.backend.repositories.Store
 import com.example.foodboxapp.viewmodels.StoreUiState
 import com.example.foodboxapp.viewmodels.StoreViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel

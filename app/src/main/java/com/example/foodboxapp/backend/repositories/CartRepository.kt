@@ -1,11 +1,13 @@
-package com.example.foodboxapp.backend
+package com.example.foodboxapp.backend.repositories
 
+import com.example.foodboxapp.backend.data_sources.CartDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.serialization.Serializable
 
-
+@Serializable
 data class CartItem(
     val product: Product,
     val quantity: Int,
@@ -14,7 +16,7 @@ data class CartItem(
     fun copy(
         product: Product = this.product,
         quantity: Int = this.quantity,
-    ): CartItem{
+    ): CartItem {
         return CartItem(product, quantity, totalPrice = product.price * quantity)
     }
 }
@@ -22,7 +24,7 @@ data class CartItem(
 interface CartRepository {
 
     val cartItems: StateFlow<List<CartItem>>
-    suspend fun attemptRetrieveCartItems(): Result<List<CartItem>>
+    suspend fun retrieveCartItems()
     suspend fun saveCartItemsPersistent()
     suspend fun saveCartItems(items: List<CartItem>)
     suspend fun addCartItem(item: CartItem)
@@ -31,18 +33,22 @@ interface CartRepository {
 
 }
 
-class CartRepositoryImpl() : CartRepository {
+class CartRepositoryImpl(
+    private val dataSource: CartDataSource
+) : CartRepository {
 
     private val _cartItems = MutableStateFlow(emptyList<CartItem>())
     override val cartItems: StateFlow<List<CartItem>>
         get() = _cartItems.asStateFlow()
 
-    override suspend fun attemptRetrieveCartItems(): Result<List<CartItem>> {
-        return Result.failure(NotImplementedError())
+    override suspend fun retrieveCartItems() {
+        _cartItems.update {
+            dataSource.load()
+        }
     }
 
     override suspend fun saveCartItemsPersistent() {
-
+        dataSource.save(cartItems.value)
     }
 
     override suspend fun saveCartItems(items: List<CartItem>) {

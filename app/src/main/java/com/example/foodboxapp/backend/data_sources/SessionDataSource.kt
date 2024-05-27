@@ -1,4 +1,4 @@
-package com.example.foodboxapp.backend
+package com.example.foodboxapp.backend.data_sources
 
 interface SessionDataSource {
     fun login(username: String, password: String): Result<ByteArray>

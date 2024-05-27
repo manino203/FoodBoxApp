@@ -1,14 +1,15 @@
-package com.example.foodboxapp.backend
+package com.example.foodboxapp.backend.data_sources
 
 import android.accounts.NetworkErrorException
+import com.example.foodboxapp.backend.repositories.Product
+import com.example.foodboxapp.backend.repositories.dummyProductLists
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.update
 
 interface ProductDataSource {
     suspend fun fetchProducts(storeId: String): Result<List<Product>>
 }
 
-class ProductDataSourceImpl: ProductDataSource{
+class ProductDataSourceImpl: ProductDataSource {
     override suspend fun fetchProducts(storeId: String): Result<List<Product>> {
         delay(250)
         return dummyProductLists[storeId]?.let{
