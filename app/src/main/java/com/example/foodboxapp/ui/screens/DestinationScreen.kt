@@ -48,11 +48,23 @@ fun DestinationScreen(
             }
 
             ScreenDestination.Cart -> factory{
-                CartScreen(toolbarViewModel)
+                CartScreen(toolbarViewModel){
+                    navController.navigate(ScreenDestination.Checkout)
+                }
             }
 
             ScreenDestination.Settings -> factory{
                 SettingsScreen(toolbarViewModel)
+            }
+
+            ScreenDestination.Checkout -> factory{
+                CheckoutScreen(toolbarViewModel){
+                    navController.navigate(ScreenDestination.OrderSent)
+                }
+            }
+
+            ScreenDestination.OrderSent -> factory{
+                OrderSentScreen(toolbarViewModel = toolbarViewModel)
             }
         }
     }

@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodboxapp.R
 import com.example.foodboxapp.form.LoginForm
 import com.example.foodboxapp.ui.composables.AutoErrorBox
@@ -38,7 +37,7 @@ import org.koin.androidx.compose.koinViewModel
 fun LoginScreen(
     toolbarViewModel: ToolbarViewModel,
     defaultUsername: String = "",
-    actionForgottenPassword: () -> Unit
+    actionRegister: () -> Unit
 ) {
     val viewModel: LoginViewModel = koinViewModel()
     val title = stringResource(id = R.string.login)
@@ -56,7 +55,7 @@ fun LoginScreen(
             viewModel.login(username, password)
         }
     ){
-        actionForgottenPassword()
+        actionRegister()
     }
 }
 
@@ -65,7 +64,7 @@ private fun LoginScreen(
     uiState: LoginUiState,
     defaultUsername: String?,
     actionLogin: (String, String) -> Unit = { _, _ -> },
-    actionForgottenPassword: () -> Unit = {}
+    actionRegister: () -> Unit = {}
 ){
 
     Column(
@@ -76,7 +75,6 @@ private fun LoginScreen(
             .padding(20.dp)
             .fillMaxHeight()
     ) {
-//        Image(painter = painterResource(id = R.drawable.ic_logo_attack), "Attack logo")
 
         AutoErrorBox(uiState.error)
 
@@ -106,11 +104,11 @@ private fun LoginScreen(
         }
 
         Text(
-            stringResource(R.string.forgotten_password),
+            stringResource(R.string.register),
             color = MaterialTheme.colorScheme.primary,
             textDecoration = TextDecoration.Underline,
             modifier = Modifier.clickable {
-                actionForgottenPassword()
+                actionRegister()
             })
 
 //        Divider()

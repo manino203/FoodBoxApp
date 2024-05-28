@@ -17,7 +17,6 @@ data class ToolbarUiState(
     val visible: Boolean = true,
     val loading: Boolean = false,
     val title: String = "",
-    val action:Action = Action.CART,
     val cartItemCount: Int = 0
 )
 class ToolbarViewModel(
@@ -33,10 +32,6 @@ class ToolbarViewModel(
     }
     fun updateVisibility(visible: Boolean){
         uiState.value = uiState.value.copy(visible = visible)
-    }
-
-    fun updateAction(action: Action){
-        uiState.value = uiState.value.copy(action = action)
     }
 
     fun loadCart(){

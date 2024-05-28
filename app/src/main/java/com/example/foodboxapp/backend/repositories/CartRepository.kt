@@ -26,10 +26,12 @@ interface CartRepository {
     val cartItems: StateFlow<List<CartItem>>
     suspend fun retrieveCartItems()
     suspend fun saveCartItemsPersistent()
-    suspend fun saveCartItems(items: List<CartItem>)
+    suspend fun updateCartItems(items: List<CartItem>)
     suspend fun addCartItem(item: CartItem)
     suspend fun changeItemQuantity(item: CartItem, count: Int)
     suspend fun deleteCartItem(item: CartItem)
+
+    suspend fun clear()
 
 }
 
@@ -51,7 +53,7 @@ class CartRepositoryImpl(
         dataSource.save(cartItems.value)
     }
 
-    override suspend fun saveCartItems(items: List<CartItem>) {
+    override suspend fun updateCartItems(items: List<CartItem>) {
         _cartItems.update {
             items
         }
@@ -59,7 +61,7 @@ class CartRepositoryImpl(
     }
 
     override suspend fun addCartItem(item: CartItem) {
-        saveCartItems(_cartItems.value.indexOfFirst {
+        updateCartItems(_cartItems.value.indexOfFirst {
             it.product == item.product
         }.takeIf {
             it != -1
@@ -72,7 +74,7 @@ class CartRepositoryImpl(
     }
 
     override suspend fun changeItemQuantity(item: CartItem, count: Int) {
-        saveCartItems(_cartItems.value.toMutableList().also {
+        updateCartItems(_cartItems.value.toMutableList().also {
             _cartItems.value.indexOf(item).let{index ->
                 if(count > 0){
                     it[index] =
@@ -90,10 +92,14 @@ class CartRepositoryImpl(
         }.takeIf {
             it != -1
         }?.let{
-            saveCartItems(
+            updateCartItems(
                 _cartItems.value.toMutableList().apply{ removeAt(it) }
             )
         }
+    }
+
+    override suspend fun clear() {
+        updateCartItems(emptyList())
     }
 
 }

@@ -28,6 +28,7 @@ import com.example.foodboxapp.backend.repositories.SettingsRepositoryImpl
 import com.example.foodboxapp.backend.repositories.StoreRepository
 import com.example.foodboxapp.backend.repositories.StoreRepositoryImpl
 import com.example.foodboxapp.viewmodels.CartViewModel
+import com.example.foodboxapp.viewmodels.CheckoutViewModel
 import com.example.foodboxapp.viewmodels.LoginViewModel
 import com.example.foodboxapp.viewmodels.MainViewModel
 import com.example.foodboxapp.viewmodels.ProductViewModel
@@ -77,4 +78,5 @@ val appModule = module {
     viewModel { ProductViewModel(get(), get()) }
     viewModel { CartViewModel(get()) }
     viewModel { SettingsViewModel(get()) }
+    viewModel { CheckoutViewModel(get(), get()) }
 }

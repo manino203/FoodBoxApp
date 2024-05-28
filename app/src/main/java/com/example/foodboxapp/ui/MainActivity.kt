@@ -1,6 +1,7 @@
 package com.example.foodboxapp.ui
 
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -8,13 +9,17 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,11 +37,11 @@ import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
+import dev.olshevski.navigation.reimagined.popUpTo
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.replaceAll
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-
 
 class MainActivity: AppCompatActivity(){
 
@@ -48,6 +53,11 @@ class MainActivity: AppCompatActivity(){
             val toolbarViewModel: ToolbarViewModel = koinViewModel()
             val navDrawerViewModel: NavDrawerViewModel by viewModels()
             val viewModel: MainViewModel = koinViewModel()
+            val scope = rememberCoroutineScope()
+            val navController: NavController<ScreenDestination> = rememberNavController(
+                startDestination = viewModel.uiState.value.screenDestination
+            )
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             LaunchedEffect(toolbarViewModel) {
                 toolbarViewModel.loadCart()
             }
@@ -55,11 +65,34 @@ class MainActivity: AppCompatActivity(){
                 viewModel.collectSessionState()
             }
 
+            val onBackPressed: () -> Unit = remember(navController, drawerState, scope) {
+                {
+                    scope.launch {
+                        if (drawerState.isOpen && !drawerState.isAnimationRunning) {
+                            drawerState.close()
+                        } else if (navController.backstack.entries.size > 1) {
+                            navController.pop()
+                        } else {
+                            finish()
+                        }
+                    }
+                }
+            }
+            val onBackPressedCallback by rememberUpdatedState(onBackPressed)
+
+            LaunchedEffect(Unit) {
+                onBackPressedDispatcher.addCallback {
+                    onBackPressedCallback()
+                }
+            }
+
             FoodBoxThemeWithSurface{
                 MainActivityContent(
                     viewModel.uiState.value,
                     toolbarViewModel = toolbarViewModel,
-                    navDrawerViewModel
+                    navDrawerViewModel,
+                    navController,
+                    drawerState
                 ) {
                     viewModel.logout()
                 }
@@ -73,19 +106,20 @@ private fun MainActivityContent(
     uiState: MainUiState,
     toolbarViewModel: ToolbarViewModel,
     navDrawerViewModel: NavDrawerViewModel,
+    navController: NavController<ScreenDestination>,
+    drawerState: DrawerState,
     actionLogout: () -> Unit
 ){
 
-    val navController: NavController<ScreenDestination> = rememberNavController(
-        startDestination = uiState.screenDestination
-    )
+
 
     LaunchedEffect(uiState.screenDestination) {
         navController.replaceAll(uiState.screenDestination)
     }
 
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
     val scope = rememberCoroutineScope()
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent ={
@@ -107,12 +141,7 @@ private fun MainActivityContent(
                 topBar = {
                     Toolbar(
                         uiState = toolbarViewModel.uiState.value,
-                        actionHome = {
-                                     navController.pop()
-                        },
-                        actionCart = {
-                                     navController.navigate(ScreenDestination.Cart)
-                        },
+                        navController
                     ) {
                         scope.launch {
                             drawerState.apply {
@@ -150,13 +179,16 @@ private fun MainActivityContent(
 
 
 
+
 @Composable
 @Preview
 private fun MainActivityContentPreview(){
     val viewModel: MainViewModel = viewModel()
     val toolbarViewModel: ToolbarViewModel = viewModel()
     val navDrawerViewModel: NavDrawerViewModel = viewModel()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val navController = rememberNavController(startDestination = ScreenDestination.Splash as ScreenDestination)
 
 
-    MainActivityContent(viewModel.uiState.value, toolbarViewModel, navDrawerViewModel,{})
+    MainActivityContent(viewModel.uiState.value, toolbarViewModel, navDrawerViewModel, navController, drawerState){}
 }
