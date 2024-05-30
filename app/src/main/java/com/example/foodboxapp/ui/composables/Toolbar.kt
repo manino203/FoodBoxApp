@@ -49,6 +49,7 @@ fun Toolbar(
     }
     val cartScreens = listOf(ScreenDestination.Cart, ScreenDestination.Checkout, ScreenDestination.OrderSent)
     val backArrowScreens = listOf(ScreenDestination.Checkout)
+    val actionLessScreens = listOf(ScreenDestination.Login(""), ScreenDestination.Registration, ScreenDestination.Splash)
     if(uiState.visible){
         Column {
             TopAppBar(
@@ -71,37 +72,45 @@ fun Toolbar(
                     }
                 },
                 actions = {
-                    if (!cartScreens.contains(currentScreen)) {
-                        IconButton(onClick = {
-                            navController.navigate(ScreenDestination.Cart)
-                        }) {
-                            Icon(Icons.Outlined.ShoppingCart, contentDescription = stringResource(id = R.string.cart_screen_title))
-                            if(uiState.cartItemCount > 0){
-                                Text(
-                                    text = "${uiState.cartItemCount}",
-                                    modifier = Modifier
-                                        .height(16.dp)
-                                        .offset(8.dp, (-8).dp)
-                                        .background(
-                                            MaterialTheme.colorScheme.error,
-                                            shape = CircleShape
-                                        )
-                                        .padding(horizontal = 5.dp),
-                                    color = MaterialTheme.colorScheme.onError,
-                                    lineHeight = 18.sp,
-                                    fontSize = 11.sp
+                    if(!actionLessScreens.contains(currentScreen)){
+                        if (!cartScreens.contains(currentScreen)) {
+                            IconButton(onClick = {
+                                navController.navigate(ScreenDestination.Cart)
+                            }) {
+                                Icon(
+                                    Icons.Outlined.ShoppingCart,
+                                    contentDescription = stringResource(id = R.string.cart_screen_title)
+                                )
+                                if (uiState.cartItemCount > 0) {
+                                    Text(
+                                        text = "${uiState.cartItemCount}",
+                                        modifier = Modifier
+                                            .height(16.dp)
+                                            .offset(8.dp, (-8).dp)
+                                            .background(
+                                                MaterialTheme.colorScheme.error,
+                                                shape = CircleShape
+                                            )
+                                            .padding(horizontal = 5.dp),
+                                        color = MaterialTheme.colorScheme.onError,
+                                        lineHeight = 18.sp,
+                                        fontSize = 11.sp
+                                    )
+                                }
+                            }
+                        } else {
+                            IconButton(onClick = {
+                                navController.popUpTo {
+                                    !cartScreens.contains(it)
+                                }
+                            }) {
+                                Icon(
+                                    Icons.Filled.Home,
+                                    contentDescription = stringResource(id = R.string.cart_screen_title)
                                 )
                             }
-                        }
-                    }else{
-                        IconButton(onClick = {
-                            navController.popUpTo{
-                                !cartScreens.contains(it)
-                            }
-                        }) {
-                            Icon(Icons.Filled.Home, contentDescription = stringResource(id = R.string.cart_screen_title))
-                        }
 
+                        }
                     }
                 }
             )

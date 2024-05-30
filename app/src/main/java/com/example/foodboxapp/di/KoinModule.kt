@@ -3,6 +3,7 @@ package com.example.foodboxapp.di
 import android.content.Context
 import com.example.foodboxapp.backend.data_sources.AccountDataSource
 import com.example.foodboxapp.backend.data_sources.AccountDataSourceImpl
+import com.example.foodboxapp.backend.data_sources.AccountDataSourceImpl.Companion.ACCOUNT_PREFS_NAME
 import com.example.foodboxapp.backend.data_sources.CART_PREFS_NAME
 import com.example.foodboxapp.backend.data_sources.CartDataSource
 import com.example.foodboxapp.backend.data_sources.CartDataSourceImpl
@@ -27,6 +28,7 @@ import com.example.foodboxapp.backend.repositories.SettingsRepository
 import com.example.foodboxapp.backend.repositories.SettingsRepositoryImpl
 import com.example.foodboxapp.backend.repositories.StoreRepository
 import com.example.foodboxapp.backend.repositories.StoreRepositoryImpl
+import com.example.foodboxapp.viewmodels.AccountSettingsViewModel
 import com.example.foodboxapp.viewmodels.CartViewModel
 import com.example.foodboxapp.viewmodels.CheckoutViewModel
 import com.example.foodboxapp.viewmodels.LoginViewModel
@@ -47,6 +49,9 @@ val sharedPrefsModule = module {
     single(named(CART_PREFS_NAME)) {
         androidApplication().getSharedPreferences(CART_PREFS_NAME, Context.MODE_PRIVATE)
     }
+    single(named(ACCOUNT_PREFS_NAME)) {
+        androidApplication().getSharedPreferences(ACCOUNT_PREFS_NAME, Context.MODE_PRIVATE)
+    }
 }
 
 val dataSourceModule = module {
@@ -56,12 +61,12 @@ val dataSourceModule = module {
     single<ProductDataSource> { ProductDataSourceImpl() }
     single<CartDataSource> { CartDataSourceImpl(get(named(CART_PREFS_NAME))) }
     single<SettingsDataSource> { SettingsDataSourceImpl(get(named(SETTINGS_PREFS_NAME))) }
-    single<AccountDataSource> { AccountDataSourceImpl() }
+    single<AccountDataSource> { AccountDataSourceImpl(get(named(ACCOUNT_PREFS_NAME))) }
 }
 
 val repositoryModule = module {
     includes(dataSourceModule)
-    single<SessionRepository> { SessionRepositoryImpl(get()) }
+    single<SessionRepository> { SessionRepositoryImpl(get(), get()) }
     single<StoreRepository> { StoreRepositoryImpl(get()) }
     single<ProductRepository> { ProductRepositoryImpl(get()) }
     single<CartRepository> { CartRepositoryImpl(get()) }
@@ -71,7 +76,7 @@ val repositoryModule = module {
 
 val appModule = module {
     includes(repositoryModule)
-    viewModel { MainViewModel(get()) }
+    viewModel { MainViewModel(get(), get()) }
     viewModel { ToolbarViewModel(get()) }
     viewModel { LoginViewModel(get()) }
     viewModel { StoreViewModel(get()) }
@@ -79,4 +84,6 @@ val appModule = module {
     viewModel { CartViewModel(get()) }
     viewModel { SettingsViewModel(get()) }
     viewModel { CheckoutViewModel(get(), get()) }
+    viewModel { AccountSettingsViewModel(get()) }
+
 }

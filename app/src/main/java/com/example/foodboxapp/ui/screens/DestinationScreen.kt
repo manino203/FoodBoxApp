@@ -66,6 +66,10 @@ fun DestinationScreen(
             ScreenDestination.OrderSent -> factory{
                 OrderSentScreen(toolbarViewModel = toolbarViewModel)
             }
+
+            ScreenDestination.AccountSettings -> factory{
+                AccountSettingsScreen(toolbarViewModel = toolbarViewModel)
+            }
         }
     }
     screen()

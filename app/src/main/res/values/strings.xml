@@ -58,6 +58,10 @@
     <string name="order_sent">Order Sent</string>
     <string name="order_sent_message">Your order has been sent!\nYou will be notified when any of our workers accepts it.</string>
 
+    <string name="account_settings">Account Settings</string>
+    <string name="modify">Modify</string>
+
+
 
 
 

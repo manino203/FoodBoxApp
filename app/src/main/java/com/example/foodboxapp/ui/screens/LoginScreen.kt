@@ -50,7 +50,7 @@ fun LoginScreen(
     }
     LoginScreen(
         uiState = viewModel.uiState.value,
-        defaultUsername = defaultUsername,
+        defaultEmail = defaultUsername,
         { username, password ->
             viewModel.login(username, password)
         }
@@ -62,7 +62,7 @@ fun LoginScreen(
 @Composable
 private fun LoginScreen(
     uiState: LoginUiState,
-    defaultUsername: String?,
+    defaultEmail: String?,
     actionLogin: (String, String) -> Unit = { _, _ -> },
     actionRegister: () -> Unit = {}
 ){
@@ -80,10 +80,10 @@ private fun LoginScreen(
 
         val loginFormState = rememberFormState(
             LoginForm(
-                username = defaultUsername.orEmpty(),
+                email = defaultEmail.orEmpty(),
                 password = "",
                 actionSubmit = {
-                    actionLogin(it.username, it.password)
+                    actionLogin(it.email, it.password)
                 },
             )
         )

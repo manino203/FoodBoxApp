@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodboxapp.backend.data_holders.Account
+import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.backend.repositories.SessionRepository
 import com.example.foodboxapp.backend.repositories.SessionState
 import com.example.foodboxapp.navigation.ScreenDestination
@@ -13,17 +15,20 @@ import kotlinx.coroutines.launch
 
 data class MainUiState(
     val loading: Boolean = false,
-    val screenDestination: ScreenDestination = ScreenDestination.Splash
+    val screenDestination: ScreenDestination = ScreenDestination.Splash,
+    val account: Account? = null
 )
 
 class MainViewModel(
-    private val sessionRepo: SessionRepository
+    private val sessionRepo: SessionRepository,
+    private val accountRepo: AccountRepository
 ): ViewModel() {
     val uiState = mutableStateOf(MainUiState())
 
     fun collectSessionState() {
         Log.d("collect", "asd")
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.IO) {
+            accountRepo.load()
             sessionRepo.state.collect {
                 Log.d("sessionState change", "$it")
                 when (it) {
@@ -43,7 +48,15 @@ class MainViewModel(
     }
 
     fun logout(){
-        sessionRepo.logout()
+        viewModelScope.launch(Dispatchers.IO) {
+            sessionRepo.logout()
+        }
     }
-
+    fun collectAccount(){
+        viewModelScope.launch(Dispatchers.IO) {
+            accountRepo.account.collect{
+                uiState.value = uiState.value.copy(account = it)
+            }
+        }
+    }
 }

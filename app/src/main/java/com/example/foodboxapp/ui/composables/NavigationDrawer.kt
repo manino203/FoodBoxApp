@@ -2,6 +2,7 @@ package com.example.foodboxapp.ui.composables
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -35,18 +36,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.foodboxapp.R
 import com.example.foodboxapp.navigation.ScreenDestination
-import com.example.foodboxapp.viewmodels.NavDrawerUiState
+import com.example.foodboxapp.viewmodels.MainUiState
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.navigate
 
 
 @Composable
 fun NavigationDrawer(
-    uiState: NavDrawerUiState,
+    uiState: MainUiState,
     navController: NavController<ScreenDestination>,
     actionLogout: () -> Unit,
     actionClose: () -> Unit
 ) {
+
+
+
     BoxWithConstraints {
         ModalDrawerSheet(
             Modifier
@@ -62,19 +66,27 @@ fun NavigationDrawer(
                         .requiredSize(32.dp)
                 )
             }
-            Header(
-                image = R.drawable.ic_launcher_foreground,
-                title = "Account",
-                subtitle = stringResource(uiState.accType.title)
-            )
+            uiState.account?.let{
+                Header(
+                    image = R.drawable.ic_launcher_foreground,
+                    title = it.email,
+                    subtitle = stringResource(it.type.title),
+                    modifier = Modifier.clickable {
+                        navController.navigate(ScreenDestination.AccountSettings)
+                        actionClose()
+                    }
+                )
+            }
+            uiState.account?.let{
             MenuItem(label = stringResource(id = R.string.new_order), selected = false, onClick = {
                 navController.navigate(ScreenDestination.Main)
                 actionClose()
             },
                 icon = {
-                    Icon(Icons.Default.Add, contentDescription = "Add")
+                    Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.new_order))
                 }
             )
+            }
 //            MenuItem(
 //                label = stringResource(id = R.string.order_history),
 //                selected = false,
@@ -107,19 +119,24 @@ fun NavigationDrawer(
                     icon = {
                         Icon(Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
                     })
-                MenuItem(
-                    label = stringResource(id = R.string.log_out),
-                    selected = false,
-                    onClick = {
-                        actionLogout()
-                        actionClose()
-                    },
-                    icon = {
-                        Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = stringResource(
-                            id = R.string.log_out
-                        ))
-                    }
-                )
+                uiState.account?.let{
+                    MenuItem(
+                        label = stringResource(id = R.string.log_out),
+                        selected = false,
+                        onClick = {
+                            actionLogout()
+                            actionClose()
+                        },
+                        icon = {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ExitToApp,
+                                contentDescription = stringResource(
+                                    id = R.string.log_out
+                                )
+                            )
+                        }
+                    )
+                }
             }
         }
     }

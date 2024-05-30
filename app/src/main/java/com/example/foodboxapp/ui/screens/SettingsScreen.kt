@@ -4,14 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -36,6 +34,7 @@ import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.repositories.SettingsRepositoryImpl
 import com.example.foodboxapp.backend.repositories.SettingsRepositoryImpl.Companion.THEME_CHOICES
 import com.example.foodboxapp.backend.repositories.SettingsState
+import com.example.foodboxapp.ui.composables.Category
 import com.example.foodboxapp.viewmodels.SettingsViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import kotlinx.coroutines.launch
@@ -75,21 +74,19 @@ private fun SettingsScreen(
     actionSetLanguage: (Int) -> Unit
 ){
     LazyColumn {
-        item{
-            Category(title = stringResource(R.string.settings_appearance)){
-                ChoiceSetting(
-                    stringResource(id = R.string.settings_theme),
-                    uiState.theme,
-                    THEME_CHOICES,
-                    actionSetTheme
-                )
-                ChoiceSetting(
-                    stringResource(id = R.string.settings_language),
-                    uiState.language,
-                    SettingsRepositoryImpl.LANGUAGE_CHOICES,
-                    actionSetLanguage
-                )
-            }
+        Category(title = R.string.settings_appearance){
+            ChoiceSetting(
+                stringResource(id = R.string.settings_theme),
+                uiState.theme,
+                THEME_CHOICES,
+                actionSetTheme
+            )
+            ChoiceSetting(
+                stringResource(id = R.string.settings_language),
+                uiState.language,
+                SettingsRepositoryImpl.LANGUAGE_CHOICES,
+                actionSetLanguage
+            )
         }
 
     }
@@ -119,22 +116,6 @@ private fun SettingItem(
         ){
             valueComposable()
         }
-    }
-}
-
-@Composable
-private fun Category(
-    title: String,
-    content: @Composable ColumnScope.() -> Unit
-){
-    Column{
-        Text(
-            modifier = Modifier.padding(16.dp),
-            text = title,
-            color = MaterialTheme.colorScheme.primary
-        )
-        this.content()
-        HorizontalDivider()
     }
 }
 

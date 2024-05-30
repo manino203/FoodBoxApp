@@ -429,7 +429,7 @@ fun FormComposable(state: FormState, modifier: Modifier = Modifier) {
 @CombinedPreviews
 private fun FormComposablePreview() = FoodBoxThemeWithSurface {
     val form = LoginForm(
-        username = "",
+        email = "",
         password = "",
         actionSubmit = {}
     )

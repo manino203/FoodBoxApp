@@ -10,4 +10,5 @@ sealed interface ScreenDestination {
     data object Settings: ScreenDestination
     data object Checkout: ScreenDestination
     data object OrderSent: ScreenDestination
+    data object AccountSettings: ScreenDestination
 }

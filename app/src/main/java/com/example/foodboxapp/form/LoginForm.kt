@@ -3,21 +3,21 @@ package com.example.foodboxapp.form
 import com.example.foodboxapp.R
 
 data class FilledLoginForm(
-    val username: String,
+    val email: String,
     val password: String
 )
 
 class LoginForm(
-    username: String,
+    email: String,
     password: String,
     actionSubmit: (FilledLoginForm) -> Unit
 ): Form(
     fields = listOf(
         Field(
-            label = R.string.username,
+            label = R.string.email,
             placeholder = null,
-            validators = listOf(RequiredValidator),
-            value = username,
+            validators = listOf(RequiredValidator, EmailValidator),
+            value = email,
             help = null,
             type = FieldType.Text,
             isRequired = true
@@ -37,7 +37,7 @@ class LoginForm(
     onSubmit = {
         actionSubmit(
             FilledLoginForm(
-                username = it[0],
+                email = it[0],
                 password = it[1]
             )
         )
