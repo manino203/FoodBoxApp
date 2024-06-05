@@ -1,9 +1,13 @@
 package com.example.foodboxapp.di
 
 import android.content.Context
+import com.example.foodboxapp.backend.data_sources.AcceptedOrdersDataSource
+import com.example.foodboxapp.backend.data_sources.AcceptedOrdersDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.AccountDataSource
 import com.example.foodboxapp.backend.data_sources.AccountDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.AccountDataSourceImpl.Companion.ACCOUNT_PREFS_NAME
+import com.example.foodboxapp.backend.data_sources.AvailableOrdersDataSource
+import com.example.foodboxapp.backend.data_sources.AvailableOrdersDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.CART_PREFS_NAME
 import com.example.foodboxapp.backend.data_sources.CartDataSource
 import com.example.foodboxapp.backend.data_sources.CartDataSourceImpl
@@ -16,8 +20,12 @@ import com.example.foodboxapp.backend.data_sources.SettingsDataSource
 import com.example.foodboxapp.backend.data_sources.SettingsDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.StoreDataSource
 import com.example.foodboxapp.backend.data_sources.StoreDataSourceImpl
+import com.example.foodboxapp.backend.repositories.AcceptedOrdersRepository
+import com.example.foodboxapp.backend.repositories.AcceptedOrdersRepositoryImpl
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.backend.repositories.AccountRepositoryImpl
+import com.example.foodboxapp.backend.repositories.AvailableOrdersRepository
+import com.example.foodboxapp.backend.repositories.AvailableOrdersRepositoryImpl
 import com.example.foodboxapp.backend.repositories.CartRepository
 import com.example.foodboxapp.backend.repositories.CartRepositoryImpl
 import com.example.foodboxapp.backend.repositories.ProductRepository
@@ -37,6 +45,8 @@ import com.example.foodboxapp.viewmodels.ProductViewModel
 import com.example.foodboxapp.viewmodels.SettingsViewModel
 import com.example.foodboxapp.viewmodels.StoreViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
+import com.example.foodboxapp.viewmodels.worker.AcceptedOrdersViewModel
+import com.example.foodboxapp.viewmodels.worker.AvailableOrdersViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
@@ -62,6 +72,9 @@ val dataSourceModule = module {
     single<CartDataSource> { CartDataSourceImpl(get(named(CART_PREFS_NAME))) }
     single<SettingsDataSource> { SettingsDataSourceImpl(get(named(SETTINGS_PREFS_NAME))) }
     single<AccountDataSource> { AccountDataSourceImpl(get(named(ACCOUNT_PREFS_NAME))) }
+    single<AvailableOrdersDataSource> { AvailableOrdersDataSourceImpl() }
+    single<AcceptedOrdersDataSource> { AcceptedOrdersDataSourceImpl() }
+
 }
 
 val repositoryModule = module {
@@ -72,6 +85,8 @@ val repositoryModule = module {
     single<CartRepository> { CartRepositoryImpl(get()) }
     single<SettingsRepository> { SettingsRepositoryImpl(get()) }
     single<AccountRepository> { AccountRepositoryImpl(get()) }
+    single<AvailableOrdersRepository> { AvailableOrdersRepositoryImpl(get()) }
+    single<AcceptedOrdersRepository> { AcceptedOrdersRepositoryImpl(get()) }
 }
 
 val appModule = module {
@@ -85,5 +100,6 @@ val appModule = module {
     viewModel { SettingsViewModel(get()) }
     viewModel { CheckoutViewModel(get(), get()) }
     viewModel { AccountSettingsViewModel(get()) }
-
+    viewModel { AvailableOrdersViewModel(get()) }
+    viewModel { AcceptedOrdersViewModel(get()) }
 }

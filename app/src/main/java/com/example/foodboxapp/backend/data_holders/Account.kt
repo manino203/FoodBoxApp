@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class Account(
     val email: String,
     val address: Address,
-    val type: AccountType = AccountType.Client,
+    val type: AccountType = AccountType.Worker,
     val paymentMethod: PaymentMethod = PaymentMethod.GooglePay
 )
 
@@ -19,7 +19,7 @@ sealed class AccountType{
     data object Client: AccountType(){
         override val title: Int = R.string.client
     }
-    data object Employee: AccountType(){
+    data object Worker: AccountType(){
         override val title: Int = R.string.employee
     }
 

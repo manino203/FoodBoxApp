@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.foodboxapp.R
+import com.example.foodboxapp.backend.data_holders.AccountType
 import com.example.foodboxapp.navigation.ScreenDestination
 import com.example.foodboxapp.viewmodels.MainUiState
 import dev.olshevski.navigation.reimagined.NavController
@@ -48,9 +49,6 @@ fun NavigationDrawer(
     actionLogout: () -> Unit,
     actionClose: () -> Unit
 ) {
-
-
-
     BoxWithConstraints {
         ModalDrawerSheet(
             Modifier
@@ -78,35 +76,37 @@ fun NavigationDrawer(
                 )
             }
             uiState.account?.let{
-            MenuItem(label = stringResource(id = R.string.new_order), selected = false, onClick = {
-                navController.navigate(ScreenDestination.Main)
-                actionClose()
-            },
-                icon = {
-                    Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.new_order))
+                if (uiState.account.type == AccountType.Client){
+                    MenuItem(label = stringResource(id = R.string.new_order),
+                        selected = false,
+                        onClick = {
+                            navController.navigate(ScreenDestination.Main)
+                            actionClose()
+                        },
+                        icon = {
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = stringResource(id = R.string.new_order)
+                            )
+                        }
+                    )
+                }else{
+                    MenuItem(label = stringResource(id = R.string.available_orders),
+                        selected = false,
+                        onClick = {
+                            navController.navigate(ScreenDestination.AvailableOrders)
+                            actionClose()
+                        }
+                    )
+                    MenuItem(label = stringResource(id = R.string.accepted_orders),
+                        selected = false,
+                        onClick = {
+                            navController.navigate(ScreenDestination.AcceptedOrders)
+                            actionClose()
+                        }
+                    )
                 }
-            )
             }
-//            MenuItem(
-//                label = stringResource(id = R.string.order_history),
-//                selected = false,
-//                onClick = { /*TODO*/ },
-//                icon = {
-//                    Icon(
-//                        painter = painterResource(id = R.drawable.history),
-//                        contentDescription = "App Settings"
-//                    )
-//                })
-//            MenuItem(
-//                label = stringResource(id = R.string.acc_stats),
-//                selected = false,
-//                onClick = { /*TODO*/ },
-//                icon = {
-//                    Icon(
-//                        painter = painterResource(id = R.drawable.bar_chart),
-//                        contentDescription = "App Settings"
-//                    )
-//                })
             Spacer(modifier = Modifier.weight(1f))
             Column {
                 MenuItem(

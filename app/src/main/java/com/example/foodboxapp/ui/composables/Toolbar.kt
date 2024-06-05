@@ -49,7 +49,7 @@ fun Toolbar(
     }
     val cartScreens = listOf(ScreenDestination.Cart, ScreenDestination.Checkout, ScreenDestination.OrderSent)
     val backArrowScreens = listOf(ScreenDestination.Checkout)
-    val actionLessScreens = listOf(ScreenDestination.Login(""), ScreenDestination.Registration, ScreenDestination.Splash)
+    val actionLessScreens = listOf(ScreenDestination.Login(""), ScreenDestination.Registration, ScreenDestination.Splash, ScreenDestination.AvailableOrders, ScreenDestination.AcceptedOrders)
     if(uiState.visible){
         Column {
             TopAppBar(

@@ -72,27 +72,27 @@ val dummyProductLists = mapOf(
         "Billa",
         listOf(
             Product(
-                "Tesco Finest Clementine Or Sweet Easy Peeler 600G",
-                "https://digitalcontent.api.tesco.com/v2/media/ghs/cfb3c09d-511a-4982-b329-f0d1793ad5e0/ac881f1a-3e3d-4c5f-a316-68da6226a708.jpeg?h=225&w=225",
-                2.5f
+                "Milka Triolade",
+                "https://assets-eu-01.kc-usercontent.com/3164816e-ec15-018a-864f-a8c5d9f6be0d/4292fcf3-ed71-4756-a39a-282957e9baa5/W22%20TOP%20Ponuka%20400x434px5.jpg?w=400&fm=webp&lossless=0&q=80&dpr=1",
+                2.49f
             )
         )
     ),Pair(
         "Lidl",
         listOf(
             Product(
-                "Tesco Finest Clementine Or Sweet Easy Peeler 600G",
-                "https://digitalcontent.api.tesco.com/v2/media/ghs/cfb3c09d-511a-4982-b329-f0d1793ad5e0/ac881f1a-3e3d-4c5f-a316-68da6226a708.jpeg?h=225&w=225",
-                2.5f
+                "LIVERGY® Pánske teplákové šortky",
+                "https://www.lidl.sk/assets/gcp862ad962b85a456390eb111547176f9a.jpeghttps://www.lidl.sk/assets/gcp862ad962b85a456390eb111547176f9a.jpeg",
+                6.99f
             )
         )
     ),Pair(
         "Kaufland",
         listOf(
             Product(
-                "Tesco Finest Clementine Or Sweet Easy Peeler 600G",
-                "https://digitalcontent.api.tesco.com/v2/media/ghs/cfb3c09d-511a-4982-b329-f0d1793ad5e0/ac881f1a-3e3d-4c5f-a316-68da6226a708.jpeg?h=225&w=225",
-                2.5f
+                "Filety zo sleďa Appel v omáčke skyr s aromatickými bylinkami 190g",
+                "https://media.cdn.kaufland.de/product-images/300x300/4c71306ba922bd5840ae8548f64ca8c9.webp",
+                1.89f
             )
         )
     ),

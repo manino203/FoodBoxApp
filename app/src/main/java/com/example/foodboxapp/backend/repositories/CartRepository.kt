@@ -1,25 +1,11 @@
 package com.example.foodboxapp.backend.repositories
 
+import com.example.foodboxapp.backend.data_holders.CartItem
 import com.example.foodboxapp.backend.data_sources.CartDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class CartItem(
-    val product: Product,
-    val quantity: Int,
-    val totalPrice: Float = product.price * quantity
-){
-    fun copy(
-        product: Product = this.product,
-        quantity: Int = this.quantity,
-    ): CartItem {
-        return CartItem(product, quantity, totalPrice = product.price * quantity)
-    }
-}
 
 interface CartRepository {
 

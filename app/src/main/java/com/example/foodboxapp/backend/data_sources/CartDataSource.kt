@@ -2,7 +2,7 @@ package com.example.foodboxapp.backend.data_sources
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.example.foodboxapp.backend.repositories.CartItem
+import com.example.foodboxapp.backend.data_holders.CartItem
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodboxapp.backend.data_holders.Account
+import com.example.foodboxapp.backend.data_holders.AccountType
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.backend.repositories.SessionRepository
 import com.example.foodboxapp.backend.repositories.SessionState
@@ -39,7 +40,15 @@ class MainViewModel(
                     }
                     SessionState.SESSION_AVAILABLE -> uiState.value = uiState.value.copy(screenDestination = ScreenDestination.Main)
                     SessionState.NOT_LOGGED_IN -> uiState.value = uiState.value.copy(screenDestination = ScreenDestination.Login(""))
-                    SessionState.LOGGED_IN -> uiState.value = uiState.value.copy(screenDestination = ScreenDestination.Main)
+                    SessionState.LOGGED_IN -> {
+                        if(accountRepo.account.value?.type == AccountType.Client){
+                            uiState.value =
+                                uiState.value.copy(screenDestination = ScreenDestination.Main)
+                        }else{
+                            uiState.value =
+                                uiState.value.copy(screenDestination = ScreenDestination.AvailableOrders)
+                        }
+                    }
                     SessionState.LOGGED_OUT -> uiState.value = uiState.value.copy(screenDestination = ScreenDestination.Login(""))
                     SessionState.SESSION_EXPIRED -> uiState.value = uiState.value.copy(screenDestination = ScreenDestination.Login(""))
                 }

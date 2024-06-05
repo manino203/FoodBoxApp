@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Account
+import com.example.foodboxapp.backend.data_holders.CartItem
 import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.backend.repositories.AccountRepository
-import com.example.foodboxapp.backend.repositories.CartItem
 import com.example.foodboxapp.backend.repositories.CartRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -58,7 +58,7 @@ class CheckoutViewModel(
     fun loadAccount(){
         viewModelScope.launch(Dispatchers.IO) {
             accountRepository.account.collect{
-                uiState.value = uiState.value.copy(account = it)
+                uiState.value = uiState.value.copy(account = it, paymentMethod = it?.paymentMethod)
             }
         }
     }

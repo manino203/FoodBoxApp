@@ -24,7 +24,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -32,6 +31,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -55,10 +55,13 @@ import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.repositories.Product
 import com.example.foodboxapp.backend.repositories.Store
 import com.example.foodboxapp.backend.repositories.dummyProductLists
+import com.example.foodboxapp.ui.composables.BottomSheet
 import com.example.foodboxapp.ui.composables.Price
+import com.example.foodboxapp.ui.composables.open
 import com.example.foodboxapp.viewmodels.ProductUiState
 import com.example.foodboxapp.viewmodels.ProductViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -77,12 +80,11 @@ fun ProductScreen(
     }
 
     ProductScreen(viewModel.uiState.value){ product, quantity ->
-        viewModel.addProductToCart(product, quantity)
+        viewModel.addProductToCart(product, quantity, store)
     }
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProductScreen(
     uiState: ProductUiState,
@@ -110,27 +112,20 @@ private fun ProductItem(
     actionAddToCart: (Product, Int) -> Unit
 ) {
 
-    var sheetOpen by remember{
+    var sheetOpen = remember{
         mutableStateOf(false)
     }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true, )
     val coroScope = rememberCoroutineScope()
 
-    if(sheetOpen){
-        AddToCartSheet(
-            product = product,
-            sheetState = sheetState,
-            actionClose = {
-                coroScope.launch {
-                    sheetState.hide()
-                }.invokeOnCompletion {
-                    sheetOpen = false
-                }
-            }
-        ) {
-            actionAddToCart(product, it)
-        }
+    AddToCartSheet(
+        product = product,
+        sheetState = sheetState,
+        sheetOpen = sheetOpen,
+        coroScope = coroScope
+    ) {
+        actionAddToCart(product, it)
     }
 
     Card(
@@ -139,10 +134,7 @@ private fun ProductItem(
             .fillMaxWidth()
             .wrapContentHeight()
             .clickable {
-                sheetOpen = true
-                coroScope.launch {
-                    sheetState.show()
-                }
+                sheetState.open(sheetOpen, coroScope)
             },
         border = BorderStroke(1.dp, Color.Gray)
     ) {
@@ -179,8 +171,9 @@ private fun ProductItem(
 @Composable
 private fun AddToCartSheet(
     product: Product,
+    sheetOpen: MutableState<Boolean>,
     sheetState: SheetState,
-    actionClose: () -> Unit,
+    coroScope: CoroutineScope,
     actionAdd: (Int) -> Unit
 ){
     var quantity by remember {
@@ -190,13 +183,13 @@ private fun AddToCartSheet(
     var tfValue by remember(quantity) {
         mutableStateOf("$quantity")
     }
-    ModalBottomSheet(
+    BottomSheet(
         modifier = Modifier.wrapContentHeight(),
-        onDismissRequest = actionClose,
-        sheetState = sheetState
+        sheetState = sheetState,
+        showSheet = sheetOpen,
+        coroScope = coroScope
     ) {
         Column(
-            Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             AsyncImage(
@@ -276,7 +269,7 @@ private fun AddToCartSheet(
                     enabled = tfValue.isNotBlank() && quantity > 0,
                     onClick = {
                         actionAdd(quantity)
-                        actionClose()
+                        it()
                     }
                 ) {
                     Icon(Icons.Filled.ShoppingCart, contentDescription = stringResource(id = R.string.add_to_cart))
@@ -300,7 +293,7 @@ private fun ProductScreenPreview(){
             sheetState.show()
         }
     }
-    AddToCartSheet(sheetState = sheetState, product = dummyProductLists["Tesco"]!![0], actionClose = { /*TODO*/ }) { _ ->
+    AddToCartSheet(sheetState = sheetState, product = dummyProductLists["Tesco"]!![0], sheetOpen = remember{ mutableStateOf(true) },coroScope = rememberCoroutineScope()) { _ ->
 
     }
 }

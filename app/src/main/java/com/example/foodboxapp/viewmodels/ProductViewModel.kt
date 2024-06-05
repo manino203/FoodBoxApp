@@ -3,7 +3,7 @@ package com.example.foodboxapp.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodboxapp.backend.repositories.CartItem
+import com.example.foodboxapp.backend.data_holders.CartItem
 import com.example.foodboxapp.backend.repositories.CartRepository
 import com.example.foodboxapp.backend.repositories.Product
 import com.example.foodboxapp.backend.repositories.ProductRepository
@@ -33,12 +33,13 @@ class ProductViewModel(
         }
     }
 
-    fun addProductToCart(product: Product, quantity: Int){
+    fun addProductToCart(product: Product, quantity: Int, store: Store){
         viewModelScope.launch(Dispatchers.Default){
             cartRepo.addCartItem(
                 CartItem(
                     product,
                     quantity,
+                    store,
                     product.price * quantity
                 )
             )

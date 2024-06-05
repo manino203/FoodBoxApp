@@ -11,16 +11,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Address
 import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.form.AddressForm
-import com.example.foodboxapp.ui.composables.CartItem
 import com.example.foodboxapp.ui.composables.Category
 import com.example.foodboxapp.ui.composables.CenteredLoading
 import com.example.foodboxapp.ui.composables.CheckoutBar
 import com.example.foodboxapp.ui.composables.FormComposable
+import com.example.foodboxapp.ui.composables.OrderSummary
 import com.example.foodboxapp.ui.composables.PaymentMethodSelector
 import com.example.foodboxapp.ui.composables.rememberFormState
 import com.example.foodboxapp.viewmodels.CheckoutUiState
@@ -46,8 +45,8 @@ fun CheckoutScreen(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.loadAccount()
         viewModel.loadCartItems()
+        viewModel.loadAccount()
     }
     val account by remember(viewModel.uiState.value.account) {
         mutableStateOf(viewModel.uiState.value.account)
@@ -93,13 +92,19 @@ private fun CheckoutScreen(
             )
         }
     )
+    val summaryCategories by remember(uiState.cartItems) {
+        mutableStateOf(uiState.cartItems.map{ it.store }.toSet().map{ store ->
+            Pair(store.title, uiState.cartItems.filter { store.title == it.store.title })
+        })
+    }
     Scaffold(bottomBar = {
         CheckoutBar(total = uiState.total, buttonTitle = stringResource(id = R.string.pay)) {
             actionPay(
                 Order(
                     items = uiState.cartItems,
-                    uiState.account,
+                    1,
                     address,
+                    uiState.cartItems.map { it.store }.toSet().toList(),
                     uiState.total
                 )
             )
@@ -117,11 +122,8 @@ private fun CheckoutScreen(
                 }
             }
 
-            Category(R.string.summary, false) {
-                uiState.cartItems.forEach {item ->
-                    CartItem(item = item, modifier = Modifier.padding(16.dp, 8.dp), editable = false)
-                }
-            }
+            OrderSummary(summaryCategories, false)
+
         }
     }
 }

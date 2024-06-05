@@ -6,21 +6,23 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.foodboxapp.R
-import com.example.foodboxapp.backend.repositories.CartItem
+import com.example.foodboxapp.backend.data_holders.CartItem
 import com.example.foodboxapp.backend.repositories.Product
-import com.example.foodboxapp.ui.composables.CartItem
+import com.example.foodboxapp.backend.repositories.dummyStoreList
 import com.example.foodboxapp.ui.composables.CheckoutBar
+import com.example.foodboxapp.ui.composables.OrderSummary
+import com.example.foodboxapp.ui.composables.rememberSummaryCategories
 import com.example.foodboxapp.viewmodels.CartUiState
 import com.example.foodboxapp.viewmodels.CartViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
@@ -32,7 +34,6 @@ fun CartScreen(
     actionCheckout: () -> Unit
 ) {
     val viewModel: CartViewModel = koinViewModel()
-    //todo: toolbar state
     val title = stringResource(id = R.string.cart_screen_title)
     LaunchedEffect(title) {
         toolbarViewModel.updateTitle(title)
@@ -63,6 +64,9 @@ private fun CartScreen(
     actionDeleteItem: (CartItem) -> Unit,
     actionChangeItemQuantity: (Product, Int) -> Unit
 ){
+
+    val summaryCategories by rememberSummaryCategories(cartItems = uiState.items)
+
     Scaffold(
         Modifier.fillMaxSize(),
         bottomBar = {
@@ -80,16 +84,13 @@ private fun CartScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(uiState.items) { item ->
-                    CartItem(
-                        item = item,
-                        actionDeleteItem = {
-                            actionDeleteItem(item)
-                        }
-                    ) {
-                        actionChangeItemQuantity(item.product, it)
+                OrderSummary(
+                    items = summaryCategories,
+                    actionItemDelete = { actionDeleteItem(it) },
+                    actionChangeItemCount = { product, count ->
+                        actionChangeItemQuantity(product, count)
                     }
-                }
+                )
             }
         }else{
             Box(
@@ -115,6 +116,7 @@ private fun CartScreenPreview(){
                 2.5f
             ),
             1,
+            dummyStoreList[0],
             2.50f
     )
     )),{}, {}) { _, _ -> }

@@ -61,6 +61,17 @@
     <string name="account_settings">Account Settings</string>
     <string name="modify">Modify</string>
 
+    <string name="available_orders">Available Orders</string>
+    <string name="stores">Stores</string>
+    <string name="order_id">Order ID</string>
+    <string name="no_orders">There aren\'t any orders right now.</string>
+    <string name="accept_order">Accept Order</string>
+
+
+    <string name="accepted_orders">Accepted Orders</string>
+
+
+
 
 
 

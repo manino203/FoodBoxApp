@@ -3,6 +3,8 @@ package com.example.foodboxapp.ui.screens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.example.foodboxapp.navigation.ScreenDestination
+import com.example.foodboxapp.ui.screens.worker.AcceptedOrdersScreen
+import com.example.foodboxapp.ui.screens.worker.AvailableOrdersScreen
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.navigate
@@ -70,6 +72,15 @@ fun DestinationScreen(
             ScreenDestination.AccountSettings -> factory{
                 AccountSettingsScreen(toolbarViewModel = toolbarViewModel)
             }
+
+            ScreenDestination.AvailableOrders -> factory{
+                AvailableOrdersScreen(toolbarViewModel = toolbarViewModel)
+            }
+
+            ScreenDestination.AcceptedOrders -> factory{
+                AcceptedOrdersScreen(toolbarViewModel = toolbarViewModel)
+            }
+
         }
     }
     screen()

@@ -26,101 +26,126 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.foodboxapp.backend.repositories.CartItem
+import com.example.foodboxapp.backend.data_holders.CartItem
 
 @Composable
-fun CartItem(
+fun CartItemComposable(
     item: CartItem,
     modifier: Modifier = Modifier,
-    editable: Boolean = true,
-    actionDeleteItem: () -> Unit = {},
-    actionChangeItemQuantity: (Int) -> Unit = { _ -> }
+    actionDeleteItem: (() -> Unit)? = null,
+    actionChangeItemQuantity: ((Int) -> Unit)? = null,
+    actionClick: (() -> Unit)? = null
 ){
+    actionClick?.let{
+        Card(
+            modifier = modifier,
+            onClick = actionClick,
+            elevation = CardDefaults.elevatedCardElevation(),
+        ) {
+            CartItemContent(
+                item,
+                actionDeleteItem,
+                actionChangeItemQuantity
+            )
+        }
+    } ?:
     Card(
         modifier = modifier,
-        elevation = CardDefaults.elevatedCardElevation()
+        elevation = CardDefaults.elevatedCardElevation(),
+    ){
+        CartItemContent(
+            item,
+            actionDeleteItem,
+            actionChangeItemQuantity
+            )
+    }
+}
+
+@Composable
+private fun CartItemContent(
+    item: CartItem,
+    actionDeleteItem: (() -> Unit)? = null,
+    actionChangeItemQuantity: ((Int) -> Unit)? = null
+){
+    Row(
+        Modifier.padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ){
         Row(
-            Modifier.padding(16.dp),
+            Modifier.weight(0.75f),
             verticalAlignment = Alignment.CenterVertically
         ){
-            Row(
-                Modifier.weight(0.75f),
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                AsyncImage(
-                    modifier = Modifier.weight(0.4f),
-                    model = item.product.image,
-                    contentDescription = item.product.title
+            AsyncImage(
+                modifier = Modifier.weight(0.4f),
+                model = item.product.image,
+                contentDescription = item.product.title
+            )
+            Column(
+                Modifier.weight(0.6f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = item.product.title,
+                    fontWeight = FontWeight.Bold
                 )
-                Column(
-                    Modifier.weight(0.6f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                Price(
+                    item.product.price,
+                    color = Color.Gray
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = item.product.title,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Price(
-                        item.product.price,
-                        color = Color.Gray
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if (editable){
-                            Button(
-                                modifier = Modifier
-                                    .height(24.dp)
-                                    .alpha(0.8f),
-                                contentPadding = PaddingValues(0.dp),
-                                onClick = { actionChangeItemQuantity(item.quantity - 1) },
-                            ) {
-                                Text(text = "-")
+                    actionChangeItemQuantity?.let{
+                        Button(
+                            modifier = Modifier
+                                .height(24.dp)
+                                .alpha(0.8f),
+                            contentPadding = PaddingValues(0.dp),
+                            onClick = { it(item.quantity - 1) },
+                        ) {
+                            Text(text = "-")
 
-                            }
-                            Text(
-                                text = "${item.quantity}",
-                                fontWeight = FontWeight.Bold
-                            )
-                            Button(
-                                modifier = Modifier
-                                    .height(24.dp)
-                                    .alpha(0.8f),
-                                contentPadding = PaddingValues(0.dp),
-                                onClick = { actionChangeItemQuantity(item.quantity + 1) }
-                            ) {
-                                Text(text = "+")
-                            }
-                        }else{
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                text = "${item.quantity}x",
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
-                            )
                         }
-                    }
+                        Text(
+                            text = "${item.quantity}",
+                            fontWeight = FontWeight.Bold
+                        )
+                        Button(
+                            modifier = Modifier
+                                .height(24.dp)
+                                .alpha(0.8f),
+                            contentPadding = PaddingValues(0.dp),
+                            onClick = { it(item.quantity + 1) }
+                        ) {
+                            Text(text = "+")
+                        }
+                    } ?: Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = "${item.quantity}x",
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
                 }
             }
-            // todo: vertical divider
-            Price(
-                item.totalPrice,
-                modifier = Modifier.weight(0.25f),
-                textAlign = TextAlign.Center,
-                fontSize = 16.sp
-            )
-            if (editable){
-                IconButton(onClick = actionDeleteItem) {
-                    Icon(
-                        imageVector = Icons.Filled.Clear,
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                }
+        }
+        // todo: vertical divider
+        Price(
+            item.totalPrice,
+            modifier = Modifier.weight(0.25f),
+            textAlign = TextAlign.Center,
+            fontSize = 16.sp
+        )
+        actionDeleteItem?.let{
+            IconButton(onClick = it) {
+                Icon(
+                    imageVector = Icons.Filled.Clear,
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.error
+                )
             }
         }
     }
 }
+

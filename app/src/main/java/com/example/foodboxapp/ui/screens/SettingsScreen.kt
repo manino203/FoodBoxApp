@@ -11,16 +11,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,10 +31,11 @@ import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.repositories.SettingsRepositoryImpl
 import com.example.foodboxapp.backend.repositories.SettingsRepositoryImpl.Companion.THEME_CHOICES
 import com.example.foodboxapp.backend.repositories.SettingsState
+import com.example.foodboxapp.ui.composables.BottomSheet
 import com.example.foodboxapp.ui.composables.Category
+import com.example.foodboxapp.ui.composables.open
 import com.example.foodboxapp.viewmodels.SettingsViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -133,54 +131,40 @@ private fun ChoiceSetting(
     choices: List<SettingsState.ChoiceSetting>,
     actionSet: (Int) -> Unit
 ){
-    var sheetOpen by remember{
+    val sheetOpen = remember{
         mutableStateOf(false)
     }
     val sheetState = rememberModalBottomSheetState()
     val coroScope = rememberCoroutineScope()
-
-    val dismiss: () -> Unit = {
-        coroScope.launch{
-            sheetState.hide()
-        }.invokeOnCompletion {
-            sheetOpen = false
-        }
-    }
-
-    if(sheetOpen){
-        ModalBottomSheet(
-            sheetState = sheetState,
-            onDismissRequest = dismiss
+    BottomSheet(showSheet = sheetOpen, sheetState = sheetState, coroScope = coroScope){ dismiss ->
+        Column(
+            Modifier.padding(16.dp)
         ) {
-            Column(
-                Modifier.padding(16.dp)
-            ){
-                choices.forEachIndexed { index, it ->
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(50))
-                            .background(
-                                if (it == value) MaterialTheme.colorScheme.primary.copy(
-                                    alpha = .3f
-                                ) else MaterialTheme.colorScheme.surface, RoundedCornerShape(50)
-                            )
-                            .clickable {
-                                actionSet(index)
-                                dismiss()
-                            }
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+            choices.forEachIndexed { index, it ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(50))
+                        .background(
+                            if (it == value) MaterialTheme.colorScheme.primary.copy(
+                                alpha = .3f
+                            ) else MaterialTheme.colorScheme.surface, RoundedCornerShape(50)
+                        )
+                        .clickable {
+                            actionSet(index)
+                            dismiss()
+                        }
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
 
                     ) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = stringResource(it.label),
-                            fontWeight = if (it == value) FontWeight.Bold else null,
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center
-                            )
-                    }
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(it.label),
+                        fontWeight = if (it == value) FontWeight.Bold else null,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }
@@ -190,10 +174,7 @@ private fun ChoiceSetting(
     SettingItem(
         title = title,
         actionClick = {
-            sheetOpen = true
-            coroScope.launch {
-                sheetState.show()
-            }
+            sheetState.open(sheetOpen, coroScope)
         }
     ) {
         Text(text = stringResource(value.label))

@@ -22,6 +22,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.foodboxapp.backend.data_holders.AccountType
 import com.example.foodboxapp.navigation.ScreenDestination
 import com.example.foodboxapp.ui.composables.FoodBoxThemeWithSurface
 import com.example.foodboxapp.ui.composables.NavigationDrawer
@@ -53,12 +54,16 @@ class MainActivity: AppCompatActivity(){
                 startDestination = viewModel.uiState.value.screenDestination
             )
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-            LaunchedEffect(toolbarViewModel) {
-                toolbarViewModel.loadCart()
-            }
+
             LaunchedEffect(viewModel) {
                 viewModel.collectAccount()
                 viewModel.collectSessionState()
+            }
+
+            LaunchedEffect(toolbarViewModel) {
+                if(viewModel.uiState.value.account?.type == AccountType.Client){
+                    toolbarViewModel.loadCart()
+                }
             }
 
             val onBackPressed: () -> Unit = remember(navController, drawerState, scope) {
