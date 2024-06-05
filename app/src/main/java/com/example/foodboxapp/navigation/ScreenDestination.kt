@@ -13,5 +13,5 @@ sealed interface ScreenDestination {
     data object AccountSettings: ScreenDestination
     data object AvailableOrders: ScreenDestination
     data object AcceptedOrders: ScreenDestination
-
+    data class Order(val order: com.example.foodboxapp.backend.data_holders.Order): ScreenDestination
 }

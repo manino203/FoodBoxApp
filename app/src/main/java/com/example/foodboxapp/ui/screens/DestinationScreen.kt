@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import com.example.foodboxapp.navigation.ScreenDestination
 import com.example.foodboxapp.ui.screens.worker.AcceptedOrdersScreen
 import com.example.foodboxapp.ui.screens.worker.AvailableOrdersScreen
+import com.example.foodboxapp.ui.screens.worker.OrderScreen
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.navigate
@@ -78,7 +79,18 @@ fun DestinationScreen(
             }
 
             ScreenDestination.AcceptedOrders -> factory{
-                AcceptedOrdersScreen(toolbarViewModel = toolbarViewModel)
+                AcceptedOrdersScreen(toolbarViewModel = toolbarViewModel){
+                    navController.navigate(ScreenDestination.Order(it))
+                }
+            }
+
+            is ScreenDestination.Order -> factory{
+                OrderScreen(
+                    toolbarViewModel = toolbarViewModel,
+                    order = destination.order
+                ){
+                    navController.navigate(ScreenDestination.AcceptedOrders)
+                }
             }
 
         }

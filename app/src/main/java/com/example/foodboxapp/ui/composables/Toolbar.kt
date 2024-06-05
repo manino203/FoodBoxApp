@@ -72,7 +72,7 @@ fun Toolbar(
                     }
                 },
                 actions = {
-                    if(!actionLessScreens.contains(currentScreen)){
+                    if(!actionLessScreens.contains(currentScreen) || currentScreen is ScreenDestination.Order){
                         if (!cartScreens.contains(currentScreen)) {
                             IconButton(onClick = {
                                 navController.navigate(ScreenDestination.Cart)

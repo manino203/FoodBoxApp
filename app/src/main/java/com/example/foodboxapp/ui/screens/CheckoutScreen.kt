@@ -122,7 +122,7 @@ private fun CheckoutScreen(
                 }
             }
 
-            OrderSummary(summaryCategories, false)
+            OrderSummary(summaryCategories, showDivider = false)
 
         }
     }

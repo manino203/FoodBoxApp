@@ -11,6 +11,8 @@ import com.example.foodboxapp.backend.data_sources.AvailableOrdersDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.CART_PREFS_NAME
 import com.example.foodboxapp.backend.data_sources.CartDataSource
 import com.example.foodboxapp.backend.data_sources.CartDataSourceImpl
+import com.example.foodboxapp.backend.data_sources.OrderDataSource
+import com.example.foodboxapp.backend.data_sources.OrderDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.ProductDataSource
 import com.example.foodboxapp.backend.data_sources.ProductDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.SETTINGS_PREFS_NAME
@@ -28,6 +30,8 @@ import com.example.foodboxapp.backend.repositories.AvailableOrdersRepository
 import com.example.foodboxapp.backend.repositories.AvailableOrdersRepositoryImpl
 import com.example.foodboxapp.backend.repositories.CartRepository
 import com.example.foodboxapp.backend.repositories.CartRepositoryImpl
+import com.example.foodboxapp.backend.repositories.OrderRepository
+import com.example.foodboxapp.backend.repositories.OrderRepositoryImpl
 import com.example.foodboxapp.backend.repositories.ProductRepository
 import com.example.foodboxapp.backend.repositories.ProductRepositoryImpl
 import com.example.foodboxapp.backend.repositories.SessionRepository
@@ -47,6 +51,7 @@ import com.example.foodboxapp.viewmodels.StoreViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import com.example.foodboxapp.viewmodels.worker.AcceptedOrdersViewModel
 import com.example.foodboxapp.viewmodels.worker.AvailableOrdersViewModel
+import com.example.foodboxapp.viewmodels.worker.OrderViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
@@ -74,6 +79,7 @@ val dataSourceModule = module {
     single<AccountDataSource> { AccountDataSourceImpl(get(named(ACCOUNT_PREFS_NAME))) }
     single<AvailableOrdersDataSource> { AvailableOrdersDataSourceImpl() }
     single<AcceptedOrdersDataSource> { AcceptedOrdersDataSourceImpl() }
+    single<OrderDataSource> { OrderDataSourceImpl() }
 
 }
 
@@ -87,6 +93,7 @@ val repositoryModule = module {
     single<AccountRepository> { AccountRepositoryImpl(get()) }
     single<AvailableOrdersRepository> { AvailableOrdersRepositoryImpl(get()) }
     single<AcceptedOrdersRepository> { AcceptedOrdersRepositoryImpl(get()) }
+    single<OrderRepository> { OrderRepositoryImpl(get()) }
 }
 
 val appModule = module {
@@ -102,4 +109,5 @@ val appModule = module {
     viewModel { AccountSettingsViewModel(get()) }
     viewModel { AvailableOrdersViewModel(get()) }
     viewModel { AcceptedOrdersViewModel(get()) }
+    viewModel { OrderViewModel(get()) }
 }

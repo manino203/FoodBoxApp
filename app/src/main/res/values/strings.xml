@@ -67,8 +67,10 @@
     <string name="no_orders">There aren\'t any orders right now.</string>
     <string name="accept_order">Accept Order</string>
 
-
     <string name="accepted_orders">Accepted Orders</string>
+
+    <string name="order">Order</string>
+    <string name="complete_order">Complete Order</string>
 
 
 
