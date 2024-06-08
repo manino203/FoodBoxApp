@@ -1,49 +1,44 @@
 package com.example.foodboxapp.backend.data_sources
 
-import com.example.foodboxapp.backend.data_holders.CartItem
+import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.example.foodboxapp.backend.data_holders.Order
-import com.example.foodboxapp.backend.data_holders.sampleAddress
-import com.example.foodboxapp.backend.repositories.dummyProductLists
-import com.example.foodboxapp.backend.repositories.dummyStoreList
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 interface AcceptedOrdersDataSource {
     suspend fun fetch(): List<Order>
+
+    suspend fun edit(update: SharedPreferences.Editor.(String) -> Unit)
+
+    suspend fun clear()
 }
 
 class AcceptedOrdersDataSourceImpl(
-
+    private val sharedPrefs: SharedPreferences
 ): AcceptedOrdersDataSource {
-    override suspend fun fetch(): List<Order> {
-        val items = dummyProductLists["Tesco"]?.map{
-            val count = 1
-            CartItem(
-                it,
-                count,
-                dummyStoreList[0],
-                it.price * count
-            )
-        }?.toMutableList()?.apply{
-            addAll(
-                dummyProductLists["Billa"]?.map {
-                    val count = 1
-                    CartItem(
-                        it,
-                        count,
-                        dummyStoreList[1],
-                        it.price * count
-                    )
-                } ?: emptyList()
-            )
-        } ?: emptyList()
 
-        return listOf(
-            Order(
-                items,
-                1,
-                sampleAddress,
-                listOf(dummyStoreList[0], dummyStoreList[1]),
-                items.sumOf { it.totalPrice.toDouble() }.toFloat()
-            )
-        )
+    companion object{
+        const val ACCEPTED_ORDERS_PREFS = "accepted_orders"
+        private const val ORDERS_KEY = "accepted_orders"
+    }
+    @OptIn(ExperimentalSerializationApi::class)
+    override suspend fun fetch(): List<Order> {
+        return sharedPrefs.getString(ORDERS_KEY, null)?.let { Json.decodeFromString<List<Order>>(it) } ?: emptyList()
+    }
+
+    override suspend fun edit(update: SharedPreferences.Editor.(String) -> Unit) {
+        sharedPrefs.edit {
+            update(ORDERS_KEY)
+            commit()
+        }
+    }
+
+    override suspend fun clear() {
+        edit {
+            clear()
+            commit()
+        }
     }
 }

@@ -1,7 +1,9 @@
 package com.example.foodboxapp.backend.data_holders
 
 import com.example.foodboxapp.backend.repositories.Store
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Order(
     val items: List<CartItem>,
     val id: Int = 1,

@@ -3,6 +3,7 @@ package com.example.foodboxapp.di
 import android.content.Context
 import com.example.foodboxapp.backend.data_sources.AcceptedOrdersDataSource
 import com.example.foodboxapp.backend.data_sources.AcceptedOrdersDataSourceImpl
+import com.example.foodboxapp.backend.data_sources.AcceptedOrdersDataSourceImpl.Companion.ACCEPTED_ORDERS_PREFS
 import com.example.foodboxapp.backend.data_sources.AccountDataSource
 import com.example.foodboxapp.backend.data_sources.AccountDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.AccountDataSourceImpl.Companion.ACCOUNT_PREFS_NAME
@@ -67,6 +68,9 @@ val sharedPrefsModule = module {
     single(named(ACCOUNT_PREFS_NAME)) {
         androidApplication().getSharedPreferences(ACCOUNT_PREFS_NAME, Context.MODE_PRIVATE)
     }
+    single(named(ACCEPTED_ORDERS_PREFS)) {
+        androidApplication().getSharedPreferences(ACCEPTED_ORDERS_PREFS, Context.MODE_PRIVATE)
+    }
 }
 
 val dataSourceModule = module {
@@ -78,7 +82,7 @@ val dataSourceModule = module {
     single<SettingsDataSource> { SettingsDataSourceImpl(get(named(SETTINGS_PREFS_NAME))) }
     single<AccountDataSource> { AccountDataSourceImpl(get(named(ACCOUNT_PREFS_NAME))) }
     single<AvailableOrdersDataSource> { AvailableOrdersDataSourceImpl() }
-    single<AcceptedOrdersDataSource> { AcceptedOrdersDataSourceImpl() }
+    single<AcceptedOrdersDataSource> { AcceptedOrdersDataSourceImpl(get(named(ACCEPTED_ORDERS_PREFS))) }
     single<OrderDataSource> { OrderDataSourceImpl() }
 
 }
@@ -107,7 +111,7 @@ val appModule = module {
     viewModel { SettingsViewModel(get()) }
     viewModel { CheckoutViewModel(get(), get()) }
     viewModel { AccountSettingsViewModel(get()) }
-    viewModel { AvailableOrdersViewModel(get()) }
+    viewModel { AvailableOrdersViewModel(get(), get()) }
     viewModel { AcceptedOrdersViewModel(get()) }
     viewModel { OrderViewModel(get()) }
 }
