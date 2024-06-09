@@ -34,6 +34,10 @@ class SessionRepositoryImpl(
             _state.update {
                 SessionState.LOGGED_IN
             }
+        }.onFailure {
+            _state.update {
+                SessionState.SESSION_EXPIRED
+            }
         }
     }
 
