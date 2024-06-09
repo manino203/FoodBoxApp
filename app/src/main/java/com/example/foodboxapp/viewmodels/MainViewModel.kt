@@ -34,9 +34,9 @@ class MainViewModel(
                 Log.d("sessionState change", "$it")
                 when (it) {
                     SessionState.NOT_LOADED -> {
-                        sessionRepo.resumeSession()
                         uiState.value =
                             uiState.value.copy(screenDestination = ScreenDestination.Splash)
+                        sessionRepo.resumeSession()
                     }
                     SessionState.SESSION_AVAILABLE -> uiState.value = uiState.value.copy(screenDestination = ScreenDestination.Main)
                     SessionState.NOT_LOGGED_IN -> uiState.value = uiState.value.copy(screenDestination = ScreenDestination.Login(""))

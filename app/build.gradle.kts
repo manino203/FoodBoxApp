@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.parcelize)
     kotlin("kapt")
 }
 
@@ -55,20 +56,20 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.material)
     implementation(libs.material)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.koin)
     implementation(libs.coil)
-    //todo: duplicate class found
-//    implementation(libs.androidx.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.composeUi)
-    implementation(libs.composeMaterial)
+    implementation(libs.composeMaterial3)
     implementation(libs.composeUiTooling)
     implementation(libs.lifecycle)
     implementation(libs.viewmodel)

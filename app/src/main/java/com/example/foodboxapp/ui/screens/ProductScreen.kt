@@ -53,7 +53,6 @@ import androidx.core.text.isDigitsOnly
 import coil.compose.AsyncImage
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.repositories.Product
-import com.example.foodboxapp.backend.repositories.Store
 import com.example.foodboxapp.backend.repositories.dummyProductLists
 import com.example.foodboxapp.ui.composables.BottomSheet
 import com.example.foodboxapp.ui.composables.Price
@@ -67,20 +66,20 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProductScreen(
-    store: Store,
+    storeId: Int,
     toolbarViewModel: ToolbarViewModel
 ) {
     val viewModel: ProductViewModel = koinViewModel()
-    LaunchedEffect(store.title) {
-        toolbarViewModel.updateTitle(store.title)
+    LaunchedEffect(viewModel.uiState.value.title) {
+        toolbarViewModel.updateTitle(viewModel.uiState.value.title ?: "")
     }
     LaunchedEffect(Unit) {
-        viewModel.loadProducts(store)
+        viewModel.loadProducts(storeId)
         toolbarViewModel.updateLoading(false)
     }
 
     ProductScreen(viewModel.uiState.value){ product, quantity ->
-        viewModel.addProductToCart(product, quantity, store)
+        viewModel.addProductToCart(product, quantity, storeId)
     }
 
 }
@@ -112,7 +111,7 @@ private fun ProductItem(
     actionAddToCart: (Product, Int) -> Unit
 ) {
 
-    var sheetOpen = remember{
+    val sheetOpen = remember{
         mutableStateOf(false)
     }
 

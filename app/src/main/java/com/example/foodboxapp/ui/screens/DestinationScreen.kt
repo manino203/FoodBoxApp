@@ -47,7 +47,7 @@ fun DestinationScreen(
             }
 
             is ScreenDestination.Store -> factory{
-                ProductScreen(destination.store, toolbarViewModel)
+                ProductScreen(destination.storeId, toolbarViewModel)
             }
 
             ScreenDestination.Cart -> factory{
@@ -87,7 +87,7 @@ fun DestinationScreen(
             is ScreenDestination.Order -> factory{
                 OrderScreen(
                     toolbarViewModel = toolbarViewModel,
-                    order = destination.order
+                    orderId = destination.orderId
                 ){
                     navController.navigate(ScreenDestination.AcceptedOrders)
                 }

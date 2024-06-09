@@ -106,7 +106,7 @@ val appModule = module {
     viewModel { ToolbarViewModel(get()) }
     viewModel { LoginViewModel(get()) }
     viewModel { StoreViewModel(get()) }
-    viewModel { ProductViewModel(get(), get()) }
+    viewModel { ProductViewModel(get(), get(), get()) }
     viewModel { CartViewModel(get()) }
     viewModel { SettingsViewModel(get()) }
     viewModel { CheckoutViewModel(get(), get()) }

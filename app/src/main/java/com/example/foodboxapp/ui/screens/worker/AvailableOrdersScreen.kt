@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,6 +34,7 @@ import com.example.foodboxapp.viewmodels.worker.AvailableOrdersUiState
 import com.example.foodboxapp.viewmodels.worker.AvailableOrdersViewModel
 import org.koin.androidx.compose.koinViewModel
 
+
 @Composable
 fun AvailableOrdersScreen(
     toolbarViewModel: ToolbarViewModel
@@ -44,38 +49,53 @@ fun AvailableOrdersScreen(
         toolbarViewModel.updateLoading(viewModel.uiState.value.loading)
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchOrders()
+    LaunchedEffect(viewModel) {
+        viewModel.update()
     }
 
-    AvailableOrdersScreen(uiState = viewModel.uiState.value) {
+    AvailableOrdersScreen(
+        uiState = viewModel.uiState.value,
+        actionRefresh = {
+            viewModel.refresh()
+        }
+    ) {
         viewModel.acceptOrder(it)
     }
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 private fun AvailableOrdersScreen(
     uiState: AvailableOrdersUiState,
+    actionRefresh: () -> Unit,
     actionAcceptOrder: (Order) -> Unit
 ){
-    if(uiState.orders.isNotEmpty()){
-        LazyColumn(
-            Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            items(uiState.orders) {
-                OrderItemWithBottomSheet(order = it){
-                    actionAcceptOrder(it)
+    val refreshState = rememberPullRefreshState(refreshing = uiState.refreshing, onRefresh = { actionRefresh()})
+    Box(
+        Modifier
+            .pullRefresh(refreshState)
+    ){
+        if (uiState.orders.isNotEmpty()) {
+            LazyColumn(
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(uiState.orders) {
+                    OrderItemWithBottomSheet(order = it) {
+                        actionAcceptOrder(it)
+                    }
                 }
             }
+        } else {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = stringResource(id = R.string.no_orders))
+            }
         }
-    }else{
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-            Text(text = stringResource(id = R.string.no_orders))
-        }
+        PullRefreshIndicator(refreshing = uiState.loading, state = refreshState, modifier = Modifier.align(
+            Alignment.TopCenter))
     }
 }
 

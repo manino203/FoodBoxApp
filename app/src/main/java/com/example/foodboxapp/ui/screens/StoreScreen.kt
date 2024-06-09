@@ -35,7 +35,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun StoreScreen(
     toolbarViewModel: ToolbarViewModel,
-    actionNavigateToStoreScreen: (Store) -> Unit
+    actionNavigateToStoreScreen: (Int) -> Unit
 ) {
     val viewModel: StoreViewModel = koinViewModel()
     val title = stringResource(id = R.string.app_name)
@@ -50,7 +50,7 @@ fun StoreScreen(
     StoreScreen(
         viewModel.uiState.value
     ){
-        actionNavigateToStoreScreen(it)
+        actionNavigateToStoreScreen(it.id)
     }
 }
 

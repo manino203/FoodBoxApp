@@ -1,5 +1,6 @@
 package com.example.foodboxapp.ui.screens.worker
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,7 +24,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AcceptedOrdersScreen(
     toolbarViewModel: ToolbarViewModel,
-    actionNavToOrder: (Order) -> Unit
+    actionNavToOrder: (Int) -> Unit
 ) {
     val viewModel: AcceptedOrdersViewModel = koinViewModel()
     val title = stringResource(id = R.string.accepted_orders)
@@ -40,7 +41,7 @@ fun AcceptedOrdersScreen(
     }
 
     AcceptedOrdersScreen(uiState = viewModel.uiState.value){
-        actionNavToOrder(it)
+        actionNavToOrder(it.id)
     }
 
 }
@@ -55,7 +56,8 @@ private fun AcceptedOrdersScreen(
         LazyColumn(
             Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(uiState.orders) {
                 OrderItem(order = it){

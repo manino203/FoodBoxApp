@@ -13,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -21,6 +23,7 @@ import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.CartItem
 import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.ui.composables.AddressComposable
+import com.example.foodboxapp.ui.composables.CenteredLoading
 import com.example.foodboxapp.ui.composables.OrderSummary
 import com.example.foodboxapp.ui.composables.rememberSummaryCategories
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
@@ -31,7 +34,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun OrderScreen(
     toolbarViewModel: ToolbarViewModel,
-    order: Order,
+    orderId: Int,
     actionCompleteOrder: () -> Unit
 ) {
     val viewModel: OrderViewModel = koinViewModel()
@@ -44,13 +47,22 @@ fun OrderScreen(
         toolbarViewModel.updateLoading(viewModel.uiState.value.loading)
     }
 
-
-    OrderScreen(viewModel.uiState.value, order, {
-        viewModel.crossOutItem(it)
-    }){
-        viewModel.completeOrder(order)
-        actionCompleteOrder()
+    LaunchedEffect(viewModel) {
+        viewModel.update(orderId)
     }
+
+    val order by remember(viewModel.uiState.value.order) {
+        mutableStateOf(viewModel.uiState.value.order)
+    }
+
+    order?.let{o ->
+        OrderScreen(viewModel.uiState.value, o, {
+            viewModel.crossOutItem(it)
+        }) {
+            viewModel.completeOrder(o)
+            actionCompleteOrder()
+        }
+    }?: CenteredLoading()
 }
 
 @Composable

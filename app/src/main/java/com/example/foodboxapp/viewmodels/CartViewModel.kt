@@ -40,6 +40,7 @@ class CartViewModel(
             }
         }
     }
+
     fun changeQuantity(product: Product, count: Int){
         viewModelScope.launch(Dispatchers.IO){
             uiState.value.items.find { it.product == product }?.let {

@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 data class OrderUiState(
     val loading: Boolean = false,
+    val order: Order? = null,
     val crossedOutItems: List<CartItem> = emptyList()
 )
 
@@ -36,4 +37,13 @@ class OrderViewModel(
         }
     }
 
+    fun update(orderId: Int){
+        viewModelScope.launch(IO){
+            acceptedOrdersRepo.getOrder(orderId).onSuccess {
+                uiState.value = uiState.value.copy(order = it)
+            }.onFailure {
+
+            }
+        }
+    }
 }

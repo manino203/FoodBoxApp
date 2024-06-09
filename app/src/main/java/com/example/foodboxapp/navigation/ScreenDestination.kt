@@ -1,17 +1,46 @@
 package com.example.foodboxapp.navigation
 
-sealed interface ScreenDestination {
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+
+sealed interface ScreenDestination: Parcelable {
+    @Parcelize
     data object Splash: ScreenDestination
+
+    @Parcelize
     data class Login(val username: String): ScreenDestination
+
+    @Parcelize
     data object Registration: ScreenDestination
+
+    @Parcelize
     data object Main: ScreenDestination
-    data class Store(val store: com.example.foodboxapp.backend.repositories.Store): ScreenDestination
+
+    @Parcelize
+    data class Store(val storeId: Int): ScreenDestination
+
+    @Parcelize
     data object Cart: ScreenDestination
+
+    @Parcelize
     data object Settings: ScreenDestination
+
+    @Parcelize
     data object Checkout: ScreenDestination
+
+    @Parcelize
     data object OrderSent: ScreenDestination
+
+    @Parcelize
     data object AccountSettings: ScreenDestination
+
+    @Parcelize
     data object AvailableOrders: ScreenDestination
+
+    @Parcelize
     data object AcceptedOrders: ScreenDestination
-    data class Order(val order: com.example.foodboxapp.backend.data_holders.Order): ScreenDestination
+
+    @Parcelize
+    data class Order(val orderId: Int): ScreenDestination
 }

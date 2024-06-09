@@ -28,6 +28,9 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -49,6 +52,9 @@ fun NavigationDrawer(
     actionLogout: () -> Unit,
     actionClose: () -> Unit
 ) {
+    val currentDestination by remember(navController.backstack.entries.last()) {
+        mutableStateOf(navController.backstack.entries.last().destination)
+    }
     BoxWithConstraints {
         ModalDrawerSheet(
             Modifier
@@ -78,7 +84,7 @@ fun NavigationDrawer(
             uiState.account?.let{
                 if (uiState.account.type == AccountType.Client){
                     MenuItem(label = stringResource(id = R.string.new_order),
-                        selected = false,
+                        selected = currentDestination == ScreenDestination.Main,
                         onClick = {
                             navController.navigate(ScreenDestination.Main)
                             actionClose()
@@ -92,14 +98,14 @@ fun NavigationDrawer(
                     )
                 }else{
                     MenuItem(label = stringResource(id = R.string.available_orders),
-                        selected = false,
+                        selected = currentDestination == ScreenDestination.AvailableOrders,
                         onClick = {
                             navController.navigate(ScreenDestination.AvailableOrders)
                             actionClose()
                         }
                     )
                     MenuItem(label = stringResource(id = R.string.accepted_orders),
-                        selected = false,
+                        selected = currentDestination == ScreenDestination.AcceptedOrders,
                         onClick = {
                             navController.navigate(ScreenDestination.AcceptedOrders)
                             actionClose()
@@ -111,7 +117,7 @@ fun NavigationDrawer(
             Column {
                 MenuItem(
                     label = stringResource(R.string.settings),
-                    selected = false,
+                    selected = currentDestination == ScreenDestination.Settings,
                     onClick = {
                         navController.navigate(ScreenDestination.Settings)
                         actionClose()

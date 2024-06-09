@@ -8,6 +8,7 @@ import com.example.foodboxapp.backend.repositories.CartRepository
 import com.example.foodboxapp.backend.repositories.Product
 import com.example.foodboxapp.backend.repositories.ProductRepository
 import com.example.foodboxapp.backend.repositories.Store
+import com.example.foodboxapp.backend.repositories.StoreRepository
 import com.example.foodboxapp.backend.repositories.dummyProductLists
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,26 +16,39 @@ import kotlinx.coroutines.launch
 
 data class ProductUiState(
     val loading: Boolean = false,
-    val products: List<Product> = emptyList()
-)
+    val store: Store? = null,
+    val products: List<Product> = emptyList(),
+    val title: String? = null,
+
+    )
 class ProductViewModel(
     private val productRepo: ProductRepository,
-    private val cartRepo: CartRepository
+    private val cartRepo: CartRepository,
+    private val storeRepo: StoreRepository
 ): ViewModel() {
 
     val uiState = mutableStateOf(ProductUiState())
-    fun loadProducts(store: Store){
+
+    fun update(storeId: Int){
+
+    }
+    fun loadProducts(storeId: Int){
         viewModelScope.launch(Dispatchers.Default) {
-            productRepo.fetchProducts(store.title)
-            productRepo.products.collect{
-                uiState.value =
-                    uiState.value.copy(products = dummyProductLists[store.title] ?: emptyList())
+            storeRepo.getStore(storeId).onSuccess{ store ->
+                productRepo.fetchProducts(store.title)
+                productRepo.products.collect {
+                    uiState.value =
+                        uiState.value.copy(products = dummyProductLists[store.title] ?: emptyList())
+                }
+            }.onFailure {
+                //todo error
             }
         }
     }
 
-    fun addProductToCart(product: Product, quantity: Int, store: Store){
+    fun addProductToCart(product: Product, quantity: Int, storeId: Int){
         viewModelScope.launch(Dispatchers.Default){
+            storeRepo.getStore(storeId).onSuccess{ store ->
             cartRepo.addCartItem(
                 CartItem(
                     product,
@@ -43,6 +57,9 @@ class ProductViewModel(
                     product.price * quantity
                 )
             )
+            }.onFailure {
+                //todo
+            }
         }
     }
 

@@ -34,7 +34,7 @@ class ToolbarViewModel(
         uiState.value = uiState.value.copy(visible = visible)
     }
 
-    fun loadCart(){
+    fun collectCart(){
         viewModelScope.launch(Dispatchers.IO) {
             cartRepo.retrieveCartItems()
             cartRepo.cartItems.collect {

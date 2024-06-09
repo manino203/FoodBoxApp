@@ -49,7 +49,7 @@ fun Toolbar(
     }
     val cartScreens = listOf(ScreenDestination.Cart, ScreenDestination.Checkout, ScreenDestination.OrderSent)
     val backArrowScreens = listOf(ScreenDestination.Checkout)
-    val actionLessScreens = listOf(ScreenDestination.Login(""), ScreenDestination.Registration, ScreenDestination.Splash, ScreenDestination.AvailableOrders, ScreenDestination.AcceptedOrders)
+    val actionLessScreens = listOf(ScreenDestination.Login(""), ScreenDestination.Registration, ScreenDestination.Splash, ScreenDestination.AvailableOrders, ScreenDestination.AcceptedOrders, ScreenDestination.Order(0))
     if(uiState.visible){
         Column {
             TopAppBar(
@@ -72,8 +72,10 @@ fun Toolbar(
                     }
                 },
                 actions = {
-                    if(!actionLessScreens.contains(currentScreen) || currentScreen is ScreenDestination.Order){
-                        if (!cartScreens.contains(currentScreen)) {
+                    actionLessScreens.firstOrNull {
+                        it.javaClass == currentScreen.javaClass
+                    } ?:
+                    if (!cartScreens.contains(currentScreen)) {
                             IconButton(onClick = {
                                 navController.navigate(ScreenDestination.Cart)
                             }) {
@@ -110,7 +112,6 @@ fun Toolbar(
                                 )
                             }
 
-                        }
                     }
                 }
             )

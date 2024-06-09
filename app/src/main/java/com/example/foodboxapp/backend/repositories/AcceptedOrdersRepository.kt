@@ -11,6 +11,8 @@ interface AcceptedOrdersRepository {
     suspend fun edit(block: (MutableList<Order>) -> Unit)
     suspend fun addOrder(order: Order)
     suspend fun removeOrder(order: Order)
+
+    suspend fun getOrder(id: Int): Result<Order>
 }
 
 class AcceptedOrdersRepositoryImpl(
@@ -41,6 +43,14 @@ class AcceptedOrdersRepositoryImpl(
         edit{
             it.remove(order)
         }
+    }
+
+    override suspend fun getOrder(id: Int): Result<Order> {
+        return fetch().firstOrNull {
+            it.id == id
+        }?.let {
+            Result.success(it)
+        }?: Result.failure(NoSuchElementException("Order with id: <$id> is not in the list"))
     }
 
 

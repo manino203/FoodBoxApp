@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class Account(
     val email: String,
     val address: Address,
-    val type: AccountType = AccountType.Worker,
+    val type: AccountType = AccountType.Client,
     val paymentMethod: PaymentMethod = PaymentMethod.GooglePay
 )
 
