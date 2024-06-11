@@ -22,8 +22,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.foodboxapp.ui.ui.theme.FoodBoxThemeWithSurface
 import com.example.foodboxapp.navigation.ScreenDestination
-import com.example.foodboxapp.ui.composables.FoodBoxThemeWithSurface
 import com.example.foodboxapp.ui.composables.NavigationDrawer
 import com.example.foodboxapp.ui.composables.Toolbar
 import com.example.foodboxapp.ui.screens.DestinationScreen

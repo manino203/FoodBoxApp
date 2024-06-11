@@ -43,6 +43,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import com.example.foodboxapp.ui.ui.theme.FoodBoxThemeWithSurface
 import com.example.foodboxapp.R
 import com.example.foodboxapp.form.FieldKeyboardType
 import com.example.foodboxapp.form.FieldType
@@ -426,7 +427,6 @@ fun FormComposable(state: FormState, modifier: Modifier = Modifier) {
 }
 
 @Composable
-@CombinedPreviews
 private fun FormComposablePreview() = FoodBoxThemeWithSurface {
     val form = LoginForm(
         email = "",
