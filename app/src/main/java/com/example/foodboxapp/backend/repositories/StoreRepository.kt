@@ -1,19 +1,11 @@
 package com.example.foodboxapp.backend.repositories
 
+import com.example.foodboxapp.backend.data_holders.Store
 import com.example.foodboxapp.backend.data_sources.StoreDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class Store(
-    val image: String,
-    val address: String,
-    val title: String,
-    val id: Int
-)
 
 val dummyStoreList = listOf(
     Store(

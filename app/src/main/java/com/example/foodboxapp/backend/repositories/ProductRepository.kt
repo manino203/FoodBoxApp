@@ -1,19 +1,11 @@
 package com.example.foodboxapp.backend.repositories
 
+import com.example.foodboxapp.backend.data_holders.Product
 import com.example.foodboxapp.backend.data_sources.ProductDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.serialization.Serializable
-
-
-@Serializable
-data class Product(
-    val title: String,
-    val image: String,
-    val price: Float
-)
 
 
 interface ProductRepository {
@@ -66,7 +58,6 @@ val dummyProductLists = mapOf(
                 "https://digitalcontent.api.tesco.com/v2/media/ghs/8dac8639-165d-439e-8392-f35fc03fe817/1822f26e-4123-49e9-86f5-41090fc381bc.jpeg?h=225&w=225",
                 2.5f
             ),
-
             )
     ),Pair(
         "Billa",

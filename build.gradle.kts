@@ -4,4 +4,6 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
     alias(libs.plugins.serialization) apply false
     alias(libs.plugins.parcelize) apply false
+    alias(libs.plugins.googleServices) apply false
+    alias(libs.plugins.compose.compiler) apply false
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "490139676563",
+    "project_id": "foodbox-f1f69",
+    "storage_bucket": "foodbox-f1f69.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490139676563:android:dd69cf9b983a10917c8266",
+        "android_client_info": {
+          "package_name": "com.example.foodboxapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABdXoaezUJQqKO8XeEHG9GLYm4sqDTReI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

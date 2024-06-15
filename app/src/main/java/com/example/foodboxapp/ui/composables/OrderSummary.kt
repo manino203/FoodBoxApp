@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.CartItem
-import com.example.foodboxapp.backend.repositories.Product
+import com.example.foodboxapp.backend.data_holders.Product
 
 
 @Suppress("FunctionName")

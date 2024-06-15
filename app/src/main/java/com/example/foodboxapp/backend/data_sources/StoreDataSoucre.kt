@@ -1,6 +1,6 @@
 package com.example.foodboxapp.backend.data_sources
 
-import com.example.foodboxapp.backend.repositories.Store
+import com.example.foodboxapp.backend.data_holders.Store
 import com.example.foodboxapp.backend.repositories.dummyStoreList
 import kotlinx.coroutines.delay
 

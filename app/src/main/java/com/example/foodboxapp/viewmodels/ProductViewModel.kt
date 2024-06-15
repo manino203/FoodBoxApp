@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodboxapp.backend.data_holders.CartItem
 import com.example.foodboxapp.backend.repositories.CartRepository
-import com.example.foodboxapp.backend.repositories.Product
+import com.example.foodboxapp.backend.data_holders.Product
 import com.example.foodboxapp.backend.repositories.ProductRepository
-import com.example.foodboxapp.backend.repositories.Store
+import com.example.foodboxapp.backend.data_holders.Store
 import com.example.foodboxapp.backend.repositories.StoreRepository
 import com.example.foodboxapp.backend.repositories.dummyProductLists
 import kotlinx.coroutines.Dispatchers

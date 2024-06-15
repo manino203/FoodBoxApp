@@ -1,24 +1,26 @@
 [versions]
-agp = "8.4.1"
-kotlin = "1.9.24"
+agp = "8.4.2"
+kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.7.0"
-androidxMaterial = "1.6.7"
+androidxMaterial = "1.6.8"
 material = "1.12.0"
 koinDi = "3.4.3"
-compose = "1.6.7"
+compose = "1.6.8"
 composeCompiler = "1.5.14"
-lifecycle = "2.8.1"
-viewmodel = "2.8.1"
+lifecycle = "2.8.2"
+viewmodel = "2.8.2"
 activity = "1.9.0"
 material3Android = "1.2.1"
 navigation = "1.5.0"
-composeBom = "2024.05.00"
+composeBom = "2024.06.00"
 coilVersion = "2.4.0"
-serializationVersion = "1.2.2"
+serializationVersion = "1.6.0"
+googleServicesVersion = "4.4.2"
+firebaseVersion = "33.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,9 +47,13 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 coil = {module = "io.coil-kt:coil-compose", version.ref = "coilVersion"}
 serialization = {module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializationVersion" }
+firebase-bom = {group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseVersion" }
+firebase-analytics = {group = "com.google.firebase", name = "firebase-analytics" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 serialization = {id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
 parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin"  }
+googleServices = { id = "com.google.gms.google-services", version.ref = "googleServicesVersion"  }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

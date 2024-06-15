@@ -52,7 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import coil.compose.AsyncImage
 import com.example.foodboxapp.R
-import com.example.foodboxapp.backend.repositories.Product
+import com.example.foodboxapp.backend.data_holders.Product
 import com.example.foodboxapp.backend.repositories.dummyProductLists
 import com.example.foodboxapp.ui.composables.BottomSheet
 import com.example.foodboxapp.ui.composables.Price

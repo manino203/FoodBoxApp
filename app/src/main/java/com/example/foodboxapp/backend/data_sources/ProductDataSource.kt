@@ -1,7 +1,7 @@
 package com.example.foodboxapp.backend.data_sources
 
 import android.accounts.NetworkErrorException
-import com.example.foodboxapp.backend.repositories.Product
+import com.example.foodboxapp.backend.data_holders.Product
 import com.example.foodboxapp.backend.repositories.dummyProductLists
 import kotlinx.coroutines.delay
 

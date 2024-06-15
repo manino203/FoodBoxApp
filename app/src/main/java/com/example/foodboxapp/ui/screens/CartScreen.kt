@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.CartItem
-import com.example.foodboxapp.backend.repositories.Product
+import com.example.foodboxapp.backend.data_holders.Product
 import com.example.foodboxapp.backend.repositories.dummyStoreList
 import com.example.foodboxapp.ui.composables.CheckoutBar
 import com.example.foodboxapp.ui.composables.OrderSummary

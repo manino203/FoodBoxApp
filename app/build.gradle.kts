@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.serialization)
     alias(libs.plugins.parcelize)
+    alias(libs.plugins.googleServices)
+    alias(libs.plugins.compose.compiler)
     kotlin("kapt")
 }
 
@@ -53,6 +55,10 @@ android {
 }
 
 dependencies {
+
+    implementation(platform(libs.firebase.bom))
+    implementation(platform(libs.firebase.analytics))
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
