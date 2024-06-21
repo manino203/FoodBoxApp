@@ -1,6 +1,5 @@
 package com.example.foodboxapp.form
 
-import android.provider.ContactsContract.CommonDataKinds.Email
 import com.example.foodboxapp.R
 
 data class FilledRegistrationForm(
@@ -9,26 +8,18 @@ data class FilledRegistrationForm(
     val password: String
 )
 
-class RegistrationForm(username: String,
+class RegistrationForm(
                        email: String,
                        password: String,
+                       confirmPassword: String,
                        actionSubmit: (FilledRegistrationForm) -> Unit
 ): Form(
     fields = listOf(
         Field(
-            label = R.string.username,
-            placeholder = null,
-            validators = listOf(RequiredValidator),
-            value = username,
-            help = null,
-            type = FieldType.Text,
-            isRequired = true
-        ),
-        Field(
             label = R.string.email,
             placeholder = null,
             validators = listOf(RequiredValidator, EmailValidator),
-            value = username,
+            value = email,
             help = null,
             type = FieldType.Text,
             isRequired = true
@@ -36,10 +27,20 @@ class RegistrationForm(username: String,
         Field(
             label = R.string.password,
             placeholder = null,
-            validators = listOf(RequiredValidator),
+            validators = listOf(RequiredValidator, PasswordValidator),
             value = password,
             help = null,
             type = FieldType.Password,
+            isRequired = true
+        ),
+
+        Field(
+            label = R.string.confirm_password,
+            placeholder = null,
+            validators = listOf(RequiredValidator, PasswordValidator),
+            value = confirmPassword,
+            help = null,
+            type = FieldType.ConfirmPassword,
             isRequired = true
         )
     ),

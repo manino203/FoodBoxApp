@@ -6,7 +6,6 @@ import com.example.foodboxapp.backend.data_sources.AcceptedOrdersDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.AcceptedOrdersDataSourceImpl.Companion.ACCEPTED_ORDERS_PREFS
 import com.example.foodboxapp.backend.data_sources.AccountDataSource
 import com.example.foodboxapp.backend.data_sources.AccountDataSourceImpl
-import com.example.foodboxapp.backend.data_sources.AccountDataSourceImpl.Companion.ACCOUNT_PREFS_NAME
 import com.example.foodboxapp.backend.data_sources.AvailableOrdersDataSource
 import com.example.foodboxapp.backend.data_sources.AvailableOrdersDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.CART_PREFS_NAME
@@ -23,6 +22,8 @@ import com.example.foodboxapp.backend.data_sources.SettingsDataSource
 import com.example.foodboxapp.backend.data_sources.SettingsDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.StoreDataSource
 import com.example.foodboxapp.backend.data_sources.StoreDataSourceImpl
+import com.example.foodboxapp.backend.network.HttpService
+import com.example.foodboxapp.backend.network.HttpServiceImpl
 import com.example.foodboxapp.backend.repositories.AcceptedOrdersRepository
 import com.example.foodboxapp.backend.repositories.AcceptedOrdersRepositoryImpl
 import com.example.foodboxapp.backend.repositories.AccountRepository
@@ -47,6 +48,7 @@ import com.example.foodboxapp.viewmodels.CheckoutViewModel
 import com.example.foodboxapp.viewmodels.LoginViewModel
 import com.example.foodboxapp.viewmodels.MainViewModel
 import com.example.foodboxapp.viewmodels.ProductViewModel
+import com.example.foodboxapp.viewmodels.RegistrationViewModel
 import com.example.foodboxapp.viewmodels.SettingsViewModel
 import com.example.foodboxapp.viewmodels.StoreViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
@@ -65,22 +67,24 @@ val sharedPrefsModule = module {
     single(named(CART_PREFS_NAME)) {
         androidApplication().getSharedPreferences(CART_PREFS_NAME, Context.MODE_PRIVATE)
     }
-    single(named(ACCOUNT_PREFS_NAME)) {
-        androidApplication().getSharedPreferences(ACCOUNT_PREFS_NAME, Context.MODE_PRIVATE)
-    }
     single(named(ACCEPTED_ORDERS_PREFS)) {
         androidApplication().getSharedPreferences(ACCEPTED_ORDERS_PREFS, Context.MODE_PRIVATE)
     }
 }
 
+val serviceModule = module {
+    single<HttpService>{ HttpServiceImpl() }
+}
+
 val dataSourceModule = module {
     includes(sharedPrefsModule)
-    single<SessionDataSource> { SessionDataSourceImpl() }
+    includes(serviceModule)
     single<StoreDataSource> { StoreDataSourceImpl() }
     single<ProductDataSource> { ProductDataSourceImpl() }
     single<CartDataSource> { CartDataSourceImpl(get(named(CART_PREFS_NAME))) }
     single<SettingsDataSource> { SettingsDataSourceImpl(get(named(SETTINGS_PREFS_NAME))) }
-    single<AccountDataSource> { AccountDataSourceImpl(get(named(ACCOUNT_PREFS_NAME))) }
+    single<AccountDataSource> { AccountDataSourceImpl(get()) }
+    single<SessionDataSource> { SessionDataSourceImpl(get()) }
     single<AvailableOrdersDataSource> { AvailableOrdersDataSourceImpl() }
     single<AcceptedOrdersDataSource> { AcceptedOrdersDataSourceImpl(get(named(ACCEPTED_ORDERS_PREFS))) }
     single<OrderDataSource> { OrderDataSourceImpl() }
@@ -89,12 +93,12 @@ val dataSourceModule = module {
 
 val repositoryModule = module {
     includes(dataSourceModule)
-    single<SessionRepository> { SessionRepositoryImpl(get(), get()) }
     single<StoreRepository> { StoreRepositoryImpl(get()) }
     single<ProductRepository> { ProductRepositoryImpl(get()) }
     single<CartRepository> { CartRepositoryImpl(get()) }
     single<SettingsRepository> { SettingsRepositoryImpl(get()) }
     single<AccountRepository> { AccountRepositoryImpl(get()) }
+    single<SessionRepository> { SessionRepositoryImpl(get(), get()) }
     single<AvailableOrdersRepository> { AvailableOrdersRepositoryImpl(get()) }
     single<AcceptedOrdersRepository> { AcceptedOrdersRepositoryImpl(get()) }
     single<OrderRepository> { OrderRepositoryImpl(get()) }
@@ -105,6 +109,7 @@ val appModule = module {
     viewModel { MainViewModel(get(), get()) }
     viewModel { ToolbarViewModel(get()) }
     viewModel { LoginViewModel(get()) }
+    viewModel { RegistrationViewModel(get()) }
     viewModel { StoreViewModel(get()) }
     viewModel { ProductViewModel(get(), get(), get()) }
     viewModel { CartViewModel(get()) }

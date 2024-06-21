@@ -11,8 +11,7 @@ interface AccountRepository {
     val account: StateFlow<Account?>
 
     suspend fun update(account: Account?)
-    suspend fun load()
-    suspend fun clear()
+    suspend fun fetch()
 }
 
 class AccountRepositoryImpl(
@@ -29,18 +28,12 @@ class AccountRepositoryImpl(
         _account.update {
             account
         }
-        dataSource.save(account)
+        dataSource.update(account)
     }
 
-    override suspend fun load() {
-        _account.update {
-            dataSource.load()
-        }
+    override suspend fun fetch() {
+//        _account.update {
+//            dataSource.fetch()
+//        }
     }
-
-    override suspend fun clear() {
-        update(null)
-    }
-
-
 }

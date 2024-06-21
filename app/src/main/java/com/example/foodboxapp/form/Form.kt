@@ -8,6 +8,7 @@ enum class FieldType {
     Text,
     TextArea,
     Password,
+    ConfirmPassword,
     Date,
     Scanner,
     Checkbox
@@ -44,6 +45,8 @@ enum class FormError {
     Required,
     InvalidFormat,
     NotInteger,
+    InvalidPassword,
+    PasswordsDoNotMatch
 }
 
 @StringRes
@@ -52,5 +55,7 @@ fun FormError.toResourceString(): Int {
         FormError.Required -> R.string.field_error_required
         FormError.InvalidFormat -> R.string.field_error_invalid_format
         FormError.NotInteger -> R.string.field_error_must_be_integer
+        FormError.InvalidPassword -> R.string.field_error_invalid_password
+        FormError.PasswordsDoNotMatch -> R.string.field_error_passwords_do_not_match
     }
 }

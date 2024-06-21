@@ -23,7 +23,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -43,13 +42,14 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.example.foodboxapp.ui.ui.theme.FoodBoxThemeWithSurface
 import com.example.foodboxapp.R
 import com.example.foodboxapp.form.FieldKeyboardType
 import com.example.foodboxapp.form.FieldType
 import com.example.foodboxapp.form.Form
+import com.example.foodboxapp.form.FormError
 import com.example.foodboxapp.form.LoginForm
 import com.example.foodboxapp.form.toResourceString
+import com.example.foodboxapp.ui.ui.theme.FoodBoxThemeWithSurface
 import kotlinx.coroutines.launch
 
 data class FormState(
@@ -97,9 +97,17 @@ fun FormComposable(state: FormState, modifier: Modifier = Modifier) {
 
         form.fields.forEachIndexed { i, f ->
             values[i].value = values[i].value.trim()
-
-            val error = f.validators
-                .firstOrNull { !it.validate(values[i].value) }?.error
+            val passwordFieldIndex = form.fields.indexOfFirst { it.type == FieldType.Password }
+            val error = if (f.type == FieldType.ConfirmPassword && passwordFieldIndex != -1) {
+                if(state.values[passwordFieldIndex].value != values[i].value){
+                    FormError.PasswordsDoNotMatch
+                }else{
+                    null
+                }
+            }else{
+                f.validators
+                    .firstOrNull { !it.validate(values[i].value) }?.error
+            }
 
             if (isFormValid && error != null) {
                 isFormValid = false
@@ -180,19 +188,29 @@ fun FormComposable(state: FormState, modifier: Modifier = Modifier) {
                 onDone = { actionSubmit() }
             )
 
-            @OptIn(ExperimentalComposeUiApi::class)
             val fieldModifier = Modifier
                 .focusRequester(focus)
                 .onFocusChanged { focusState ->
                     if (wasFocused) {
-                        if (field.type != FieldType.Password) {
+                        if (field.type != FieldType.Password && field.type != FieldType.ConfirmPassword) {
                             value = value.trim()
                         }
 
                         scope.launch {
-                            val validationError = field.validators.firstOrNull { v ->
-                                !v.validate(value)
-                            }?.error
+                            val passwordFieldIndex =
+                                form.fields.indexOfFirst { it.type == FieldType.Password }
+                            val validationError =
+                                if (field.type == FieldType.ConfirmPassword && passwordFieldIndex != -1) {
+                                    state.values[passwordFieldIndex].let {
+                                        if (it.value != value) {
+                                            FormError.PasswordsDoNotMatch
+                                        } else null
+                                    }
+                                } else {
+                                    field.validators.firstOrNull { v ->
+                                        !v.validate(value)
+                                    }?.error
+                                }
 
                             error = validationError
                                 ?.toResourceString()
@@ -289,6 +307,43 @@ fun FormComposable(state: FormState, modifier: Modifier = Modifier) {
                         keyboardOptions = keyboardOptions
                     )
                 }
+                FieldType.ConfirmPassword -> {
+                    var passwordVisible by remember { mutableStateOf(false) }
+                    TextField(
+                        label = { Text(context.getString(field.label)) },
+                        value = value,
+                        placeholder = { field.placeholder },
+                        enabled = field.isEnabled,
+                        onValueChange = { value = it },
+                        visualTransformation = if (passwordVisible)
+                            VisualTransformation.None
+                        else
+                            PasswordVisualTransformation(),
+                        trailingIcon = {
+
+
+                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                Icon(
+                                    painterResource(
+                                        id = if (passwordVisible)
+                                            R.drawable.visibility
+                                        else
+                                            R.drawable.visibility_off
+                                    ),
+                                    contentDescription = null
+                                )
+                            }
+                        },
+                        modifier = fieldModifier,
+                        isError = error != null,
+                        singleLine = true,
+                        supportingText = supportingText,
+                        keyboardActions = keyboardActions,
+                        keyboardOptions = keyboardOptions
+                    )
+
+                }
+
 
 //                FieldType.Date -> @OptIn(ExperimentalMaterial3Api::class) {
 //                    var isDialogOpen by remember { mutableStateOf(false) }

@@ -1,14 +1,11 @@
 package com.example.foodboxapp.viewmodels
 
-import android.provider.ContactsContract.CommonDataKinds.Email
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodboxapp.backend.repositories.SessionRepository
 import com.example.foodboxapp.form.FilledRegistrationForm
 import com.example.foodboxapp.ui.composables.UiStateError
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 data class RegistrationUiState(
@@ -19,16 +16,20 @@ data class RegistrationUiState(
     val password: String = "",
 )
 
-class RegistrationViewModel: ViewModel() {
+class RegistrationViewModel(
+    private val sessionRepo: SessionRepository
+): ViewModel() {
 
     val uiState = mutableStateOf(RegistrationUiState())
 
     fun register(form: FilledRegistrationForm){
         viewModelScope.launch {
             uiState.value = uiState.value.copy(loading = true)
-            delay(3000)
+            sessionRepo.register(form.email, form.password){
+                uiState.value = uiState.value.copy(error = UiStateError(it))
+            }
+        }.invokeOnCompletion {
             uiState.value = uiState.value.copy(loading = false)
-            uiState.value = uiState.value.copy(error = UiStateError(Exception("not implemented yet")))
         }
 
     }

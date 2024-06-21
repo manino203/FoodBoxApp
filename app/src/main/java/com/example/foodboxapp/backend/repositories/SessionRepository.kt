@@ -1,7 +1,5 @@
 package com.example.foodboxapp.backend.repositories
 
-import com.example.foodboxapp.backend.data_holders.Account
-import com.example.foodboxapp.backend.data_holders.sampleAddress
 import com.example.foodboxapp.backend.data_sources.SessionDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,6 +8,7 @@ import kotlinx.coroutines.flow.update
 
 interface SessionRepository{
     suspend fun login(email: String, password: String)
+    suspend fun register(email: String, password: String, onError: (Throwable) -> Unit)
     suspend fun resumeSession()
     suspend fun logout()
 
@@ -21,15 +20,14 @@ class SessionRepositoryImpl(
     private val dataSource: SessionDataSource,
     private val accountRepository: AccountRepository
 ): SessionRepository {
+
     private val _state = MutableStateFlow(SessionState.NOT_LOADED)
     override val state: StateFlow<SessionState> get() = _state.asStateFlow()
+
     override suspend fun login(email: String, password: String) {
         dataSource.login(email, password).onSuccess {
             accountRepository.update(
-                Account(
-                    email,
-                    sampleAddress
-                )
+                it
             )
             _state.update {
                 SessionState.LOGGED_IN
@@ -41,18 +39,35 @@ class SessionRepositoryImpl(
         }
     }
 
-    override suspend fun resumeSession() {
-        accountRepository.account.value?.let {
+    override suspend fun register(email: String, password: String, onError: (Throwable) -> Unit) {
+        dataSource.register(email, password).onSuccess {
+            accountRepository.update(
+                it
+            )
             _state.update {
                 SessionState.LOGGED_IN
             }
-        } ?: _state.update {
-            SessionState.SESSION_EXPIRED
+        }.onFailure {
+            onError(it)
+        }
+    }
+
+    override suspend fun resumeSession() {
+        dataSource.resumeSession().onSuccess {
+            accountRepository.update(
+                it
+            )
+            _state.update {
+                SessionState.LOGGED_IN
+            }
+        }.onFailure {
+            _state.update {
+                SessionState.SESSION_EXPIRED
+            }
         }
     }
 
     override suspend fun logout() {
-        accountRepository.clear()
         dataSource.logout()
         _state.update {
             SessionState.LOGGED_OUT

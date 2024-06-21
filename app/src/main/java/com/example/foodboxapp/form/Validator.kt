@@ -32,6 +32,9 @@ val EmailValidator = FormFieldValidator(FormError.InvalidFormat) {
     )
 
 }
+val PasswordValidator = FormFieldValidator(FormError.InvalidPassword){
+    it.length >= 6
+}
 
 val PhoneValidator = FormFieldValidator(FormError.InvalidFormat) {
     // android.util.Patterns.PHONE.matcher(it).matches()

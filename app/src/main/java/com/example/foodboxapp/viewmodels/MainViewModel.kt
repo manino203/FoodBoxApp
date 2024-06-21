@@ -29,7 +29,6 @@ class MainViewModel(
     fun collectSessionState() {
         Log.d("collect", "asd")
         viewModelScope.launch(Dispatchers.IO) {
-            accountRepo.load()
             sessionRepo.state.collect {
                 Log.d("sessionState change", "$it")
                 when (it) {

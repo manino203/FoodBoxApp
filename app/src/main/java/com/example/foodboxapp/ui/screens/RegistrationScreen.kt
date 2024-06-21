@@ -24,25 +24,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodboxapp.R
 import com.example.foodboxapp.form.FilledRegistrationForm
-import com.example.foodboxapp.form.LoginForm
 import com.example.foodboxapp.form.RegistrationForm
 import com.example.foodboxapp.ui.composables.AutoErrorBox
 import com.example.foodboxapp.ui.composables.FormComposable
 import com.example.foodboxapp.ui.composables.rememberFormState
-import com.example.foodboxapp.viewmodels.LoginViewModel
 import com.example.foodboxapp.viewmodels.RegistrationUiState
 import com.example.foodboxapp.viewmodels.RegistrationViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun RegistrationScreen(
     toolbarViewModel: ToolbarViewModel,
     alreadyHaveAccountAction: () -> Unit
 ) {
-    val viewModel: RegistrationViewModel = viewModel()
+    val viewModel: RegistrationViewModel = koinViewModel()
     val title = stringResource(id = R.string.register)
 
     LaunchedEffect(title) {
@@ -80,9 +78,9 @@ private fun RegistrationScreen(
 
         val registrationFormState = rememberFormState(
             RegistrationForm(
-                username = "",
                 email = "",
                 password = "",
+                confirmPassword = "",
                 actionSubmit = {
                     actionRegister(it)
                 },

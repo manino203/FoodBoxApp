@@ -5,6 +5,7 @@
     <string name="username">Username</string>
     <string name="email" translatable="false">Email</string>
     <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
     <string name="forgotten_password">Forgotten password</string>
     <string name="already_have_account">I already have an account</string>
 
@@ -22,6 +23,8 @@
     <string name="field_error_required">This field is required</string>
     <string name="field_error_invalid_format">Invalid format</string>
     <string name="field_error_must_be_integer">Must be a whole number</string>
+    <string name="field_error_invalid_password">Password should be at least 6 characters</string>
+    <string name="field_error_passwords_do_not_match">Passwords do not match</string>
 
     <string name="cart_screen_title">Your Cart</string>
     <string name="cart_empty">Your cart is empty.</string>
