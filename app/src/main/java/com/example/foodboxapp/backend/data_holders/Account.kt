@@ -10,9 +10,7 @@ data class Account(
     val address: Address = Address(),
     val type: AccountType = AccountType.Client,
     val paymentMethod: PaymentMethod? = null,
-){
-    constructor() : this("", "", Address(), AccountType.Client, null)
-}
+)
 
 @Serializable
 sealed class AccountType{

@@ -7,7 +7,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.foodboxapp.R
@@ -66,9 +65,6 @@ private fun AccountSettingsScreen(
     actionModifyAddress: (Address) -> Unit,
     actionModifyPaymentMethod: (PaymentMethod) -> Unit
 ){
-    var address by remember {
-        mutableStateOf(Address())
-    }
     val addressFormState = rememberFormState(
         form = AddressForm(
             uiState.account!!.address.street,

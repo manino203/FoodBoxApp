@@ -9,11 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-enum class Action{
-    CART,
-    HOME
-}
-
 data class ToolbarUiState(
     val visible: Boolean = true,
     val loading: Boolean = false,
