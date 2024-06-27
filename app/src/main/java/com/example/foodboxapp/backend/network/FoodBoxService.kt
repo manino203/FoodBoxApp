@@ -47,6 +47,7 @@ class FoodBoxServiceImpl(): FoodBoxService{
         }
     }
 
+    @Suppress("unused")
     override suspend fun updateAccount(acc: Account): Account {
         try{
             db.collection("accounts").document(acc.id).set(

@@ -30,9 +30,6 @@ class ProductViewModel(
 
     val uiState = mutableStateOf(ProductUiState())
 
-    fun update(storeId: Int){
-
-    }
     fun loadProducts(storeId: String){
         viewModelScope.launch(Dispatchers.Default) {
             productRepo.fetchProducts(storeId)

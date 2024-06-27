@@ -24,9 +24,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Store
+import com.example.foodboxapp.ui.composables.AsyncImageWithLoading
 import com.example.foodboxapp.viewmodels.StoreUiState
 import com.example.foodboxapp.viewmodels.StoreViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
@@ -100,10 +100,12 @@ fun StoreItem(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            AsyncImage(
+            AsyncImageWithLoading(
                 modifier = Modifier.requiredSize(96.dp),
-                model = store.imageUrl,
-                contentDescription = store.title
+                imageUrl = store.imageUrl ?: "",
+                contentDescription = store.title,
+                width = 100.dp,
+                height = 100.dp
             )
             Text(
                 modifier = Modifier
