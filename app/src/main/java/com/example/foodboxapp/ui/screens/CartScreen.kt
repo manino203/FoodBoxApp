@@ -14,12 +14,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.CartItem
 import com.example.foodboxapp.backend.data_holders.Product
-import com.example.foodboxapp.backend.repositories.dummyStoreList
 import com.example.foodboxapp.ui.composables.CheckoutBar
 import com.example.foodboxapp.ui.composables.OrderSummary
 import com.example.foodboxapp.ui.composables.rememberSummaryCategories
@@ -103,21 +101,4 @@ private fun CartScreen(
             }
         }
     }
-}
-
-@Preview
-@Composable
-private fun CartScreenPreview(){
-    CartScreen(uiState = CartUiState(items = listOf(
-        CartItem(
-            Product(
-                "Tesco Finest Clementine Or Sweet Easy Peeler 600G",
-                "https://digitalcontent.api.tesco.com/v2/media/ghs/cfb3c09d-511a-4982-b329-f0d1793ad5e0/ac881f1a-3e3d-4c5f-a316-68da6226a708.jpeg?h=225&w=225",
-                2.5f
-            ),
-            1,
-            dummyStoreList[0],
-            2.50f
-    )
-    )),{}, {}) { _, _ -> }
 }

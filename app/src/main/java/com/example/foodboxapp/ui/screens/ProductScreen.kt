@@ -1,5 +1,6 @@
 package com.example.foodboxapp.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,13 +39,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Product
-import com.example.foodboxapp.backend.repositories.dummyProductLists
+import com.example.foodboxapp.ui.composables.AsyncImageWithLoading
 import com.example.foodboxapp.ui.composables.BottomSheet
 import com.example.foodboxapp.ui.composables.Price
 import com.example.foodboxapp.ui.composables.ProductCount
@@ -53,12 +53,11 @@ import com.example.foodboxapp.viewmodels.ProductUiState
 import com.example.foodboxapp.viewmodels.ProductViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProductScreen(
-    storeId: Int,
+    storeId: String,
     toolbarViewModel: ToolbarViewModel
 ) {
     val viewModel: ProductViewModel = koinViewModel()
@@ -67,6 +66,7 @@ fun ProductScreen(
     }
     LaunchedEffect(Unit) {
         viewModel.loadProducts(storeId)
+        Log.d("ProductItemStoreId", storeId)
         toolbarViewModel.updateLoading(false)
     }
 
@@ -139,10 +139,12 @@ private fun ProductItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AsyncImage(
+                AsyncImageWithLoading(
                     modifier = Modifier.weight(0.5f),
-                    model = product.image,
-                    contentDescription = product.title
+                    imageUrl = product.imageUrl ?: "",
+                    contentDescription = product.title,
+                    width = 100.dp,
+                    height = 100.dp
                 )
                 Text(
                     modifier = Modifier.weight(1f),
@@ -184,7 +186,7 @@ private fun AddToCartSheet(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             AsyncImage(
-                model = product.image,
+                model = product.imageUrl,
                 contentDescription = product.title
             )
             Text(text = product.title)
@@ -228,23 +230,5 @@ private fun AddToCartSheet(
                 }
             }
         }
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-@Preview
-private fun ProductScreenPreview(){
-//    ProductScreen(uiState = ProductUiState(products = dummyProductLists["Tesco"]!!)){_,_ ->}
-    val sheetState = rememberModalBottomSheetState()
-    val cs = rememberCoroutineScope()
-    LaunchedEffect(Unit) {
-        cs.launch {
-            sheetState.show()
-        }
-    }
-    AddToCartSheet(sheetState = sheetState, product = dummyProductLists["Tesco"]!![0], sheetOpen = remember{ mutableStateOf(true) },coroScope = rememberCoroutineScope()) { _ ->
-
     }
 }

@@ -77,7 +77,7 @@ private fun CartItemContent(
         ){
             AsyncImage(
                 modifier = Modifier.weight(0.4f),
-                model = item.product.image,
+                model = item.product.imageUrl,
                 contentDescription = item.product.title
             )
             Column(

@@ -10,7 +10,6 @@ import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.backend.repositories.CartRepository
 import com.example.foodboxapp.backend.repositories.ProductRepository
 import com.example.foodboxapp.backend.repositories.StoreRepository
-import com.example.foodboxapp.backend.repositories.dummyProductLists
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -34,21 +33,17 @@ class ProductViewModel(
     fun update(storeId: Int){
 
     }
-    fun loadProducts(storeId: Int){
+    fun loadProducts(storeId: String){
         viewModelScope.launch(Dispatchers.Default) {
-            storeRepo.getStore(storeId).onSuccess{ store ->
-                productRepo.fetchProducts(store.title)
-                productRepo.products.collect {
-                    uiState.value =
-                        uiState.value.copy(products = dummyProductLists[store.title] ?: emptyList())
-                }
-            }.onFailure {
-                //todo error
+            productRepo.fetchProducts(storeId)
+            productRepo.products.collect {
+                uiState.value =
+                    uiState.value.copy(products = it)
             }
         }
     }
 
-    fun addProductToCart(product: Product, quantity: Int, storeId: Int){
+    fun addProductToCart(product: Product, quantity: Int, storeId: String){
         viewModelScope.launch(Dispatchers.Default){
             storeRepo.getStore(storeId).onSuccess{ store ->
                 accountRepo.account.value?.id?.let {

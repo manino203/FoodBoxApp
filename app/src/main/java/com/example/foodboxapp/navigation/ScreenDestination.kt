@@ -18,7 +18,7 @@ sealed interface ScreenDestination: Parcelable {
     data object Main: ScreenDestination
 
     @Parcelize
-    data class Store(val storeId: Int): ScreenDestination
+    data class Store(val storeId: String): ScreenDestination
 
     @Parcelize
     data object Cart: ScreenDestination

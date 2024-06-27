@@ -75,8 +75,8 @@ val serviceModule = module {
 val dataSourceModule = module {
     includes(sharedPrefsModule)
     includes(serviceModule)
-    single<StoreDataSource> { StoreDataSourceImpl() }
-    single<ProductDataSource> { ProductDataSourceImpl() }
+    single<StoreDataSource> { StoreDataSourceImpl(get()) }
+    single<ProductDataSource> { ProductDataSourceImpl(get()) }
     single<CartDataSource> { CartDataSourceImpl(get(named(CART_PREFS_NAME))) }
     single<SettingsDataSource> { SettingsDataSourceImpl(get(named(SETTINGS_PREFS_NAME))) }
     single<AccountDataSource> { AccountDataSourceImpl(get()) }

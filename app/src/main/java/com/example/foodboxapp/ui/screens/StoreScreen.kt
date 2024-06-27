@@ -35,7 +35,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun StoreScreen(
     toolbarViewModel: ToolbarViewModel,
-    actionNavigateToStoreScreen: (Int) -> Unit
+    actionNavigateToStoreScreen: (String) -> Unit
 ) {
     val viewModel: StoreViewModel = koinViewModel()
     val title = stringResource(id = R.string.app_name)
@@ -113,7 +113,17 @@ fun StoreItem(
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 32.sp
             )
-            Text(text = store.address)
+            store.address?.let {
+                Text(text = buildString {
+                    append(it.street)
+                    append(", ")
+                    append(it.zipCode)
+                    append(", ")
+                    append(it.city)
+                    append(", ")
+                    append(it.country)
+                })
+            }
         }
     }
 }

@@ -3,6 +3,8 @@ package com.example.foodboxapp.backend.network
 import android.util.Log
 import com.example.foodboxapp.backend.data_holders.Account
 import com.example.foodboxapp.backend.data_holders.Address
+import com.example.foodboxapp.backend.data_holders.Product
+import com.example.foodboxapp.backend.data_holders.Store
 import com.example.foodboxapp.backend.data_holders.toAccountType
 import com.example.foodboxapp.backend.data_holders.toPaymentMethod
 import com.google.firebase.auth.FirebaseAuth
@@ -18,6 +20,9 @@ interface FoodBoxService {
     suspend fun register(email: String, password: String): Account?
     fun logout()
 
+    suspend fun fetchStores(): List<Store>
+
+    suspend fun fetchProducts(storeId: String): List<Product>
 }
 
 class FoodBoxServiceImpl(): FoodBoxService{
@@ -32,7 +37,7 @@ class FoodBoxServiceImpl(): FoodBoxService{
                 Account(
                     id = uid,
                     email = it.get("email").toString(),
-                    address = Address(),
+                    address = it.get("address") as? Address ?: Address(),
                     type = it.get("type").toString().toAccountType(),
                     paymentMethod = it.get("paymentMethod").toString().toPaymentMethod()
                 )
@@ -80,6 +85,54 @@ class FoodBoxServiceImpl(): FoodBoxService{
 
     override fun logout() {
         auth.signOut()
+    }
+
+    override suspend fun fetchStores(): List<Store> {
+        return try {
+            db.collection("stores").get().await().documents.map {
+                Log.d("Store", "title = ${it.get("title").toString()},\n" +
+                        "address = ${it.get(" address ") as? Address},\n" +
+                        "imageUrl = ${it.get(" title ").toString()},\n" +
+                        "id = ${it.id}")
+                Store(
+                    title = it.get("title").toString(),
+                    address = it.get("address") as? Address,
+                    imageUrl = it.get("title").toString(),
+                    id = it.id
+                )
+            }
+        }catch (e: Exception){
+            throw groupFirestoreExceptions(e)
+        }
+    }
+
+    override suspend fun fetchProducts(storeId: String): List<Product> {
+        return try{
+            db.collection("products").whereEqualTo("storeId", storeId).get().await().documents.mapNotNull {
+                Log.d("ProductItemStoreId", storeId)
+                Log.d(
+                    "ProductItem", """id = ${it.id},
+                    storeId = ${ it.get("storeId").toString() },
+                    title = ${ it.get("title").toString() },
+                    imageUrl = ${ it.get("imageUrl").toString() },
+                    price = ${ it.getDouble("price")?.toFloat()},
+                    details = ${ it.get("details").toString() },"""
+                )
+
+                it.getDouble("price")?.toFloat()?.let{ price ->
+                    Product(
+                        id = it.id,
+                        storeId = it.get("storeId").toString(),
+                        title = it.get("title").toString(),
+                        imageUrl = it.get("imageUrl").toString(),
+                        price = price,
+                        details = it.get("details").toString(),
+                    )
+                }
+            }
+        }catch (e: Exception){
+            throw groupFirestoreExceptions(e)
+        }
     }
 
     private fun signIn(user: FirebaseUser?): String {
