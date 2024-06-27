@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodboxapp.backend.data_holders.Account
 import com.example.foodboxapp.backend.data_holders.Address
+import com.example.foodboxapp.backend.data_holders.PaymentMethod
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,10 +28,10 @@ class AccountSettingsViewModel(
         }
     }
 
-    fun modify(email: String, address: Address, paymentMethod: PaymentMethod){
+    fun modify(id: String, email: String, address: Address, paymentMethod: PaymentMethod?){
         uiState.value = uiState.value.copy(loading = true)
         viewModelScope.launch(Dispatchers.IO){
-            accountRepo.update(Account(email, address, paymentMethod = paymentMethod))
+            accountRepo.update(Account(id, email, address, paymentMethod = paymentMethod))
         }.invokeOnCompletion {
             uiState.value = uiState.value.copy(loading = false)
         }

@@ -3,9 +3,8 @@ package com.example.foodboxapp.form
 import com.example.foodboxapp.R
 
 data class FilledRegistrationForm(
-    val username: String,
     val email: String,
-    val password: String
+    val password: String,
 )
 
 class RegistrationForm(
@@ -49,9 +48,8 @@ class RegistrationForm(
     onSubmit = {
         actionSubmit(
             FilledRegistrationForm(
-                username = it[0],
-                email = it[1],
-                password = it[2]
+                email = it[0],
+                password = it[1]
             )
         )
     })

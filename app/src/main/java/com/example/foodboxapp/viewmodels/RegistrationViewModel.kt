@@ -3,7 +3,7 @@ package com.example.foodboxapp.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodboxapp.backend.repositories.SessionRepository
+import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.form.FilledRegistrationForm
 import com.example.foodboxapp.ui.composables.UiStateError
 import kotlinx.coroutines.launch
@@ -17,7 +17,7 @@ data class RegistrationUiState(
 )
 
 class RegistrationViewModel(
-    private val sessionRepo: SessionRepository
+    private val sessionRepo: AccountRepository
 ): ViewModel() {
 
     val uiState = mutableStateOf(RegistrationUiState())
@@ -25,9 +25,12 @@ class RegistrationViewModel(
     fun register(form: FilledRegistrationForm){
         viewModelScope.launch {
             uiState.value = uiState.value.copy(loading = true)
-            sessionRepo.register(form.email, form.password){
-                uiState.value = uiState.value.copy(error = UiStateError(it))
+            kotlin.runCatching{
+                sessionRepo.register(form.email, form.password)
             }
+                .onFailure{
+                    uiState.value = uiState.value.copy(error = UiStateError(it))
+                }
         }.invokeOnCompletion {
             uiState.value = uiState.value.copy(loading = false)
         }

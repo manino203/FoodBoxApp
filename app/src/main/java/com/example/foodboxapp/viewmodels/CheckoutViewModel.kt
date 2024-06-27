@@ -3,44 +3,17 @@ package com.example.foodboxapp.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Account
 import com.example.foodboxapp.backend.data_holders.CartItem
 import com.example.foodboxapp.backend.data_holders.Order
+import com.example.foodboxapp.backend.data_holders.PaymentMethod
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.backend.repositories.CartRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 
 
-@Serializable
-sealed class PaymentMethod{
-    open val image: Int = R.drawable.mastercard_logo
-    open val title: Int = R.string.credit_card
-    companion object{
-        fun methods() = listOf(Card, GooglePay, Paypal)
-    }
-    @Serializable
-    data object Card: PaymentMethod(){
-        override val image = R.drawable.mastercard_logo
-        override val title = R.string.credit_card
-
-    }
-    @Serializable
-    data object GooglePay: PaymentMethod(){
-        override val image = R.drawable.google_pay_logo
-        override val title = R.string.google_pay
-
-    }
-    @Serializable
-    data object Paypal: PaymentMethod(){
-        override val image = R.drawable.paypal_logo
-        override val title = R.string.paypal
-
-    }
-}
 data class CheckoutUiState(
     val loading: Boolean = false,
     val cartItems: List<CartItem> = emptyList(),
@@ -66,7 +39,7 @@ class CheckoutViewModel(
         viewModelScope.launch(Dispatchers.Default) {
             uiState.value = uiState.value.copy(loading = true)
             delay(500)
-            cartRepo.clear()
+            uiState.value.account?.id?.let { cartRepo.clear(it) }
             uiState.value = uiState.value.copy(loading = false)
         }.invokeOnCompletion { navigateToOrderSent() }
     }

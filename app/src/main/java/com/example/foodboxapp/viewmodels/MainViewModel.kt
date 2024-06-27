@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.foodboxapp.backend.data_holders.Account
 import com.example.foodboxapp.backend.data_holders.AccountType
 import com.example.foodboxapp.backend.repositories.AccountRepository
-import com.example.foodboxapp.backend.repositories.SessionRepository
 import com.example.foodboxapp.backend.repositories.SessionState
 import com.example.foodboxapp.navigation.ScreenDestination
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +20,7 @@ data class MainUiState(
 )
 
 class MainViewModel(
-    private val sessionRepo: SessionRepository,
+    private val sessionRepo: AccountRepository,
     private val accountRepo: AccountRepository
 ): ViewModel() {
     val uiState = mutableStateOf(MainUiState())

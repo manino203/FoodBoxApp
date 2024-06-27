@@ -4,8 +4,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodboxapp.backend.data_holders.CartItem
-import com.example.foodboxapp.backend.repositories.CartRepository
 import com.example.foodboxapp.backend.data_holders.Product
+import com.example.foodboxapp.backend.repositories.AccountRepository
+import com.example.foodboxapp.backend.repositories.CartRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -15,7 +16,8 @@ data class CartUiState(
     val totalPrice: Float = 0f
 )
 class CartViewModel(
-    private val cartRepo: CartRepository
+    private val cartRepo: CartRepository,
+    private val accountRepo: AccountRepository
 ):ViewModel() {
     val uiState = mutableStateOf(CartUiState())
     private fun updateCart(items: List<CartItem>){
@@ -34,7 +36,7 @@ class CartViewModel(
 
 
     fun collectCartChanges(){
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.IO) {
             cartRepo.cartItems.collect{
                 updateCart(it)
             }
@@ -44,14 +46,16 @@ class CartViewModel(
     fun changeQuantity(product: Product, count: Int){
         viewModelScope.launch(Dispatchers.IO){
             uiState.value.items.find { it.product == product }?.let {
-                cartRepo.changeItemQuantity(it, count)
+                accountRepo.account.value?.id?.let { id ->
+                    cartRepo.changeItemQuantity(it, count, id)
+                }
             }
         }
     }
 
     fun deleteItem(item: CartItem){
         viewModelScope.launch(Dispatchers.IO){
-            cartRepo.deleteCartItem(item)
+            accountRepo.account.value?.id?.let { cartRepo.deleteCartItem(item, it) }
         }
     }
 

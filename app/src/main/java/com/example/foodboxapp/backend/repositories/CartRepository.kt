@@ -10,14 +10,12 @@ import kotlinx.coroutines.flow.update
 interface CartRepository {
 
     val cartItems: StateFlow<List<CartItem>>
-    suspend fun retrieveCartItems()
-    suspend fun saveCartItemsPersistent()
-    suspend fun updateCartItems(items: List<CartItem>)
-    suspend fun addCartItem(item: CartItem)
-    suspend fun changeItemQuantity(item: CartItem, count: Int)
-    suspend fun deleteCartItem(item: CartItem)
+    suspend fun retrieveCartItems(userId: String)
+    suspend fun addCartItem(item: CartItem, userId: String)
+    suspend fun changeItemQuantity(item: CartItem, count: Int, userId: String)
+    suspend fun deleteCartItem(item: CartItem, userId: String)
 
-    suspend fun clear()
+    suspend fun clear(userId: String)
 
 }
 
@@ -29,24 +27,24 @@ class CartRepositoryImpl(
     override val cartItems: StateFlow<List<CartItem>>
         get() = _cartItems.asStateFlow()
 
-    override suspend fun retrieveCartItems() {
+    override suspend fun retrieveCartItems(userId: String) {
         _cartItems.update {
-            dataSource.load()
+            dataSource.load(userId)
         }
     }
 
-    override suspend fun saveCartItemsPersistent() {
-        dataSource.save(cartItems.value)
+    private suspend fun saveCartItemsPersistent(userId: String) {
+        dataSource.save(cartItems.value, userId)
     }
 
-    override suspend fun updateCartItems(items: List<CartItem>) {
+    private suspend fun updateCartItems(items: List<CartItem>, userId: String) {
         _cartItems.update {
             items
         }
-        saveCartItemsPersistent()
+        saveCartItemsPersistent(userId)
     }
 
-    override suspend fun addCartItem(item: CartItem) {
+    override suspend fun addCartItem(item: CartItem, userId: String) {
         updateCartItems(_cartItems.value.indexOfFirst {
             it.product == item.product
         }.takeIf {
@@ -56,10 +54,10 @@ class CartRepositoryImpl(
                 it[index] =
                     it[index].copy(quantity = it[index].quantity + item.quantity)
             }
-        } ?: _cartItems.value.toMutableList().apply { add(item) })
+        } ?: _cartItems.value.toMutableList().apply { add(item) }, userId)
     }
 
-    override suspend fun changeItemQuantity(item: CartItem, count: Int) {
+    override suspend fun changeItemQuantity(item: CartItem, count: Int, userId: String) {
         updateCartItems(_cartItems.value.toMutableList().also {
             _cartItems.value.indexOf(item).let{index ->
                 if(count > 0){
@@ -69,23 +67,24 @@ class CartRepositoryImpl(
                     it.removeAt(index)
                 }
             }
-        })
+        }, userId)
     }
 
-    override suspend fun deleteCartItem(item: CartItem) {
+    override suspend fun deleteCartItem(item: CartItem, userId: String) {
         _cartItems.value.indexOfFirst {
             it.product == item.product
         }.takeIf {
             it != -1
         }?.let{
             updateCartItems(
-                _cartItems.value.toMutableList().apply{ removeAt(it) }
+                _cartItems.value.toMutableList().apply{ removeAt(it) },
+                userId
             )
         }
     }
 
-    override suspend fun clear() {
-        updateCartItems(emptyList())
+    override suspend fun clear(userId: String) {
+        updateCartItems(emptyList(), userId)
     }
 
 }

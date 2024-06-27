@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Store(
-    val image: String,
+    val imageUrl: String,
     val address: String,
     val title: String,
     val id: Int

@@ -16,14 +16,12 @@ import com.example.foodboxapp.backend.data_sources.OrderDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.ProductDataSource
 import com.example.foodboxapp.backend.data_sources.ProductDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.SETTINGS_PREFS_NAME
-import com.example.foodboxapp.backend.data_sources.SessionDataSource
-import com.example.foodboxapp.backend.data_sources.SessionDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.SettingsDataSource
 import com.example.foodboxapp.backend.data_sources.SettingsDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.StoreDataSource
 import com.example.foodboxapp.backend.data_sources.StoreDataSourceImpl
-import com.example.foodboxapp.backend.network.HttpService
-import com.example.foodboxapp.backend.network.HttpServiceImpl
+import com.example.foodboxapp.backend.network.FoodBoxService
+import com.example.foodboxapp.backend.network.FoodBoxServiceImpl
 import com.example.foodboxapp.backend.repositories.AcceptedOrdersRepository
 import com.example.foodboxapp.backend.repositories.AcceptedOrdersRepositoryImpl
 import com.example.foodboxapp.backend.repositories.AccountRepository
@@ -36,8 +34,6 @@ import com.example.foodboxapp.backend.repositories.OrderRepository
 import com.example.foodboxapp.backend.repositories.OrderRepositoryImpl
 import com.example.foodboxapp.backend.repositories.ProductRepository
 import com.example.foodboxapp.backend.repositories.ProductRepositoryImpl
-import com.example.foodboxapp.backend.repositories.SessionRepository
-import com.example.foodboxapp.backend.repositories.SessionRepositoryImpl
 import com.example.foodboxapp.backend.repositories.SettingsRepository
 import com.example.foodboxapp.backend.repositories.SettingsRepositoryImpl
 import com.example.foodboxapp.backend.repositories.StoreRepository
@@ -73,7 +69,7 @@ val sharedPrefsModule = module {
 }
 
 val serviceModule = module {
-    single<HttpService>{ HttpServiceImpl() }
+    single<FoodBoxService>{ FoodBoxServiceImpl() }
 }
 
 val dataSourceModule = module {
@@ -84,7 +80,6 @@ val dataSourceModule = module {
     single<CartDataSource> { CartDataSourceImpl(get(named(CART_PREFS_NAME))) }
     single<SettingsDataSource> { SettingsDataSourceImpl(get(named(SETTINGS_PREFS_NAME))) }
     single<AccountDataSource> { AccountDataSourceImpl(get()) }
-    single<SessionDataSource> { SessionDataSourceImpl(get()) }
     single<AvailableOrdersDataSource> { AvailableOrdersDataSourceImpl() }
     single<AcceptedOrdersDataSource> { AcceptedOrdersDataSourceImpl(get(named(ACCEPTED_ORDERS_PREFS))) }
     single<OrderDataSource> { OrderDataSourceImpl() }
@@ -98,7 +93,6 @@ val repositoryModule = module {
     single<CartRepository> { CartRepositoryImpl(get()) }
     single<SettingsRepository> { SettingsRepositoryImpl(get()) }
     single<AccountRepository> { AccountRepositoryImpl(get()) }
-    single<SessionRepository> { SessionRepositoryImpl(get(), get()) }
     single<AvailableOrdersRepository> { AvailableOrdersRepositoryImpl(get()) }
     single<AcceptedOrdersRepository> { AcceptedOrdersRepositoryImpl(get()) }
     single<OrderRepository> { OrderRepositoryImpl(get()) }
@@ -107,12 +101,12 @@ val repositoryModule = module {
 val appModule = module {
     includes(repositoryModule)
     viewModel { MainViewModel(get(), get()) }
-    viewModel { ToolbarViewModel(get()) }
+    viewModel { ToolbarViewModel(get(), get()) }
     viewModel { LoginViewModel(get()) }
     viewModel { RegistrationViewModel(get()) }
     viewModel { StoreViewModel(get()) }
-    viewModel { ProductViewModel(get(), get(), get()) }
-    viewModel { CartViewModel(get()) }
+    viewModel { ProductViewModel(get(), get(), get(), get()) }
+    viewModel { CartViewModel(get(), get()) }
     viewModel { SettingsViewModel(get()) }
     viewModel { CheckoutViewModel(get(), get()) }
     viewModel { AccountSettingsViewModel(get()) }

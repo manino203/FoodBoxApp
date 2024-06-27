@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.koin)
     implementation(libs.coil)
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

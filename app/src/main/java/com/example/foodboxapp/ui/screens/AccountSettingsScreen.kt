@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Address
+import com.example.foodboxapp.backend.data_holders.PaymentMethod
 import com.example.foodboxapp.form.AddressForm
 import com.example.foodboxapp.ui.composables.Category
 import com.example.foodboxapp.ui.composables.CenteredLoading
@@ -20,7 +21,6 @@ import com.example.foodboxapp.ui.composables.PaymentMethodSelector
 import com.example.foodboxapp.ui.composables.rememberFormState
 import com.example.foodboxapp.viewmodels.AccountSettingsUiState
 import com.example.foodboxapp.viewmodels.AccountSettingsViewModel
-import com.example.foodboxapp.viewmodels.PaymentMethod
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -51,11 +51,11 @@ fun AccountSettingsScreen(
         AccountSettingsScreen(
             uiState = viewModel.uiState.value,
             actionModifyAddress = {
-                viewModel.modify(acc.email, it, acc.paymentMethod)
+                viewModel.modify(acc.id, acc.email, it, acc.paymentMethod)
 
             }
         ) {
-            viewModel.modify(acc.email, acc.address, it)
+            viewModel.modify(acc.id, acc.email, acc.address, it)
         }
     } ?: CenteredLoading()
 }

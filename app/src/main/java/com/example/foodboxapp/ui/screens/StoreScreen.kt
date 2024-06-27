@@ -102,7 +102,7 @@ fun StoreItem(
         ){
             AsyncImage(
                 modifier = Modifier.requiredSize(96.dp),
-                model = store.image,
+                model = store.imageUrl,
                 contentDescription = store.title
             )
             Text(

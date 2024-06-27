@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Address
 import com.example.foodboxapp.backend.data_holders.Order
+import com.example.foodboxapp.backend.data_holders.PaymentMethod
 import com.example.foodboxapp.form.AddressForm
 import com.example.foodboxapp.ui.composables.Category
 import com.example.foodboxapp.ui.composables.CenteredLoading
@@ -24,7 +25,6 @@ import com.example.foodboxapp.ui.composables.PaymentMethodSelector
 import com.example.foodboxapp.ui.composables.rememberFormState
 import com.example.foodboxapp.viewmodels.CheckoutUiState
 import com.example.foodboxapp.viewmodels.CheckoutViewModel
-import com.example.foodboxapp.viewmodels.PaymentMethod
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import org.koin.androidx.compose.koinViewModel
 

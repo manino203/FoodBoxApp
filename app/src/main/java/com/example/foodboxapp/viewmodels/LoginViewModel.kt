@@ -3,7 +3,7 @@ package com.example.foodboxapp.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodboxapp.backend.repositories.SessionRepository
+import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.ui.composables.UiStateError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +14,7 @@ data class LoginUiState(
 )
 
 class LoginViewModel(
-    private val sessionRepository: SessionRepository
+    private val accountRepository: AccountRepository
 ): ViewModel() {
     val uiState = mutableStateOf(LoginUiState())
 
@@ -22,7 +22,7 @@ class LoginViewModel(
         viewModelScope.launch(Dispatchers.IO){
             uiState.value = uiState.value.copy(isLoggingIn = true)
             kotlin.runCatching{
-                sessionRepository.login(username, password)
+                accountRepository.login(username, password)
             }.onFailure {
                 uiState.value = uiState.value.copy(error = UiStateError(it))
             }
@@ -30,9 +30,4 @@ class LoginViewModel(
             uiState.value = uiState.value.copy(isLoggingIn = false)
         }
     }
-
-    fun forgottenPassword(){
-
-    }
-
 }
