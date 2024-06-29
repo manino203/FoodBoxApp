@@ -29,6 +29,8 @@ import com.example.foodboxapp.ui.composables.AddressComposable
 import com.example.foodboxapp.ui.composables.CheckoutBar
 import com.example.foodboxapp.ui.composables.OrderItemWithBottomSheet
 import com.example.foodboxapp.ui.composables.OrderSummary
+import com.example.foodboxapp.ui.composables.updateToolbarLoading
+import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import com.example.foodboxapp.viewmodels.worker.AvailableOrdersUiState
 import com.example.foodboxapp.viewmodels.worker.AvailableOrdersViewModel
@@ -41,13 +43,8 @@ fun AvailableOrdersScreen(
 ) {
     val viewModel: AvailableOrdersViewModel = koinViewModel()
     val title = stringResource(id = R.string.available_orders)
-    LaunchedEffect(title) {
-        toolbarViewModel.updateTitle(title)
-    }
-
-    LaunchedEffect(viewModel.uiState.value.loading) {
-        toolbarViewModel.updateLoading(viewModel.uiState.value.loading)
-    }
+    updateToolbarTitle(toolbarViewModel, title)
+    updateToolbarLoading(toolbarViewModel, viewModel.uiState.value.loading)
 
     LaunchedEffect(viewModel) {
         viewModel.update()

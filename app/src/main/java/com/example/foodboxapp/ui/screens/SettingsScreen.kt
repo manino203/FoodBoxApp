@@ -34,6 +34,8 @@ import com.example.foodboxapp.backend.repositories.SettingsState
 import com.example.foodboxapp.ui.composables.BottomSheet
 import com.example.foodboxapp.ui.composables.Category
 import com.example.foodboxapp.ui.composables.open
+import com.example.foodboxapp.ui.composables.updateToolbarLoading
+import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.SettingsViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -44,13 +46,11 @@ fun SettingsScreen(
 ) {
     val viewModel:SettingsViewModel = koinViewModel()
     val title = stringResource(id = R.string.settings)
-    LaunchedEffect(title) {
-        toolbarViewModel.updateTitle(title)
-    }
+    updateToolbarTitle(toolbarViewModel, title)
+    updateToolbarLoading(toolbarViewModel, false)
 
     LaunchedEffect(Unit) {
         viewModel.collectChanges()
-        toolbarViewModel.updateLoading(false)
     }
 
     SettingsScreen(

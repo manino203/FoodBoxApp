@@ -18,6 +18,8 @@ import com.example.foodboxapp.ui.composables.CenteredLoading
 import com.example.foodboxapp.ui.composables.FormComposable
 import com.example.foodboxapp.ui.composables.PaymentMethodSelector
 import com.example.foodboxapp.ui.composables.rememberFormState
+import com.example.foodboxapp.ui.composables.updateToolbarLoading
+import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.AccountSettingsUiState
 import com.example.foodboxapp.viewmodels.AccountSettingsViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
@@ -29,13 +31,9 @@ fun AccountSettingsScreen(
 ) {
     val viewModel: AccountSettingsViewModel = koinViewModel()
     val title = stringResource(id = R.string.account_settings)
-    LaunchedEffect(title) {
-        toolbarViewModel.updateTitle(title)
-    }
 
-    LaunchedEffect(viewModel.uiState.value.loading) {
-        toolbarViewModel.updateLoading(viewModel.uiState.value.loading)
-    }
+    updateToolbarTitle(toolbarViewModel, title)
+    updateToolbarLoading(toolbarViewModel, viewModel.uiState.value.loading)
 
     LaunchedEffect(Unit) {
         viewModel.collectAccount()

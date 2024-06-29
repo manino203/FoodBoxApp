@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 
 data class ProductUiState(
-    val loading: Boolean = false,
+    val loading: Boolean = true,
     val store: Store? = null,
     val products: List<Product> = emptyList(),
     val title: String? = null,
@@ -31,12 +31,18 @@ class ProductViewModel(
     val uiState = mutableStateOf(ProductUiState())
 
     fun loadProducts(storeId: String){
-        viewModelScope.launch(Dispatchers.Default) {
-            productRepo.fetchProducts(storeId)
+        uiState.value = uiState.value.copy(loading = true)
+        viewModelScope.launch(Dispatchers.IO) {
             productRepo.products.collect {
                 uiState.value =
                     uiState.value.copy(products = it)
             }
+        }
+
+        viewModelScope.launch(Dispatchers.Default) {
+            productRepo.fetchProducts(storeId)
+        }.invokeOnCompletion {
+            uiState.value = uiState.value.copy(loading = false)
         }
     }
 

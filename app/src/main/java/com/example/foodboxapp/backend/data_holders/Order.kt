@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Order(
     val items: List<CartItem>,
-    val id: Int = 1,
+    val id: String,
     val address: Address,
     val stores: List<Store>,
     val total: Float = items.sumOf { it.totalPrice.toDouble() }.toFloat()

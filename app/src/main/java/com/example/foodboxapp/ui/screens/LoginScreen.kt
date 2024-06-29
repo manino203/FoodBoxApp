@@ -17,7 +17,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,6 +27,8 @@ import com.example.foodboxapp.form.LoginForm
 import com.example.foodboxapp.ui.composables.AutoErrorBox
 import com.example.foodboxapp.ui.composables.FormComposable
 import com.example.foodboxapp.ui.composables.rememberFormState
+import com.example.foodboxapp.ui.composables.updateToolbarLoading
+import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.LoginUiState
 import com.example.foodboxapp.viewmodels.LoginViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
@@ -42,12 +43,8 @@ fun LoginScreen(
     val viewModel: LoginViewModel = koinViewModel()
     val title = stringResource(id = R.string.login)
 
-    LaunchedEffect(title) {
-        toolbarViewModel.updateTitle(title)
-    }
-    LaunchedEffect(Unit) {
-        toolbarViewModel.updateLoading(false)
-    }
+    updateToolbarTitle(toolbarViewModel, title)
+    updateToolbarLoading(toolbarViewModel, viewModel.uiState.value.isLoggingIn)
     LoginScreen(
         uiState = viewModel.uiState.value,
         defaultEmail = defaultUsername,

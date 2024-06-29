@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.ui.composables.OrderItem
+import com.example.foodboxapp.ui.composables.updateToolbarLoading
+import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import com.example.foodboxapp.viewmodels.worker.AcceptedOrdersUiState
 import com.example.foodboxapp.viewmodels.worker.AcceptedOrdersViewModel
@@ -24,17 +26,13 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AcceptedOrdersScreen(
     toolbarViewModel: ToolbarViewModel,
-    actionNavToOrder: (Int) -> Unit
+    actionNavToOrder: (String) -> Unit
 ) {
     val viewModel: AcceptedOrdersViewModel = koinViewModel()
     val title = stringResource(id = R.string.accepted_orders)
-    LaunchedEffect(title) {
-        toolbarViewModel.updateTitle(title)
-    }
 
-    LaunchedEffect(viewModel.uiState.value.loading) {
-        toolbarViewModel.updateLoading(viewModel.uiState.value.loading)
-    }
+    updateToolbarTitle(toolbarViewModel, title)
+    updateToolbarLoading(toolbarViewModel, viewModel.uiState.value.loading)
 
     LaunchedEffect(Unit) {
         viewModel.fetchOrders()

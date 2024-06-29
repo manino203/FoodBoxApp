@@ -37,7 +37,7 @@ class OrderViewModel(
         }
     }
 
-    fun update(orderId: Int){
+    fun update(orderId: String){
         viewModelScope.launch(IO){
             acceptedOrdersRepo.getOrder(orderId).onSuccess {
                 uiState.value = uiState.value.copy(order = it)

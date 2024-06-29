@@ -12,6 +12,8 @@ data class Account(
     val paymentMethod: PaymentMethod? = null,
 )
 
+
+
 @Serializable
 sealed class AccountType{
     abstract val title:  Int
@@ -34,8 +36,6 @@ sealed class PaymentMethod{
     open val title: Int = R.string.credit_card
     companion object{
         fun methods() = listOf(Card, GooglePay, Paypal)
-
-
     }
 
     @Serializable

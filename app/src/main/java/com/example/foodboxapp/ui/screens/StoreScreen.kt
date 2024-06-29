@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.sp
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Store
 import com.example.foodboxapp.ui.composables.AsyncImageWithLoading
+import com.example.foodboxapp.ui.composables.updateToolbarLoading
+import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.StoreUiState
 import com.example.foodboxapp.viewmodels.StoreViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
@@ -39,13 +41,12 @@ fun StoreScreen(
 ) {
     val viewModel: StoreViewModel = koinViewModel()
     val title = stringResource(id = R.string.app_name)
-    LaunchedEffect(title) {
-        toolbarViewModel.updateTitle(title)
-    }
+
     LaunchedEffect(Unit) {
         viewModel.getStores()
-        toolbarViewModel.updateLoading(false)
     }
+    updateToolbarTitle(toolbarViewModel, title)
+    updateToolbarLoading(toolbarViewModel, viewModel.uiState.value.loading)
 
     StoreScreen(
         viewModel.uiState.value

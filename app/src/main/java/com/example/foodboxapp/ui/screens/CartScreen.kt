@@ -21,6 +21,8 @@ import com.example.foodboxapp.backend.data_holders.Product
 import com.example.foodboxapp.ui.composables.CheckoutBar
 import com.example.foodboxapp.ui.composables.OrderSummary
 import com.example.foodboxapp.ui.composables.rememberSummaryCategories
+import com.example.foodboxapp.ui.composables.updateToolbarLoading
+import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.CartUiState
 import com.example.foodboxapp.viewmodels.CartViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
@@ -33,13 +35,12 @@ fun CartScreen(
 ) {
     val viewModel: CartViewModel = koinViewModel()
     val title = stringResource(id = R.string.cart_screen_title)
-    LaunchedEffect(title) {
-        toolbarViewModel.updateTitle(title)
-    }
+
+    updateToolbarTitle(toolbarViewModel, title)
+    updateToolbarLoading(toolbarViewModel, viewModel.uiState.value.loading)
 
     LaunchedEffect(Unit) {
         viewModel.collectCartChanges()
-        toolbarViewModel.updateLoading(false)
     }
 
     CartScreen(

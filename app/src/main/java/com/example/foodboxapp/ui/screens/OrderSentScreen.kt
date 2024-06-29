@@ -9,13 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.example.foodboxapp.R
+import com.example.foodboxapp.ui.composables.updateToolbarLoading
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 
 @Composable
 fun OrderSentScreen(
     toolbarViewModel: ToolbarViewModel
 ) {
-
+    updateToolbarLoading(toolbarViewModel, false)
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

@@ -1,5 +1,6 @@
 package com.example.foodboxapp.ui.composables
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.example.foodboxapp.R
 import com.example.foodboxapp.navigation.ScreenDestination
 import com.example.foodboxapp.viewmodels.ToolbarUiState
+import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
@@ -50,7 +53,7 @@ fun Toolbar(
     }
     val cartScreens = listOf(ScreenDestination.Cart, ScreenDestination.Checkout, ScreenDestination.OrderSent)
     val backArrowScreens = listOf(ScreenDestination.Checkout)
-    val actionLessScreens = listOf(ScreenDestination.Login(""), ScreenDestination.Registration, ScreenDestination.Splash, ScreenDestination.AvailableOrders, ScreenDestination.AcceptedOrders, ScreenDestination.Order(0))
+    val actionLessScreens = listOf(ScreenDestination.Login(""), ScreenDestination.Registration, ScreenDestination.Splash, ScreenDestination.AvailableOrders, ScreenDestination.AcceptedOrders, ScreenDestination.Order(""))
     if(uiState.visible){
         Column {
             TopAppBar(
@@ -129,5 +132,29 @@ fun Toolbar(
                     .alpha(if (uiState.loading) 1f else 0f)
             )
         }
+    }
+}
+
+
+@SuppressLint("ComposableNaming")
+@Composable
+fun updateToolbarLoading(
+    vm: ToolbarViewModel,
+    loading: Boolean
+){
+    LaunchedEffect(loading) {
+        vm.updateLoading(loading)
+    }
+}
+
+
+@SuppressLint("ComposableNaming")
+@Composable
+fun updateToolbarTitle(
+    vm: ToolbarViewModel,
+    title: String
+){
+    LaunchedEffect(title) {
+        vm.updateTitle(title)
     }
 }

@@ -1,6 +1,5 @@
 package com.example.foodboxapp.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +48,8 @@ import com.example.foodboxapp.ui.composables.BottomSheet
 import com.example.foodboxapp.ui.composables.Price
 import com.example.foodboxapp.ui.composables.ProductCount
 import com.example.foodboxapp.ui.composables.open
+import com.example.foodboxapp.ui.composables.updateToolbarLoading
+import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.ProductUiState
 import com.example.foodboxapp.viewmodels.ProductViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
@@ -61,14 +62,15 @@ fun ProductScreen(
     toolbarViewModel: ToolbarViewModel
 ) {
     val viewModel: ProductViewModel = koinViewModel()
-    LaunchedEffect(viewModel.uiState.value.title) {
-        toolbarViewModel.updateTitle(viewModel.uiState.value.title ?: "")
-    }
+
+    updateToolbarTitle(toolbarViewModel, viewModel.uiState.value.title ?: "")
+    updateToolbarLoading(toolbarViewModel, viewModel.uiState.value.loading)
+
     LaunchedEffect(Unit) {
         viewModel.loadProducts(storeId)
-        Log.d("ProductItemStoreId", storeId)
-        toolbarViewModel.updateLoading(false)
     }
+
+
 
     ProductScreen(viewModel.uiState.value){ product, quantity ->
         viewModel.addProductToCart(product, quantity, storeId)

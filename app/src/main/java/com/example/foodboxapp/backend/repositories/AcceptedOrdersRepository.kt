@@ -12,7 +12,7 @@ interface AcceptedOrdersRepository {
     suspend fun addOrder(order: Order)
     suspend fun removeOrder(order: Order)
 
-    suspend fun getOrder(id: Int): Result<Order>
+    suspend fun getOrder(id: String): Result<Order>
 }
 
 class AcceptedOrdersRepositoryImpl(
@@ -45,7 +45,7 @@ class AcceptedOrdersRepositoryImpl(
         }
     }
 
-    override suspend fun getOrder(id: Int): Result<Order> {
+    override suspend fun getOrder(id: String): Result<Order> {
         return fetch().firstOrNull {
             it.id == id
         }?.let {

@@ -17,7 +17,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -30,6 +29,8 @@ import com.example.foodboxapp.form.RegistrationForm
 import com.example.foodboxapp.ui.composables.AutoErrorBox
 import com.example.foodboxapp.ui.composables.FormComposable
 import com.example.foodboxapp.ui.composables.rememberFormState
+import com.example.foodboxapp.ui.composables.updateToolbarLoading
+import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.RegistrationUiState
 import com.example.foodboxapp.viewmodels.RegistrationViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
@@ -43,12 +44,9 @@ fun RegistrationScreen(
     val viewModel: RegistrationViewModel = koinViewModel()
     val title = stringResource(id = R.string.register)
 
-    LaunchedEffect(title) {
-        toolbarViewModel.updateTitle(title)
-    }
-    LaunchedEffect(Unit) {
-        toolbarViewModel.updateLoading(false)
-    }
+    updateToolbarTitle(toolbarViewModel, title)
+    updateToolbarLoading(toolbarViewModel, viewModel.uiState.value.loading)
+
     RegistrationScreen(
         uiState = viewModel.uiState.value,
         { form->

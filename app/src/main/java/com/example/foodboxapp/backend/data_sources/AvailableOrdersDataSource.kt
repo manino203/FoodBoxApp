@@ -50,7 +50,7 @@ class AvailableOrdersDataSourceImpl(
         return listOf(
             Order(
                 items,
-                1,
+                "1",
                 sampleAddress,
                 listOf(dummyStoreList[0], dummyStoreList[1]),
                 items.sumOf { it.totalPrice.toDouble() }.toFloat()
