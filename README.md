@@ -15,7 +15,7 @@ Due to the nature of the services integrated into this app, the `google-services
 
 ## Getting Started
 
-To get a copy of this project up and running on your local machine for development and testing purposes, follow these steps:
+To get a copy of this project up and running on your local machine for demonstration and testing purposes, follow these steps:
 
 ### Prerequisites
 
