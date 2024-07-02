@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This repository contains the source code for a demo Android application showcasing a grocery delivery service. Developed using Jetpack Compose for modern UI components, following the MVVM architectural pattern, and utilizing Firestore for backend data storage.
+This repository contains the source code for a demo Android application showcasing a grocery delivery service. Developed using Koin for Dependency Injection and Jetpack Compose for modern UI components, following the MVVM architectural pattern, and utilizing Firestore for backend data storage.
 
 ## Features
 
