@@ -26,7 +26,7 @@ Ensure you have the following installed on your machine:
 
 ### Installation
 
-1. Clone the repository to your local machine using `git clone https://github.com/yourusername/grocery-delivery-demo.git`.
+1. Clone the repository to your local machine using `git clone https://github.com/manino203/FoodBoxApp.git`.
 2. Open the project in Android Studio.
 3. Run the app on an emulator or connect a physical device.
 
@@ -35,4 +35,4 @@ Ensure you have the following installed on your machine:
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the GNU General Public License. See `LICENSE` for more information.
