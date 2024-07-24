@@ -3,13 +3,13 @@ package com.example.foodboxapp.backend.network
 import android.util.Log
 import com.example.foodboxapp.backend.data_holders.Account
 import com.example.foodboxapp.backend.data_holders.Address
+import com.example.foodboxapp.backend.data_holders.CartItem
+import com.example.foodboxapp.backend.data_holders.DataHolderSerializer
+import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.backend.data_holders.Product
 import com.example.foodboxapp.backend.data_holders.Store
-import com.example.foodboxapp.backend.data_holders.toAccountType
-import com.example.foodboxapp.backend.data_holders.toPaymentMethod
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -24,9 +24,15 @@ interface FoodBoxService {
     suspend fun fetchStores(): List<Store>
 
     suspend fun fetchProducts(storeId: String): List<Product>
+
+    suspend fun sendOrder(order: Order)
+    suspend fun fetchAvailableOrders(): List<Order>
+    suspend fun fetchAcceptedOrders(uid: String): List<Order>
+    suspend fun acceptOrder(orderId: String, uid: String)
+    suspend fun completeOrder(orderId: String)
 }
 
-class FoodBoxServiceImpl(): FoodBoxService{
+class FoodBoxServiceImpl : FoodBoxService{
 
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
@@ -102,6 +108,52 @@ class FoodBoxServiceImpl(): FoodBoxService{
         }
     }
 
+    override suspend fun sendOrder(order: Order) {
+        db.collection("orders").document().set(
+            DataHolderSerializer.serializeOrder(order)
+        )
+    }
+
+    override suspend fun fetchAvailableOrders(): List<Order> {
+        return fetchOrders(null)
+    }
+
+    override suspend fun fetchAcceptedOrders(uid: String): List<Order> {
+        return fetchOrders(uid)
+    }
+
+    override suspend fun acceptOrder(orderId: String, uid: String) {
+        db.collection("orders").document(orderId).update("workerId", uid).await()
+    }
+
+    override suspend fun completeOrder(orderId: String) {
+        db.collection("orders").document().delete().await()
+    }
+
+    private suspend fun fetchOrders(workerId: String?): List<Order> {
+        return db.collection("orders").whereEqualTo("workerId", workerId).get().await().mapNotNull { document ->
+            val cartItems: List<CartItem>? = (document.get("items") as? List<Map<String, *>>)?.mapNotNull{
+                DataHolderSerializer.deserializeProduct(db.collection("products").document(it["productId"].toString()).get().await())
+                    ?.let { product ->
+                        CartItem(
+                            product,
+                            count = it["count"].toString().toInt(),
+                            DataHolderSerializer.deserializeStore(db.collection("stores").document(product.storeId).get().await())
+                        )
+                    }
+            }
+            cartItems?.let { items ->
+                Order(
+                    items = items,
+                    id = document.id,
+                    address = document.get("address") as? Address ?: Address(),
+                    stores = cartItems.map { it.store }.toSet().toList(),
+                    total = cartItems.sumOf { it.totalPrice.toDouble() }.toFloat()
+                )
+            }
+        }
+    }
+
     private fun signIn(user: FirebaseUser?): String {
         return try {
             user?.uid ?: throw groupAuthExceptions(NoUidException("No UID found after sign in"))
@@ -118,71 +170,6 @@ class FoodBoxServiceImpl(): FoodBoxService{
     private fun groupFirestoreExceptions(exception: Throwable): Throwable{
         Log.d("Firestore exception", "$exception: ${exception.message}")
         throw exception
-    }
-}
-
-interface DataHolderSerializer{
-    companion object{
-
-        private fun log(tag: String, document: DocumentSnapshot){
-            Log.d(
-                "DatabaseQueryResult: $tag",
-                buildString {
-                    append("$tag{\n")
-                    document.data?.forEach{
-                        append("    ${it.key} = ${it.value}\n")
-                    }
-                    append("}")
-                }
-            )
-
-        }
-
-        fun serializeAccount(acc: Account): Any {
-            return object {
-                val email = acc.email
-                val address = acc.address
-                val type = acc.type.toString()
-                val paymentMethod = acc.paymentMethod.toString()
-            }
-        }
-
-        fun deserializeAccount(uid: String, documentSnapshot: DocumentSnapshot): Account {
-            log("Account", documentSnapshot)
-            return Account(
-                id = uid,
-                email = documentSnapshot.get("email").toString(),
-                address = documentSnapshot.get("address") as? Address ?: Address(),
-                type = documentSnapshot.get("type").toString().toAccountType(),
-                paymentMethod = documentSnapshot.get("paymentMethod").toString().toPaymentMethod()
-            )
-        }
-
-
-        fun deserializeStore(documentSnapshot: DocumentSnapshot): Store {
-            log("Store", documentSnapshot)
-            return Store(
-                title = documentSnapshot.get("title").toString(),
-                address = documentSnapshot.get("address") as? Address,
-                imageUrl = documentSnapshot.get("title").toString(),
-                id = documentSnapshot.id
-            )
-        }
-
-
-        fun deserializeProduct(documentSnapshot: DocumentSnapshot): Product? {
-            log("Product", documentSnapshot)
-            return documentSnapshot.getDouble("price")?.toFloat()?.let { price ->
-                Product(
-                    id = documentSnapshot.id,
-                    storeId = documentSnapshot.get("storeId").toString(),
-                    title = documentSnapshot.get("title").toString(),
-                    imageUrl = documentSnapshot.get("imageUrl").toString(),
-                    price = price,
-                    details = documentSnapshot.get("details").toString(),
-                )
-            }
-        }
     }
 }
 

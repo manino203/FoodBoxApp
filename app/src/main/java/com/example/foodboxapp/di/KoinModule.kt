@@ -3,7 +3,6 @@ package com.example.foodboxapp.di
 import android.content.Context
 import com.example.foodboxapp.backend.data_sources.AcceptedOrdersDataSource
 import com.example.foodboxapp.backend.data_sources.AcceptedOrdersDataSourceImpl
-import com.example.foodboxapp.backend.data_sources.AcceptedOrdersDataSourceImpl.Companion.ACCEPTED_ORDERS_PREFS
 import com.example.foodboxapp.backend.data_sources.AccountDataSource
 import com.example.foodboxapp.backend.data_sources.AccountDataSourceImpl
 import com.example.foodboxapp.backend.data_sources.AvailableOrdersDataSource
@@ -63,9 +62,6 @@ val sharedPrefsModule = module {
     single(named(CART_PREFS_NAME)) {
         androidApplication().getSharedPreferences(CART_PREFS_NAME, Context.MODE_PRIVATE)
     }
-    single(named(ACCEPTED_ORDERS_PREFS)) {
-        androidApplication().getSharedPreferences(ACCEPTED_ORDERS_PREFS, Context.MODE_PRIVATE)
-    }
 }
 
 val serviceModule = module {
@@ -80,9 +76,9 @@ val dataSourceModule = module {
     single<CartDataSource> { CartDataSourceImpl(get(named(CART_PREFS_NAME))) }
     single<SettingsDataSource> { SettingsDataSourceImpl(get(named(SETTINGS_PREFS_NAME))) }
     single<AccountDataSource> { AccountDataSourceImpl(get()) }
-    single<AvailableOrdersDataSource> { AvailableOrdersDataSourceImpl() }
-    single<AcceptedOrdersDataSource> { AcceptedOrdersDataSourceImpl(get(named(ACCEPTED_ORDERS_PREFS))) }
-    single<OrderDataSource> { OrderDataSourceImpl() }
+    single<AvailableOrdersDataSource> { AvailableOrdersDataSourceImpl(get()) }
+    single<AcceptedOrdersDataSource> { AcceptedOrdersDataSourceImpl(get()) }
+    single<OrderDataSource> { OrderDataSourceImpl(get()) }
 
 }
 
@@ -108,9 +104,9 @@ val appModule = module {
     viewModel { ProductViewModel(get(), get(), get(), get()) }
     viewModel { CartViewModel(get(), get()) }
     viewModel { SettingsViewModel(get()) }
-    viewModel { CheckoutViewModel(get(), get()) }
+    viewModel { CheckoutViewModel(get(), get(), get()) }
     viewModel { AccountSettingsViewModel(get()) }
     viewModel { AvailableOrdersViewModel(get(), get()) }
-    viewModel { AcceptedOrdersViewModel(get()) }
+    viewModel { AcceptedOrdersViewModel(get(), get()) }
     viewModel { OrderViewModel(get()) }
 }

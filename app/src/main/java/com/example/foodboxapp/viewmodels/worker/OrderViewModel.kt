@@ -7,6 +7,7 @@ import com.example.foodboxapp.backend.data_holders.CartItem
 import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.backend.repositories.AcceptedOrdersRepository
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 data class OrderUiState(
@@ -33,16 +34,16 @@ class OrderViewModel(
 
     fun completeOrder(order: Order){
         viewModelScope.launch(IO){
-            acceptedOrdersRepo.removeOrder(order)
+            acceptedOrdersRepo.completeOrder(order)
         }
     }
 
     fun update(orderId: String){
         viewModelScope.launch(IO){
-            acceptedOrdersRepo.getOrder(orderId).onSuccess {
+            acceptedOrdersRepo.orders.collectLatest { orders ->
+                orders.firstOrNull{it.id == orderId }?.let {
                 uiState.value = uiState.value.copy(order = it)
-            }.onFailure {
-
+            }
             }
         }
     }

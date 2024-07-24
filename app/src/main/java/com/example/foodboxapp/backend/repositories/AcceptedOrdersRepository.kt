@@ -2,56 +2,35 @@ package com.example.foodboxapp.backend.repositories
 
 import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.backend.data_sources.AcceptedOrdersDataSource
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 interface AcceptedOrdersRepository {
-    suspend fun fetch(): List<Order>
-    suspend fun edit(block: (MutableList<Order>) -> Unit)
-    suspend fun addOrder(order: Order)
-    suspend fun removeOrder(order: Order)
+    val orders: StateFlow<List<Order>>
 
-    suspend fun getOrder(id: String): Result<Order>
+
+    suspend fun fetch(uid: String): List<Order>
+    suspend fun completeOrder(order: Order)
 }
 
 class AcceptedOrdersRepositoryImpl(
     private val dataSource: AcceptedOrdersDataSource
 ): AcceptedOrdersRepository {
-    override suspend fun fetch(): List<Order> {
-        return dataSource.fetch()
-    }
+    override val orders: StateFlow<List<Order>>
+        get() = _orders.asStateFlow()
 
-    @OptIn(ExperimentalSerializationApi::class)
-    override suspend fun edit(block: (MutableList<Order>) -> Unit) {
-        fetch().also {
-            dataSource.edit { key ->
-                putString(key, Json.encodeToString(value = it.toMutableList().also { block(it) }))
-            }
+    private val _orders = MutableStateFlow<List<Order>>(emptyList())
+    override suspend fun fetch(uid: String): List<Order> {
+        return dataSource.fetch(uid).also {
+            _orders.update { it }
         }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
-    override suspend fun addOrder(order: Order) {
-        edit {
-            it.add(order)
-        }
+    override suspend fun completeOrder(order: Order) {
+        dataSource.completeOrder(order.id)
     }
-
-    @OptIn(ExperimentalSerializationApi::class)
-    override suspend fun removeOrder(order: Order) {
-        edit{
-            it.remove(order)
-        }
-    }
-
-    override suspend fun getOrder(id: String): Result<Order> {
-        return fetch().firstOrNull {
-            it.id == id
-        }?.let {
-            Result.success(it)
-        }?: Result.failure(NoSuchElementException("Order with id: <$id> is not in the list"))
-    }
-
 
 }

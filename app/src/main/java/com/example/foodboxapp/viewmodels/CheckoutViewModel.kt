@@ -9,8 +9,8 @@ import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.backend.data_holders.PaymentMethod
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.backend.repositories.CartRepository
+import com.example.foodboxapp.backend.repositories.OrderRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -23,6 +23,7 @@ data class CheckoutUiState(
 )
 
 class CheckoutViewModel(
+    private val orderRepo: OrderRepository,
     private val cartRepo: CartRepository,
     private val accountRepository: AccountRepository
 ): ViewModel() {
@@ -36,12 +37,14 @@ class CheckoutViewModel(
         }
     }
     fun sendOrder(order: Order, navigateToOrderSent: () -> Unit){
+        uiState.value = uiState.value.copy(loading = true)
         viewModelScope.launch(Dispatchers.Default) {
-            uiState.value = uiState.value.copy(loading = true)
-            delay(500)
+            orderRepo.sendOrder(order)
             uiState.value.account?.id?.let { cartRepo.clear(it) }
+        }.invokeOnCompletion {
             uiState.value = uiState.value.copy(loading = false)
-        }.invokeOnCompletion { navigateToOrderSent() }
+            navigateToOrderSent()
+        }
     }
 
     fun updatePaymentMethod(method: PaymentMethod){

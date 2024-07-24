@@ -100,7 +100,7 @@ private fun CheckoutScreen(
             actionPay(
                 Order(
                     items = uiState.cartItems,
-                    "1",
+                    "",
                     address,
                     uiState.cartItems.map { it.store }.toSet().toList(),
                     uiState.total

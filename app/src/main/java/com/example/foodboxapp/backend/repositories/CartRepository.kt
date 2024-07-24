@@ -52,7 +52,7 @@ class CartRepositoryImpl(
         }?.let { index ->
             _cartItems.value.toMutableList().also {
                 it[index] =
-                    it[index].copy(quantity = it[index].quantity + item.quantity)
+                    it[index].copy(quantity = it[index].count + item.count)
             }
         } ?: _cartItems.value.toMutableList().apply { add(item) }, userId)
     }

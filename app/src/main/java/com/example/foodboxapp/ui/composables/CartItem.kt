@@ -98,11 +98,11 @@ private fun CartItemContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     actionChangeItemQuantity?.let{
-                        var tfValue by remember(item.quantity) {
-                            mutableStateOf("${item.quantity}")
+                        var tfValue by remember(item.count) {
+                            mutableStateOf("${item.count}")
                         }
                         ProductCount(
-                            count = item.quantity,
+                            count = item.count,
                             textFieldValue = tfValue,
                             actionChangeTextFieldValue = { tfValue = it }
                         ) {
@@ -110,7 +110,7 @@ private fun CartItemContent(
                         }
                     } ?: Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = "${item.quantity}x",
+                            text = "${item.count}x",
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )

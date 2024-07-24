@@ -35,7 +35,7 @@ fun AcceptedOrdersScreen(
     updateToolbarLoading(toolbarViewModel, viewModel.uiState.value.loading)
 
     LaunchedEffect(Unit) {
-        viewModel.fetchOrders()
+        viewModel.collectChanges()
     }
 
     AcceptedOrdersScreen(uiState = viewModel.uiState.value){
@@ -50,7 +50,7 @@ private fun AcceptedOrdersScreen(
     uiState: AcceptedOrdersUiState,
     actionClickOrder: (Order) -> Unit
 ){
-    if(uiState.orders.isNotEmpty()){
+    if(uiState.orders.isNotEmpty() || uiState.loading){
         LazyColumn(
             Modifier
                 .fillMaxSize()

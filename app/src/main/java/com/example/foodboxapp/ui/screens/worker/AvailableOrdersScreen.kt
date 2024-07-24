@@ -11,7 +11,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,7 +46,7 @@ fun AvailableOrdersScreen(
     updateToolbarLoading(toolbarViewModel, viewModel.uiState.value.loading)
 
     LaunchedEffect(viewModel) {
-        viewModel.update()
+        viewModel.collectChanges()
     }
 
     AvailableOrdersScreen(
@@ -61,7 +60,7 @@ fun AvailableOrdersScreen(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun AvailableOrdersScreen(
     uiState: AvailableOrdersUiState,
@@ -71,6 +70,7 @@ private fun AvailableOrdersScreen(
     val refreshState = rememberPullRefreshState(refreshing = uiState.refreshing, onRefresh = { actionRefresh()})
     Box(
         Modifier
+            .fillMaxSize()
             .pullRefresh(refreshState)
     ){
         if (uiState.orders.isNotEmpty()) {
