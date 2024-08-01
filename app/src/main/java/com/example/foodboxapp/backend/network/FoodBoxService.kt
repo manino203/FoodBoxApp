@@ -129,7 +129,7 @@ class FoodBoxServiceImpl : FoodBoxService{
     private suspend fun fetchOrders(workerId: String?): List<Order> {
         return db.collection("orders").whereEqualTo("workerId", workerId).get().await().mapNotNull { document ->
             DataHolderSerializer.log("Order", document)
-            val cartItems: List<CartItem>? = (document.get("items") as? List<Map<String, *>>)?.mapNotNull{
+            @Suppress("UNCHECKED_CAST") val cartItems: List<CartItem>? = (document.get("items") as? List<Map<String, *>>)?.mapNotNull{
                 DataHolderSerializer.deserializeProduct(db.collection("products").document(it["productId"].toString()).get().await())
                     ?.let { product ->
                         CartItem(
