@@ -3,6 +3,7 @@ package com.example.foodboxapp.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodboxapp.backend.data_holders.AccountType
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.backend.repositories.CartRepository
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +14,7 @@ data class ToolbarUiState(
     val visible: Boolean = true,
     val loading: Boolean = false,
     val title: String = "",
+    val showActions: Boolean = false,
     val cartItemCount: Int = 0
 )
 class ToolbarViewModel(
@@ -35,6 +37,7 @@ class ToolbarViewModel(
         viewModelScope.launch(Dispatchers.IO){
             accountRepo.account.collect {
                 it?.id?.let { id -> cartRepo.retrieveCartItems(id) }
+                uiState.value = uiState.value.copy(showActions = it?.type == AccountType.Client)
             }
         }
         viewModelScope.launch(Dispatchers.IO) {

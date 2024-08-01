@@ -1,5 +1,6 @@
 package com.example.foodboxapp.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,6 +30,7 @@ class AccountSettingsViewModel(
     }
 
     fun modify(id: String, email: String, address: Address, paymentMethod: PaymentMethod?){
+        Log.d("address", address.toString())
         uiState.value = uiState.value.copy(loading = true)
         viewModelScope.launch(Dispatchers.IO){
             accountRepo.update(Account(id, email, address, paymentMethod = paymentMethod))

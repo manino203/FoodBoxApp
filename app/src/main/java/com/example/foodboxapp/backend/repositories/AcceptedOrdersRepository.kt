@@ -6,13 +6,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.serialization.ExperimentalSerializationApi
 
 interface AcceptedOrdersRepository {
     val orders: StateFlow<List<Order>>
 
 
-    suspend fun fetch(uid: String): List<Order>
+    suspend fun fetch(uid: String)
     suspend fun completeOrder(order: Order)
 }
 
@@ -23,13 +22,14 @@ class AcceptedOrdersRepositoryImpl(
         get() = _orders.asStateFlow()
 
     private val _orders = MutableStateFlow<List<Order>>(emptyList())
-    override suspend fun fetch(uid: String): List<Order> {
-        return dataSource.fetch(uid).also {
-            _orders.update { it }
-        }
+    override suspend fun fetch(uid: String) {
+        _orders.update { dataSource.fetch(uid) }
     }
 
     override suspend fun completeOrder(order: Order) {
+        _orders.update {
+            it.toMutableList().apply { remove(order) }
+        }
         dataSource.completeOrder(order.id)
     }
 

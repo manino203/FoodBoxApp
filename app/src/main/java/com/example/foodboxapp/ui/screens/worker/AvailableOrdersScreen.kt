@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -60,40 +61,26 @@ fun AvailableOrdersScreen(
 
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun AvailableOrdersScreen(
     uiState: AvailableOrdersUiState,
     actionRefresh: () -> Unit,
     actionAcceptOrder: (Order) -> Unit
 ){
-    val refreshState = rememberPullRefreshState(refreshing = uiState.refreshing, onRefresh = { actionRefresh()})
-    Box(
-        Modifier
-            .fillMaxSize()
-            .pullRefresh(refreshState)
+
+    OrderListScreen(
+        isEmpty = uiState.orders.isEmpty(),
+        isRefreshing = uiState.refreshing,
+        actionRefresh = { actionRefresh() },
     ){
-        if (uiState.orders.isNotEmpty()) {
-            LazyColumn(
-                Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(uiState.orders) {
-                    OrderItemWithBottomSheet(order = it) {
-                        actionAcceptOrder(it)
-                    }
-                }
-            }
-        } else {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = stringResource(id = R.string.no_orders))
+        items(uiState.orders) {
+            OrderItemWithBottomSheet(order = it) {
+                actionAcceptOrder(it)
             }
         }
-        PullRefreshIndicator(refreshing = uiState.loading, state = refreshState, modifier = Modifier.align(
-            Alignment.TopCenter))
     }
+
+
 }
 
 @Composable
@@ -138,3 +125,37 @@ fun OrderDetailsSheet(
         }
     }
 }
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun OrderListScreen(
+    isRefreshing: Boolean,
+    isEmpty: Boolean,
+    actionRefresh: () -> Unit,
+    items: LazyListScope.() -> Unit
+){
+    val refreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { actionRefresh()})
+    Box(
+        Modifier
+            .fillMaxSize()
+            .pullRefresh(refreshState),
+        contentAlignment = Alignment.Center
+    ){
+
+        LazyColumn(
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items()
+        }
+
+        PullRefreshIndicator(refreshing = isRefreshing, state = refreshState, modifier = Modifier.align(
+            Alignment.TopCenter))
+        if(isEmpty){
+            Text(text = stringResource(id = R.string.no_orders))
+        }
+    }
+}
+

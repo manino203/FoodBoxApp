@@ -6,7 +6,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 interface DataHolderSerializer{
     companion object{
 
-        private fun log(tag: String, document: DocumentSnapshot){
+        fun log(tag: String, document: DocumentSnapshot){
             Log.d(
                 "Deserializing: $tag",
                 buildString {
@@ -31,10 +31,11 @@ interface DataHolderSerializer{
 
         fun deserializeAccount(uid: String, documentSnapshot: DocumentSnapshot): Account {
             log("Account", documentSnapshot)
+            Log.d("address", "${documentSnapshot.get("address") as? Address ?: Address()}")
             return Account(
                 id = uid,
                 email = documentSnapshot.get("email").toString(),
-                address = documentSnapshot.get("address") as? Address ?: Address(),
+                address = Address.fromMap(documentSnapshot.get("address")),
                 type = documentSnapshot.get("type").toString().toAccountType(),
                 paymentMethod = documentSnapshot.get("paymentMethod").toString().toPaymentMethod()
             )
@@ -46,7 +47,7 @@ interface DataHolderSerializer{
             return Store(
                 title = documentSnapshot.get("title").toString(),
                 address = documentSnapshot.get("address") as? Address,
-                imageUrl = documentSnapshot.get("title").toString(),
+                imageUrl = documentSnapshot.get("imageUrl").toString(),
                 id = documentSnapshot.id
             )
         }

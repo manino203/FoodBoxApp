@@ -53,7 +53,6 @@ fun Toolbar(
     }
     val cartScreens = listOf(ScreenDestination.Cart, ScreenDestination.Checkout, ScreenDestination.OrderSent)
     val backArrowScreens = listOf(ScreenDestination.Checkout)
-    val actionLessScreens = listOf(ScreenDestination.Login(""), ScreenDestination.Registration, ScreenDestination.Splash, ScreenDestination.AvailableOrders, ScreenDestination.AcceptedOrders, ScreenDestination.Order(""))
     if(uiState.visible){
         Column {
             TopAppBar(
@@ -83,10 +82,8 @@ fun Toolbar(
                     }
                 },
                 actions = {
-                    actionLessScreens.firstOrNull {
-                        it.javaClass == currentScreen.javaClass
-                    } ?:
-                    if (!cartScreens.contains(currentScreen)) {
+                    if(uiState.showActions){
+                        if (!cartScreens.contains(currentScreen)) {
                             IconButton(onClick = {
                                 navController.navigate(ScreenDestination.Cart)
                             }) {
@@ -111,7 +108,7 @@ fun Toolbar(
                                     )
                                 }
                             }
-                        } else {
+                    } else {
                             IconButton(onClick = {
                                 navController.popUpTo {
                                     !cartScreens.contains(it)
@@ -124,7 +121,7 @@ fun Toolbar(
                             }
 
                     }
-                }
+                }}
             )
             LinearProgressIndicator(
                 Modifier

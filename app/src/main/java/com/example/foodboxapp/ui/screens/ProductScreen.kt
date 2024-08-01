@@ -85,15 +85,17 @@ private fun ProductScreen(
 ){
     val listState = rememberLazyListState()
 
-    LazyColumn(
-        Modifier
-            .fillMaxSize(),
-        listState,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(uiState.products){
-            ProductItem(product = it, actionAddToCart)
+    if (!uiState.loading){
+        LazyColumn(
+            Modifier
+                .fillMaxSize(),
+            listState,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(uiState.products) {
+                ProductItem(product = it, actionAddToCart)
 
+            }
         }
     }
 }

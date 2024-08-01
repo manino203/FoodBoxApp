@@ -56,8 +56,9 @@ fun OrderScreen(
         OrderScreen(viewModel.uiState.value, o, {
             viewModel.crossOutItem(it)
         }) {
-            viewModel.completeOrder(o)
-            actionCompleteOrder()
+            viewModel.completeOrder(o) {
+                actionCompleteOrder()
+            }
         }
     }?: CenteredLoading()
 }

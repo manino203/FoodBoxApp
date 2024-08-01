@@ -73,14 +73,21 @@ private fun CheckoutScreen(
     actionPay: (Order) -> Unit
 ){
     var address by remember {
-        mutableStateOf(Address())
+        mutableStateOf( uiState.account?.address?.let{
+            Address(
+                it.street,
+                it.city,
+                it.zipCode,
+                it.country
+            )
+        }?: Address())
     }
     val addressFormState = rememberFormState(
         form = AddressForm(
-            uiState.account!!.address.street,
-            uiState.account.address.city,
-            uiState.account.address.zipCode,
-            uiState.account.address.country
+            address.street,
+            address.city,
+            address.zipCode,
+            address.country
         ){
             address = Address(
                 it.street,

@@ -2,6 +2,7 @@ package com.example.foodboxapp.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -138,7 +139,8 @@ private fun ChoiceSetting(
     val coroScope = rememberCoroutineScope()
     BottomSheet(showSheet = sheetOpen, sheetState = sheetState, coroScope = coroScope){ dismiss ->
         Column(
-            Modifier.padding(16.dp)
+            Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             choices.forEachIndexed { index, it ->
                 Row(

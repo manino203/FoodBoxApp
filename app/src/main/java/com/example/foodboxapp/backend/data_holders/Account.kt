@@ -3,7 +3,6 @@ package com.example.foodboxapp.backend.data_holders
 import com.example.foodboxapp.R
 import kotlinx.serialization.Serializable
 
-@Serializable
 data class Account(
     val id: String,
     val email: String,
@@ -14,7 +13,6 @@ data class Account(
 
 
 
-@Serializable
 sealed class AccountType{
     abstract val title:  Int
 

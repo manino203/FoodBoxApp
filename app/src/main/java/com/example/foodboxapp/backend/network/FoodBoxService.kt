@@ -87,10 +87,6 @@ class FoodBoxServiceImpl : FoodBoxService{
     override suspend fun fetchStores(): List<Store> {
         return try {
             db.collection("stores").get().await().documents.map {
-                Log.d("Store", "title = ${it.get("title").toString()},\n" +
-                        "address = ${it.get(" address ") as? Address},\n" +
-                        "imageUrl = ${it.get(" title ").toString()},\n" +
-                        "id = ${it.id}")
                 DataHolderSerializer.deserializeStore(it)
             }
         }catch (e: Exception){
@@ -127,11 +123,12 @@ class FoodBoxServiceImpl : FoodBoxService{
     }
 
     override suspend fun completeOrder(orderId: String) {
-        db.collection("orders").document().delete().await()
+        db.collection("orders").document(orderId).delete().await()
     }
 
     private suspend fun fetchOrders(workerId: String?): List<Order> {
         return db.collection("orders").whereEqualTo("workerId", workerId).get().await().mapNotNull { document ->
+            DataHolderSerializer.log("Order", document)
             val cartItems: List<CartItem>? = (document.get("items") as? List<Map<String, *>>)?.mapNotNull{
                 DataHolderSerializer.deserializeProduct(db.collection("products").document(it["productId"].toString()).get().await())
                     ?.let { product ->
@@ -146,7 +143,7 @@ class FoodBoxServiceImpl : FoodBoxService{
                 Order(
                     items = items,
                     id = document.id,
-                    address = document.get("address") as? Address ?: Address(),
+                    address = Address.fromMap(document.get("address")),
                     stores = cartItems.map { it.store }.toSet().toList(),
                     total = cartItems.sumOf { it.totalPrice.toDouble() }.toFloat()
                 )

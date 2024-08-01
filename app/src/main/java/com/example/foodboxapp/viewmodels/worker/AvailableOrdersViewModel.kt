@@ -43,8 +43,14 @@ class AvailableOrdersViewModel(
                 uiState.value = uiState.value.copy(account = it)
             }
         }
+        viewModelScope.launch(Default) {
+            availableOrdersRepo.orders.collectLatest {
+                uiState.value = uiState.value.copy(orders = it)
+            }
+        }
         update()
     }
+
     private fun update(onComplete: () -> Unit = {}){
         uiState.value = uiState.value.copy(loading = true)
         viewModelScope.launch(IO) {
@@ -52,11 +58,6 @@ class AvailableOrdersViewModel(
         }.invokeOnCompletion {
             uiState.value = uiState.value.copy(loading = false)
             onComplete()
-        }
-        viewModelScope.launch(Default) {
-            availableOrdersRepo.orders.collectLatest{
-                uiState.value = uiState.value.copy(orders = it)
-            }
         }
     }
 }

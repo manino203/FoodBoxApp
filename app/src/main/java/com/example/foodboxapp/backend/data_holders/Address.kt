@@ -8,11 +8,17 @@ data class Address (
     val city: String = "",
     val zipCode: String = "",
     val country: String = ""
-)
-
-val sampleAddress = Address(
-    street = "17.novembra 1296",
-    city = "Cadca",
-    zipCode = "02201",
-    country = "Slovakia"
-)
+){
+    companion object{
+        fun fromMap(data: Any?): Address{
+            return (data as? Map<*, *>)?.let{
+                Address(
+                    street = it["street"].toString(),
+                    city = it["city"].toString(),
+                    zipCode = it["zipCode"].toString(),
+                    country = it["country"].toString()
+                )
+            } ?: Address()
+        }
+    }
+}

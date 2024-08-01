@@ -32,9 +32,13 @@ class OrderViewModel(
             })
     }
 
-    fun completeOrder(order: Order){
+    fun completeOrder(order: Order, onComplete: () -> Unit){
+        uiState.value = uiState.value.copy(loading = true)
         viewModelScope.launch(IO){
             acceptedOrdersRepo.completeOrder(order)
+        }.invokeOnCompletion {
+            uiState.value = uiState.value.copy(loading = false)
+            onComplete()
         }
     }
 

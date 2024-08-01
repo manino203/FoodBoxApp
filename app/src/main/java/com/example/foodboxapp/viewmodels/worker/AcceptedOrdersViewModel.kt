@@ -12,7 +12,9 @@ import kotlinx.coroutines.launch
 
 data class AcceptedOrdersUiState(
     val loading: Boolean = false,
-    val orders: List<Order> = emptyList()
+    val refreshing: Boolean = false,
+    val orders: List<Order> = emptyList(),
+    val userId: String? = null
 )
 
 class AcceptedOrdersViewModel(
@@ -26,6 +28,7 @@ class AcceptedOrdersViewModel(
             accountRepo.account.collect{
                 it?.id?.let { id ->
                     uiState.value = uiState.value.copy(loading = true)
+                    uiState.value = uiState.value.copy(userId = id)
                     repo.fetch(id)
                     uiState.value = uiState.value.copy(loading = false)
                 }
@@ -38,4 +41,24 @@ class AcceptedOrdersViewModel(
         }
 
     }
+
+    fun refresh(){
+        uiState.value.userId?.let {
+            uiState.value = uiState.value.copy(refreshing = true)
+            update(it) {
+                uiState.value = uiState.value.copy(refreshing = false)
+            }
+        }
+    }
+
+    private fun update(id: String, onComplete: () -> Unit){
+        uiState.value = uiState.value.copy(loading = true)
+        viewModelScope.launch(IO) {
+            repo.fetch(id)
+        }.invokeOnCompletion {
+            uiState.value = uiState.value.copy(loading = false)
+            onComplete()
+        }
+    }
+
 }
