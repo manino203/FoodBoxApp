@@ -22,6 +22,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,6 +48,7 @@ fun SettingsScreen(
 ) {
     val viewModel:SettingsViewModel = koinViewModel()
     val title = stringResource(id = R.string.settings)
+    val context = LocalContext.current
     updateToolbarTitle(toolbarViewModel, title)
     updateToolbarLoading(toolbarViewModel, false)
 
@@ -60,7 +62,7 @@ fun SettingsScreen(
             viewModel.setTheme(it)
         },
         {
-            viewModel.setLanguage(it)
+            viewModel.setLanguage(it, context)
         }
     )
 

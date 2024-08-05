@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">FoodBox</string>
+    <string name="login">Prihlásenie</string>
+    <string name="register">Registrácia</string>
+    <string name="username">Uživateľské meno</string>
+    <string name="email" translatable="false">Email</string>
+    <string name="password">Heslo</string>
+    <string name="confirm_password">Potvrďte Heslo</string>
+    <string name="forgotten_password">Zabudnuté Heslo</string>
+    <string name="already_have_account">Už mám účet</string>
+
+    <string name="client">Používateľ</string>
+    <string name="employee">Zamestnanec</string>
+    <string name="admin">Admin</string>
+    <string name="new_order">Nová objednávka</string>
+    <string name="order_history">História objednávok</string>
+    <string name="acc_stats">Štatistiky účtu</string>
+    <string name="app_settings">Nastavenia aplikácie</string>
+    <string name="log_out">Odhlásiť sa</string>
+    <string name="network_error">Chyba siete</string>
+    <string name="unknown_error">Neznáma chyba</string>
+    <string name="field_error_required">Toto pole je povinné</string>
+    <string name="field_error_invalid_format">Neplatný formát</string>
+    <string name="field_error_must_be_integer">Musí byť celé číslo</string>
+    <string name="field_error_invalid_password">Heslo musí mať aspoň 6 znakov</string>
+    <string name="field_error_passwords_do_not_match">Heslá sa nezhodujú</string>
+
+    <string name="cart_screen_title">Váš košík</string>
+    <string name="cart_empty">Váš košík je prázdny.</string>
+    <string name="cart_total">Celkom</string>
+    <string name="checkout">Pokladňa</string>
+    <string name="add_to_cart">Pridať do košíka</string>
+
+    <string name="settings">Nastavenia</string>
+    <string name="settings_system_theme">Systémová</string>
+    <string name="settings_dark_theme">Tmavá</string>
+    <string name="settings_light_theme">Svetlá</string>
+    <string name="settings_system_language">Systémový</string>
+    <string name="settings_english_language">Angličtina</string>
+    <string name="settings_slovak_language">Slovenčina</string>
+    <string name="settings_language">Jazyk</string>
+    <string name="settings_theme">Téma</string>
+    <string name="settings_appearance">Vzhľad</string>
+
+    <string name="address_street">Ulica</string>
+    <string name="address_city">Mesto</string>
+    <string name="address_zip_code">PSČ</string>
+    <string name="address_country">Krajina</string>
+
+    <string name="delivery_address">Doručovacia adresa</string>
+    <string name="payment_method">Spôsob platby</string>
+    <string name="summary">Zhrnutie</string>
+    <string name="confirm">Potvrdiť</string>
+    <string name="pay">Zaplatiť</string>
+
+    <string name="credit_card">Kreditná karta</string>
+    <string name="google_pay" translatable="false">Google Pay</string>
+    <string name="paypal" translatable="false">Paypal</string>
+
+    <string name="order_sent">Objednávka odoslaná</string>
+    <string name="order_sent_message">Vaša objednávka bola odoslaná!\nBudete informovaný, keď ju prijme niektorý z našich pracovníkov.</string>
+
+    <string name="account_settings">Nastavenia účtu</string>
+    <string name="modify">Upraviť</string>
+
+    <string name="available_orders">Dostupné objednávky</string>
+    <string name="stores">Obchody</string>
+    <string name="order_id">ID objednávky</string>
+    <string name="no_orders">Momentálne nie sú žiadne objednávky.</string>
+    <string name="accept_order">Prijať objednávku</string>
+
+    <string name="accepted_orders">Prijaté objednávky</string>
+
+    <string name="order">Objednávka</string>
+    <string name="complete_order">Dokončiť objednávku</string>
+
+
+</resources>

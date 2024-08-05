@@ -1,6 +1,7 @@
 package com.example.foodboxapp.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -22,11 +23,13 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.foodboxapp.ui.ui.theme.FoodBoxThemeWithSurface
+import com.example.foodboxapp.backend.data_holders.AccountType
+import com.example.foodboxapp.backend.repositories.SessionState
 import com.example.foodboxapp.navigation.ScreenDestination
 import com.example.foodboxapp.ui.composables.NavigationDrawer
 import com.example.foodboxapp.ui.composables.Toolbar
 import com.example.foodboxapp.ui.screens.DestinationScreen
+import com.example.foodboxapp.ui.ui.theme.FoodBoxThemeWithSurface
 import com.example.foodboxapp.viewmodels.MainUiState
 import com.example.foodboxapp.viewmodels.MainViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
@@ -44,20 +47,50 @@ class MainActivity: AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("activity recreated", "kotko")
 
         setContent{
             val toolbarViewModel: ToolbarViewModel = koinViewModel()
             val viewModel: MainViewModel = koinViewModel()
             val scope = rememberCoroutineScope()
-            val navController: NavController<ScreenDestination> = rememberNavController(
-                startDestination = viewModel.uiState.value.screenDestination
-            )
-            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
             LaunchedEffect(viewModel) {
-                viewModel.collectAccount()
-                viewModel.collectSessionState()
+                viewModel.collectChanges()
             }
+
+            val startDestination = remember (viewModel.uiState.value.sessionState) {
+                Log.d("sessionState change in remember", "$viewModel.uiState.value.sessionState")
+
+                when (viewModel.uiState.value.sessionState) {
+                    SessionState.NOT_LOADED -> {
+                        viewModel.resumeSession()
+                        ScreenDestination.Splash
+                    }
+                    SessionState.LOGGED_IN -> {
+                        if(viewModel.uiState.value.account?.type == AccountType.Client){
+                            ScreenDestination.Main
+                        }else{
+                            ScreenDestination.AvailableOrders
+                        }
+                    }
+                    SessionState.LOGGED_OUT -> ScreenDestination.Login("")
+                }
+            }
+
+            val navController: NavController<ScreenDestination> = rememberNavController(
+                startDestination = startDestination
+            )
+
+            LaunchedEffect(startDestination, navController) {
+                if (startDestination != ScreenDestination.Splash) {
+                    if (navController.backstack.entries.firstOrNull()?.destination != startDestination) {
+                        navController.replaceAll(startDestination)
+                    }
+                }
+            }
+
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
 
             LaunchedEffect(toolbarViewModel) {
                 toolbarViewModel.collectCart()
@@ -96,6 +129,8 @@ class MainActivity: AppCompatActivity(){
             }
         }
     }
+
+
 }
 
 @Composable
@@ -106,14 +141,6 @@ private fun MainActivityContent(
     drawerState: DrawerState,
     actionLogout: () -> Unit
 ){
-
-
-
-    LaunchedEffect(uiState.screenDestination) {
-        navController.replaceAll(uiState.screenDestination)
-    }
-
-
     val scope = rememberCoroutineScope()
 
     ModalNavigationDrawer(

@@ -58,7 +58,7 @@ class AccountRepositoryImpl(
         }catch (e: Exception){
             Log.d("resumeSession", "${e.message}")
             _state.update {
-                SessionState.SESSION_EXPIRED
+                SessionState.LOGGED_OUT
             }
         }
     }
@@ -76,10 +76,7 @@ class AccountRepositoryImpl(
 }
 
 enum class SessionState{
-    NOT_LOADED,
-    SESSION_AVAILABLE,
-    NOT_LOGGED_IN,
     LOGGED_IN,
     LOGGED_OUT,
-    SESSION_EXPIRED
+    NOT_LOADED
 }

@@ -9,6 +9,10 @@ import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.backend.data_holders.Product
 import com.example.foodboxapp.backend.data_holders.Store
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthEmailException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -44,7 +48,7 @@ class FoodBoxServiceImpl : FoodBoxService{
                 DataHolderSerializer.deserializeAccount(uid, it)
             }
         }catch (e: Exception){
-            throw groupFirestoreExceptions(e)
+            throw groupExceptions(e)
         }
     }
 
@@ -55,7 +59,7 @@ class FoodBoxServiceImpl : FoodBoxService{
                 DataHolderSerializer.serializeAccount(acc)
             ).await()
         }catch(e: Exception){
-            throw groupFirestoreExceptions(e)
+            throw groupExceptions(e)
         }
         return fetchAccount(acc.id)
     }
@@ -77,7 +81,7 @@ class FoodBoxServiceImpl : FoodBoxService{
                     email = email
                 )
             )
-        } ?: throw groupAuthExceptions(NoUidException(""))
+        } ?: throw groupExceptions(RegisterNoUidException())
     }
 
     override fun logout() {
@@ -90,7 +94,7 @@ class FoodBoxServiceImpl : FoodBoxService{
                 DataHolderSerializer.deserializeStore(it)
             }
         }catch (e: Exception){
-            throw groupFirestoreExceptions(e)
+            throw groupExceptions(e)
         }
     }
 
@@ -100,7 +104,7 @@ class FoodBoxServiceImpl : FoodBoxService{
                 DataHolderSerializer.deserializeProduct(it)
             }
         }catch (e: Exception){
-            throw groupFirestoreExceptions(e)
+            throw groupExceptions(e)
         }
     }
 
@@ -153,20 +157,35 @@ class FoodBoxServiceImpl : FoodBoxService{
 
     private fun signIn(user: FirebaseUser?): String {
         return try {
-            user?.uid ?: throw groupAuthExceptions(NoUidException("No UID found after sign in"))
+            user?.uid ?: throw groupExceptions(SignInNoUidException())
         } catch (e: Exception) {
-            throw groupAuthExceptions(e)
+            throw groupExceptions(e)
         }
     }
 
-    private fun groupAuthExceptions(exception: Throwable): Throwable{
-        Log.d("Auth exception", "$exception: ${exception.message}")
-        throw exception
-    }
-
-    private fun groupFirestoreExceptions(exception: Throwable): Throwable{
+    private fun groupExceptions(exception: Throwable): Throwable{
         Log.d("Firestore exception", "$exception: ${exception.message}")
-        throw exception
+        return when(exception){
+            is FirebaseAuthWeakPasswordException -> LocalizedException("Password is too weak")
+
+            is FirebaseAuthEmailException -> LocalizedException("Invalid email")
+
+            is FirebaseAuthInvalidCredentialsException -> LocalizedException("Invalid email or password")
+
+            is FirebaseAuthRecentLoginRequiredException -> LocalizedException("Suspicious activity detected, please login again")
+
+            is ClassCastException -> LocalizedException("There was an issue retrieving your data")
+
+            else -> {
+                LocalizedException("Something went wrong")
+            }
+        }
     }
 }
+
+class SignInNoUidException: Throwable()
+class RegisterNoUidException: Throwable()
+//class LocalizedException(val messageId: Int? = null): Exception()
+class LocalizedException(val messageId: String = ""): Exception(messageId)
+
 
