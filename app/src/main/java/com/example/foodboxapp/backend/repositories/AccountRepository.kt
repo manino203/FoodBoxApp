@@ -1,6 +1,5 @@
 package com.example.foodboxapp.backend.repositories
 
-import android.util.Log
 import com.example.foodboxapp.backend.data_holders.Account
 import com.example.foodboxapp.backend.data_sources.AccountDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,11 +8,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 interface AccountRepository{
-    suspend fun login(email: String, password: String)
-    suspend fun register(email: String, password: String)
-    suspend fun update(account: Account)
-    suspend fun resumeSession()
-    suspend fun logout()
+    suspend fun login(email: String, password: String): Result<Account>
+    suspend fun register(email: String, password: String): Result<Account>
+    suspend fun update(account: Account): Result<Account>
+    suspend fun resumeSession(): Result<Account>
+    suspend fun logout(): Result<Unit>
 
     val state: StateFlow<SessionState>
     val account: StateFlow<Account?>
@@ -29,50 +28,55 @@ class AccountRepositoryImpl(
     private val _account = MutableStateFlow<Account?>(null)
     override val account: StateFlow<Account?> get() = _account.asStateFlow()
 
-    override suspend fun login(email: String, password: String) {
-        _account.update{
-            dataSource.login(email, password)
-        }
-        _state.update {
-            SessionState.LOGGED_IN
-        }
-    }
-
-    override suspend fun register(email: String, password: String) {
-        _account.update{ dataSource.register(email, password) }
-        _state.update {
-            SessionState.LOGGED_IN
-        }
-    }
-
-    override suspend fun update(account: Account) {
-        _account.update { dataSource.update(account) }
-    }
-
-    override suspend fun resumeSession() {
-        try{
-            _account.update { dataSource.resumeSession() }
+    override suspend fun login(email: String, password: String): Result<Account> {
+        return dataSource.login(email, password).onSuccess { acc ->
+            _account.update{
+                acc
+            }
             _state.update {
                 SessionState.LOGGED_IN
             }
-        }catch (e: Exception){
-            Log.d("resumeSession", "${e.message}")
+        }
+    }
+
+    override suspend fun register(email: String, password: String): Result<Account> {
+        return dataSource.register(email, password).onSuccess { acc ->
+            _account.update { acc }
+            _state.update {
+                SessionState.LOGGED_IN
+            }
+        }
+    }
+
+    override suspend fun update(account: Account): Result<Account> {
+        return dataSource.update(account).onSuccess { acc ->
+            _account.update { acc }
+        }
+    }
+
+    override suspend fun resumeSession(): Result<Account> {
+        return dataSource.resumeSession().onSuccess { acc ->
+            _account.update { acc }
+            _state.update {
+                SessionState.LOGGED_IN
+            }
+        }.onFailure{
             _state.update {
                 SessionState.LOGGED_OUT
             }
         }
     }
 
-    override suspend fun logout() {
-        dataSource.logout()
-        _account.update {
-            null
-        }
-        _state.update {
-            SessionState.LOGGED_OUT
+    override suspend fun logout(): Result<Unit> {
+        return dataSource.logout().onSuccess {
+            _account.update {
+                null
+            }
+            _state.update {
+                SessionState.LOGGED_OUT
+            }
         }
     }
-
 }
 
 enum class SessionState{

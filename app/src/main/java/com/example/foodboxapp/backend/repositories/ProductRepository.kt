@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 interface ProductRepository {
     val products: StateFlow<List<Product>>
 
-    suspend fun fetchProducts(storeId: String)
+    suspend fun fetchProducts(storeId: String): Result<List<Product>>
 
 }
 
@@ -24,23 +24,9 @@ class ProductRepositoryImpl(
     override val products: StateFlow<List<Product>>
         get() = _products.asStateFlow()
 
-    override suspend fun fetchProducts(storeId: String) {
-        _products.update{
-            dataSource.fetchProducts(storeId)
-       }
+    override suspend fun fetchProducts(storeId: String): Result<List<Product>> {
+        return dataSource.fetchProducts(storeId).onSuccess { p ->
+            _products.update{ p }
+        }
     }
-
 }
-
-val dummyProductLists  = mapOf(
-    Pair("Tesco",
-    listOf(
-        Product(
-            id = "rqpVJJ2hguBkrtAg2Fum",
-            storeId = "sX8U57gwWT9xsUUx7NH7",
-            "Tesco Finest Clementine Or Sweet Easy Peeler 600G",
-            "https://digitalcontent.api.tesco.com/v2/media/ghs/cfb3c09d-511a-4982-b329-f0d1793ad5e0/ac881f1a-3e3d-4c5f-a316-68da6226a708.jpeg?h=225&w=225",
-            2.5f
-        ),
-        ))
-)

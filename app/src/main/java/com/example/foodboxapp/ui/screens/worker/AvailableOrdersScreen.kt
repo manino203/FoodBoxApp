@@ -2,8 +2,10 @@ package com.example.foodboxapp.ui.screens.worker
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -141,14 +143,19 @@ fun OrderListScreen(
             .pullRefresh(refreshState),
         contentAlignment = Alignment.Center
     ){
-
         LazyColumn(
             Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            item{
+                Spacer(modifier = Modifier.height(8.dp))
+            }
             items()
+            item{
+                Spacer(modifier = Modifier.height(8.dp))
+            }
         }
 
         PullRefreshIndicator(refreshing = isRefreshing, state = refreshState, modifier = Modifier.align(

@@ -10,6 +10,7 @@ import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.backend.repositories.CartRepository
 import com.example.foodboxapp.backend.repositories.ProductRepository
 import com.example.foodboxapp.backend.repositories.StoreRepository
+import com.example.foodboxapp.ui.composables.UiStateError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -19,7 +20,7 @@ data class ProductUiState(
     val store: Store? = null,
     val products: List<Product> = emptyList(),
     val title: String? = null,
-
+    val error: UiStateError? = null
     )
 class ProductViewModel(
     private val productRepo: ProductRepository,
@@ -31,7 +32,6 @@ class ProductViewModel(
     val uiState = mutableStateOf(ProductUiState())
 
     fun loadProducts(storeId: String){
-        uiState.value = uiState.value.copy(loading = true)
         viewModelScope.launch(Dispatchers.IO) {
             productRepo.products.collect {
                 uiState.value =
@@ -39,8 +39,11 @@ class ProductViewModel(
             }
         }
 
+        uiState.value = uiState.value.copy(loading = true)
         viewModelScope.launch(Dispatchers.Default) {
-            productRepo.fetchProducts(storeId)
+            productRepo.fetchProducts(storeId).onFailure {
+                uiState.value = uiState.value.copy(error = UiStateError(it))
+            }
         }.invokeOnCompletion {
             uiState.value = uiState.value.copy(loading = false)
         }
@@ -61,7 +64,7 @@ class ProductViewModel(
                     )
                 }
             }.onFailure {
-                //todo
+                uiState.value = uiState.value.copy(error = UiStateError(it))
             }
         }
     }

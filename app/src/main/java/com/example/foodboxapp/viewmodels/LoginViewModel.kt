@@ -21,11 +21,7 @@ class LoginViewModel(
     fun login(username: String, password: String){
         viewModelScope.launch(Dispatchers.IO){
             uiState.value = uiState.value.copy(isLoggingIn = true)
-            kotlin.runCatching{
-                accountRepository.login(username, password)
-            }.onFailure {
-                uiState.value = uiState.value.copy(error = UiStateError(it))
-            }
+                accountRepository.login(username, password).onFailure { uiState.value = uiState.value.copy(error = UiStateError(it)) }
         }.invokeOnCompletion {
             uiState.value = uiState.value.copy(isLoggingIn = false)
         }

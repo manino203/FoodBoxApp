@@ -10,6 +10,7 @@ import com.example.foodboxapp.backend.data_holders.PaymentMethod
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.backend.repositories.CartRepository
 import com.example.foodboxapp.backend.repositories.OrderRepository
+import com.example.foodboxapp.ui.composables.UiStateError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -19,7 +20,8 @@ data class CheckoutUiState(
     val cartItems: List<CartItem> = emptyList(),
     val account: Account? = null,
     val paymentMethod: PaymentMethod? = account?.paymentMethod,
-    val total: Float = cartItems.sumOf { it.totalPrice.toDouble() }.toFloat()
+    val total: Float = cartItems.sumOf { it.totalPrice.toDouble() }.toFloat(),
+    val error: UiStateError? = null
 )
 
 class CheckoutViewModel(
@@ -39,7 +41,7 @@ class CheckoutViewModel(
     fun sendOrder(order: Order, navigateToOrderSent: () -> Unit){
         uiState.value = uiState.value.copy(loading = true)
         viewModelScope.launch(Dispatchers.Default) {
-            orderRepo.sendOrder(order)
+            orderRepo.sendOrder(order).onFailure { uiState.value = uiState.value.copy(error = UiStateError(it)) }
             uiState.value.account?.id?.let { cartRepo.clear(it) }
         }.invokeOnCompletion {
             uiState.value = uiState.value.copy(loading = false)

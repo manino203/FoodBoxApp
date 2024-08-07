@@ -7,6 +7,7 @@ import com.example.foodboxapp.backend.data_holders.Account
 import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.backend.repositories.AvailableOrdersRepository
+import com.example.foodboxapp.ui.composables.UiStateError
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.collectLatest
@@ -16,7 +17,8 @@ data class AvailableOrdersUiState(
     val loading: Boolean = false,
     val refreshing: Boolean = false,
     val account: Account? = null,
-    val orders: List<Order> = emptyList()
+    val orders: List<Order> = emptyList(),
+    val error: UiStateError? = null
 )
 
 class AvailableOrdersViewModel(
@@ -27,7 +29,9 @@ class AvailableOrdersViewModel(
 
     fun acceptOrder(order: Order){
         viewModelScope.launch(IO) {
-            uiState.value.account?.id?.let { availableOrdersRepo.acceptOrder(order, it) }
+            uiState.value.account?.id?.let { id ->
+                availableOrdersRepo.acceptOrder(order, id).onFailure { uiState.value = uiState.value.copy(error = UiStateError(it)) }
+            }
         }
     }
 
@@ -54,7 +58,7 @@ class AvailableOrdersViewModel(
     private fun update(onComplete: () -> Unit = {}){
         uiState.value = uiState.value.copy(loading = true)
         viewModelScope.launch(IO) {
-            availableOrdersRepo.fetch()
+            availableOrdersRepo.fetch().onFailure { uiState.value = uiState.value.copy(error = UiStateError(it)) }
         }.invokeOnCompletion {
             uiState.value = uiState.value.copy(loading = false)
             onComplete()

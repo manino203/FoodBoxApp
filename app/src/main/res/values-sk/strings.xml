@@ -11,14 +11,13 @@
     <string name="already_have_account">Už mám účet</string>
 
     <string name="client">Používateľ</string>
-    <string name="employee">Zamestnanec</string>
+    <string name="employee">Pracovník</string>
     <string name="admin">Admin</string>
     <string name="new_order">Nová objednávka</string>
     <string name="order_history">História objednávok</string>
     <string name="acc_stats">Štatistiky účtu</string>
     <string name="app_settings">Nastavenia aplikácie</string>
     <string name="log_out">Odhlásiť sa</string>
-    <string name="network_error">Chyba siete</string>
     <string name="unknown_error">Neznáma chyba</string>
     <string name="field_error_required">Toto pole je povinné</string>
     <string name="field_error_invalid_format">Neplatný formát</string>
@@ -75,5 +74,17 @@
     <string name="order">Objednávka</string>
     <string name="complete_order">Dokončiť objednávku</string>
 
+    <string name="failed_to_create_account">Nepodarilo sa vytvoriť účet. Skúste to prosím znova.</string>
+    <string name="sign_in_error">Počas prihlasovania došlo k chybe. Skúste to prosím znova.</string>
+    <string name="weak_password">Heslo je príliš slabé.</string>
+    <string name="invalid_email">Neplatný email.</string>
+    <string name="invalid_credentials">Nesprávny email alebo heslo.</string>
+    <string name="suspicious_activity">Zaznamenaná podozrivá aktivita, prosím prihláste sa znova.</string>
+    <string name="no_such_account">K tejto emailovej adrese neexistuje účet.</string>
+    <string name="email_already_exists">Táto emailová adresa je už registrovaná. Použite prosím inú emailovú adresu.</string>
+    <string name="issue_retrieving_data">Vyskytol sa problém s načítaním vašich údajov.</string>
+    <string name="database_error">Pri prístupe do databázy došlo k chybe. Skúste to prosím neskôr.</string>
+    <string name="network_error">Nepodarilo sa pripojiť k sieti. Skontrolujte prosím svoje internetové pripojenie.</string>
+    <string name="generic_error">Niečo sa pokazilo.</string>
 
 </resources>

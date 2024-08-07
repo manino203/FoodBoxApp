@@ -25,10 +25,7 @@ class RegistrationViewModel(
     fun register(form: FilledRegistrationForm){
         viewModelScope.launch {
             uiState.value = uiState.value.copy(loading = true)
-            kotlin.runCatching{
-                sessionRepo.register(form.email, form.password)
-            }
-                .onFailure{
+                sessionRepo.register(form.email, form.password).onFailure{
                     uiState.value = uiState.value.copy(error = UiStateError(it))
                 }
         }.invokeOnCompletion {

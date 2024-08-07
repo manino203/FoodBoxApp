@@ -74,10 +74,10 @@ fun NavigationDrawer(
                     image = R.drawable.ic_launcher_foreground,
                     title = it.email,
                     subtitle = stringResource(it.type.title),
-                    modifier = Modifier.clickable {
+                    modifier = if (uiState.account.type == AccountType.Client) Modifier.clickable {
                         navController.navigate(ScreenDestination.AccountSettings)
                         actionClose()
-                    }
+                    }else Modifier
                 )
             }
             uiState.account?.let{

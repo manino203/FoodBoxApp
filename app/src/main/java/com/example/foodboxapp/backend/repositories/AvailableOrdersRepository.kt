@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.update
 
 interface AvailableOrdersRepository {
     val orders: StateFlow<List<Order>>
-    suspend fun fetch()
-    suspend fun acceptOrder(order: Order, uid: String)
+    suspend fun fetch(): Result<List<Order>>
+    suspend fun acceptOrder(order: Order, uid: String): Result<Unit>
 }
 
 class AvailableOrdersRepositoryImpl(
@@ -21,11 +21,13 @@ class AvailableOrdersRepositoryImpl(
 
     private val _orders = MutableStateFlow(emptyList<Order>())
 
-    override suspend fun fetch() {
-        _orders.update{ dataSource.fetch() }
+    override suspend fun fetch(): Result<List<Order>> {
+        return dataSource.fetch().onSuccess { o ->
+            _orders.update{ o }
+        }
     }
-    override suspend fun acceptOrder(order: Order, uid: String) {
-        dataSource.acceptOrder(order, uid).also {
+    override suspend fun acceptOrder(order: Order, uid: String): Result<Unit> {
+        return dataSource.acceptOrder(order, uid).onSuccess {
             _orders.update {
                 it.toMutableList().apply { remove(order) }
             }

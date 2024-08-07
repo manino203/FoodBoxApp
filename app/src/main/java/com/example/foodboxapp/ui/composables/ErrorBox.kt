@@ -1,5 +1,6 @@
 package com.example.foodboxapp.ui.composables
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -24,8 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.foodboxapp.R
-import java.nio.channels.UnresolvedAddressException
+import com.example.foodboxapp.backend.network.LocalizedException
 
 
 @Composable
@@ -83,37 +83,12 @@ data class UiStateError(
 fun UiStateError.localize(): String {
     val context = LocalContext.current
     return remember(exception, context) {
-        if (exception.isNetworkException()) {
-            return@remember context.resources.getString(R.string.network_error)
-        }
-
-        val message = when (exception) {
-            is Error -> exception.localizedMessage
-            is Exception -> exception.localizedMessage
-            else -> exception.message
-        }
-
-        return@remember if (message.isNullOrEmpty()) {
-            context.resources.getString(R.string.unknown_error)
-        } else {
-            message
+        if (exception is LocalizedException) {
+            Log.d("Exception", "${exception.originalException}: ${exception.originalException?.message}")
+            context.resources.getString(exception.messageId)
+        }else{
+            Log.d("Exception", "$exception: ${exception.message}")
+            exception.message ?: ""
         }
     }
-}
-
-private fun Throwable.isNetworkException(): Boolean = when (this) {
-    is java.net.URISyntaxException -> true
-    is java.net.UnknownHostException -> true
-    is java.net.BindException -> true
-    is java.net.ConnectException -> true
-    is java.net.HttpRetryException -> true
-    is java.net.MalformedURLException -> true
-    is java.net.NoRouteToHostException -> true
-    is java.net.PortUnreachableException -> true
-    is java.net.ProtocolException -> true
-    is java.net.SocketException -> true
-    is java.net.SocketTimeoutException -> true
-    is java.net.UnknownServiceException -> true
-    is UnresolvedAddressException -> true
-    else -> false
 }

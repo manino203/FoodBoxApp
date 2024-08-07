@@ -13,6 +13,7 @@ import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Address
 import com.example.foodboxapp.backend.data_holders.PaymentMethod
 import com.example.foodboxapp.form.AddressForm
+import com.example.foodboxapp.ui.composables.AutoErrorBox
 import com.example.foodboxapp.ui.composables.Category
 import com.example.foodboxapp.ui.composables.CenteredLoading
 import com.example.foodboxapp.ui.composables.FormComposable
@@ -79,6 +80,9 @@ private fun AccountSettingsScreen(
         }
     )
     LazyColumn(Modifier.fillMaxSize()) {
+        item{
+            AutoErrorBox(uiState.error)
+        }
         Category(title = R.string.delivery_address) {
             FormComposable(addressFormState)
         }

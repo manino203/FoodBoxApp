@@ -19,7 +19,6 @@
     <string name="acc_stats">Account Stats</string>
     <string name="app_settings">App Settings</string>
     <string name="log_out">Log out</string>
-    <string name="network_error">Network error</string>
     <string name="unknown_error">Unknown error</string>
     <string name="field_error_required">This field is required</string>
     <string name="field_error_invalid_format">Invalid format</string>
@@ -75,6 +74,19 @@
 
     <string name="order">Order</string>
     <string name="complete_order">Complete Order</string>
+
+    <string name="failed_to_create_account">Failed to create an account. Please try again.</string>
+    <string name="sign_in_error">An error occurred during sign-in. Please try again.</string>
+    <string name="weak_password">Password is too weak.</string>
+    <string name="invalid_email">Invalid email.</string>
+    <string name="invalid_credentials">Invalid email or password.</string>
+    <string name="suspicious_activity">Suspicious activity detected, please login again.</string>
+    <string name="no_such_account">No account found with this email address.</string>
+    <string name="email_already_exists">The email address is already registered. Please use a different email.</string>
+    <string name="issue_retrieving_data">There was an issue retrieving your data.</string>
+    <string name="database_error">An error occurred when accessing the database. Please try again later.</string>
+    <string name="network_error">Failed to connect to the network. Please check your internet connection.</string>
+    <string name="generic_error">Something went wrong.</string>
 
 
 

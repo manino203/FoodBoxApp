@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.backend.repositories.AcceptedOrdersRepository
 import com.example.foodboxapp.backend.repositories.AccountRepository
+import com.example.foodboxapp.ui.composables.UiStateError
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -14,7 +15,8 @@ data class AcceptedOrdersUiState(
     val loading: Boolean = false,
     val refreshing: Boolean = false,
     val orders: List<Order> = emptyList(),
-    val userId: String? = null
+    val userId: String? = null,
+    val error: UiStateError? = null
 )
 
 class AcceptedOrdersViewModel(
@@ -22,14 +24,13 @@ class AcceptedOrdersViewModel(
     private val accountRepo: AccountRepository
 ): ViewModel(){
     val uiState = mutableStateOf(AcceptedOrdersUiState())
-
     fun collectChanges(){
         viewModelScope.launch(IO) {
-            accountRepo.account.collect{
-                it?.id?.let { id ->
-                    uiState.value = uiState.value.copy(loading = true)
+            accountRepo.account.collect{ acc ->
+                acc?.id?.let { id ->
                     uiState.value = uiState.value.copy(userId = id)
-                    repo.fetch(id)
+                    uiState.value = uiState.value.copy(loading = true)
+                    fetch(id)
                     uiState.value = uiState.value.copy(loading = false)
                 }
             }
@@ -39,7 +40,6 @@ class AcceptedOrdersViewModel(
                 uiState.value = uiState.value.copy(orders = it)
             }
         }
-
     }
 
     fun refresh(){
@@ -51,10 +51,15 @@ class AcceptedOrdersViewModel(
         }
     }
 
+    private suspend fun fetch(id: String) = repo.fetch(id).onFailure {
+        uiState.value = uiState.value.copy(error = UiStateError(it))
+    }
+
     private fun update(id: String, onComplete: () -> Unit){
         uiState.value = uiState.value.copy(loading = true)
+
         viewModelScope.launch(IO) {
-            repo.fetch(id)
+            fetch(id)
         }.invokeOnCompletion {
             uiState.value = uiState.value.copy(loading = false)
             onComplete()

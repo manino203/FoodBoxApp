@@ -14,7 +14,7 @@ val dummyStoreList = emptyList<Store>(
 interface StoreRepository{
 
     val stores: StateFlow<List<Store>>
-    suspend fun fetchStores()
+    suspend fun fetchStores(): Result<List<Store>>
     suspend fun getStore(id: String): Result<Store>
 }
 
@@ -25,9 +25,9 @@ class StoreRepositoryImpl(
     private val _stores = MutableStateFlow(emptyList<Store>())
     override val stores: StateFlow<List<Store>>
         get() = _stores.asStateFlow()
-    override suspend fun fetchStores() {
-        _stores.update {
-            dataSource.fetchStores()
+    override suspend fun fetchStores(): Result<List<Store>> {
+        return dataSource.fetchStores() .onSuccess{ s ->
+            _stores.update { s }
         }
     }
 
