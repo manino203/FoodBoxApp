@@ -7,10 +7,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-val dummyStoreList = emptyList<Store>(
-
-)
-
 interface StoreRepository{
 
     val stores: StateFlow<List<Store>>
