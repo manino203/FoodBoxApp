@@ -68,7 +68,7 @@ fun ProductScreen(
     updateToolbarTitle(toolbarViewModel, viewModel.uiState.value.title ?: "")
     updateToolbarLoading(toolbarViewModel, viewModel.uiState.value.loading)
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         viewModel.loadProducts(storeId)
     }
 
@@ -94,6 +94,7 @@ private fun ProductScreen(
     RefreshableScreen(
         isRefreshing = uiState.isRefreshing,
         isEmpty = uiState.products.isEmpty(),
+        emptyMessage = stringResource(id = R.string.nothing_here),
         actionRefresh = actionRefresh
     ){
         LazyColumn(

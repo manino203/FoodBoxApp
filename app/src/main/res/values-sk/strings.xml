@@ -74,6 +74,8 @@
     <string name="order">Objednávka</string>
     <string name="complete_order">Dokončiť objednávku</string>
 
+    <string name="nothing_here">Nič tu nieje…</string>
+
     <string name="failed_to_create_account">Nepodarilo sa vytvoriť účet. Skúste to prosím znova.</string>
     <string name="sign_in_error">Počas prihlasovania došlo k chybe. Skúste to prosím znova.</string>
     <string name="weak_password">Heslo je príliš slabé.</string>

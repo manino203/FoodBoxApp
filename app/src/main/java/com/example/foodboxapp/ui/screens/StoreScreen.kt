@@ -71,6 +71,7 @@ private fun StoreScreen(
     RefreshableScreen(
         isRefreshing = uiState.isRefreshing,
         isEmpty = uiState.storeList.isEmpty(),
+        emptyMessage = stringResource(id = R.string.nothing_here),
         actionRefresh = actionRefresh
     ){
     LazyColumn(

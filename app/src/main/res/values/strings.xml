@@ -75,6 +75,8 @@
     <string name="order">Order</string>
     <string name="complete_order">Complete Order</string>
 
+    <string name="nothing_here">There\'s nothing here…</string>
+
     <string name="failed_to_create_account">Failed to create an account. Please try again.</string>
     <string name="sign_in_error">An error occurred during sign-in. Please try again.</string>
     <string name="weak_password">Password is too weak.</string>
