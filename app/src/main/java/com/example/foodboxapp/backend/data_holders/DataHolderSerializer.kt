@@ -74,20 +74,6 @@ interface DataHolderSerializer{
             )
         }
 
-        private suspend fun deserializeCartItem(item: Map<String, *>,  getProduct: suspend (String) -> Product?, getStore: suspend (String) -> Store): CartItem?{
-            return (item["count"] as? Int)?.let { count ->
-                getProduct(item["productId"].toString())?.let {
-                    CartItem(
-                        product = it,
-                        count = count,
-                        store = getStore(it.storeId),
-                        totalPrice = it.price * count
-                    )
-                }
-            }
-        }
-
-
         fun serializeOrder(order: Order): Map<String, *>{
             return mapOf(
                 Pair("items", order.items.map { serializeCartItem(it) }),
