@@ -11,7 +11,7 @@ interface StoreRepository{
 
     val stores: StateFlow<List<Store>>
     suspend fun fetchStores(): Result<List<Store>>
-    suspend fun getStore(id: String): Result<Store>
+    fun getStore(id: String): Result<Store>
 }
 
 
@@ -27,7 +27,7 @@ class StoreRepositoryImpl(
         }
     }
 
-    override suspend fun getStore(id: String): Result<Store> {
+    override fun getStore(id: String): Result<Store> {
         return stores.value.firstOrNull {
             it.id == id
         }?.let {

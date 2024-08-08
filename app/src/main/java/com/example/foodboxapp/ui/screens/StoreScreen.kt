@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +26,8 @@ import androidx.compose.ui.unit.sp
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Store
 import com.example.foodboxapp.ui.composables.AsyncImageWithLoading
+import com.example.foodboxapp.ui.composables.RefreshableScreen
+import com.example.foodboxapp.ui.composables.ShowErrorToast
 import com.example.foodboxapp.ui.composables.updateToolbarLoading
 import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.StoreUiState
@@ -44,26 +45,34 @@ fun StoreScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getStores()
+        viewModel.collectChanges()
     }
     updateToolbarTitle(toolbarViewModel, title)
     updateToolbarLoading(toolbarViewModel, viewModel.uiState.value.loading)
 
     StoreScreen(
-        viewModel.uiState.value
+        viewModel.uiState.value,
+        {viewModel.refresh()}
     ){
         actionNavigateToStoreScreen(it.id)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StoreScreen(
     uiState: StoreUiState,
+    actionRefresh: () -> Unit,
     actionStoreClick: (Store) -> Unit
 ){
     val listState = rememberLazyListState()
 
+    ShowErrorToast(error = uiState.error)
 
+    RefreshableScreen(
+        isRefreshing = uiState.isRefreshing,
+        isEmpty = uiState.storeList.isEmpty(),
+        actionRefresh = actionRefresh
+    ){
     LazyColumn(
         Modifier
             .fillMaxSize(),
@@ -76,6 +85,7 @@ private fun StoreScreen(
                 actionStoreClick(it)
             }
         }
+    }
     }
 
 

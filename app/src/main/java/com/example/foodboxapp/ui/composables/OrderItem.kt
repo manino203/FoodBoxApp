@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.ui.screens.worker.OrderDetailsSheet
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun OrderItem(
@@ -35,7 +37,11 @@ fun OrderItem(
             Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ){
-            Text(text = "${stringResource(id = R.string.order_id)}: ${order.id}")
+            Text(text = "${stringResource(id = R.string.order_date)}: ${
+                order.timestamp?.seconds?.let {
+                    SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(it * 1000)
+                } ?: ""
+            }")
             HorizontalDivider()
 
             AddressComposable(

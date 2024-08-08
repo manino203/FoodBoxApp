@@ -9,8 +9,8 @@ import kotlinx.serialization.json.Json
 
 const val CART_PREFS_NAME = "cart"
 interface CartDataSource {
-    suspend fun save(cartItems: List<CartItem>, userId: String)
-    suspend fun load(userId: String): List<CartItem>
+    fun save(cartItems: List<CartItem>, userId: String)
+    fun load(userId: String): List<CartItem>
 
 }
 
@@ -19,14 +19,14 @@ class CartDataSourceImpl(
 ): CartDataSource {
 
 
-    override suspend fun save(cartItems: List<CartItem>, userId: String) {
+    override fun save(cartItems: List<CartItem>, userId: String) {
         preferences.edit {
             putString(userId, Json.encodeToString(cartItems))
             commit()
         }
     }
 
-    override suspend fun load(userId: String): List<CartItem> {
+    override fun load(userId: String): List<CartItem> {
         return Json.decodeFromString(preferences.getString(userId, "[]")?: "[]")
     }
 

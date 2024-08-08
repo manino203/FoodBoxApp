@@ -25,6 +25,7 @@ import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.ui.composables.AddressComposable
 import com.example.foodboxapp.ui.composables.CenteredLoading
 import com.example.foodboxapp.ui.composables.OrderSummary
+import com.example.foodboxapp.ui.composables.ShowErrorToast
 import com.example.foodboxapp.ui.composables.rememberSummaryCategories
 import com.example.foodboxapp.ui.composables.updateToolbarLoading
 import com.example.foodboxapp.ui.composables.updateToolbarTitle
@@ -72,6 +73,8 @@ private fun OrderScreen(
 ){
 
     val summary by rememberSummaryCategories(order.items)
+
+    ShowErrorToast(error = uiState.error)
 
     Column(Modifier.fillMaxSize()) {
         AddressComposable(order.address)

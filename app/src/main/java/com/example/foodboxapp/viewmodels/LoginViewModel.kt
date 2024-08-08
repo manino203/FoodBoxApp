@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.ui.composables.UiStateError
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class LoginUiState(
     val isLoggingIn: Boolean = false,
@@ -19,10 +21,13 @@ class LoginViewModel(
     val uiState = mutableStateOf(LoginUiState())
 
     fun login(username: String, password: String){
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.Main){
             uiState.value = uiState.value.copy(isLoggingIn = true)
-                accountRepository.login(username, password).onFailure { uiState.value = uiState.value.copy(error = UiStateError(it)) }
-        }.invokeOnCompletion {
+            withContext(IO){
+                accountRepository.login(username, password).onFailureWithContext {
+                    uiState.value = uiState.value.copy(error = UiStateError(it))
+                }
+            }
             uiState.value = uiState.value.copy(isLoggingIn = false)
         }
     }

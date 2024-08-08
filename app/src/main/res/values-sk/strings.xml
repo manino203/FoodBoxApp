@@ -65,7 +65,7 @@
 
     <string name="available_orders">Dostupné objednávky</string>
     <string name="stores">Obchody</string>
-    <string name="order_id">ID objednávky</string>
+    <string name="order_date">Objednané dňa</string>
     <string name="no_orders">Momentálne nie sú žiadne objednávky.</string>
     <string name="accept_order">Prijať objednávku</string>
 

@@ -10,12 +10,11 @@ import kotlinx.coroutines.flow.update
 interface CartRepository {
 
     val cartItems: StateFlow<List<CartItem>>
-    suspend fun retrieveCartItems(userId: String)
-    suspend fun addCartItem(item: CartItem, userId: String)
-    suspend fun changeItemQuantity(item: CartItem, count: Int, userId: String)
-    suspend fun deleteCartItem(item: CartItem, userId: String)
-
-    suspend fun clear(userId: String)
+    fun retrieveCartItems(userId: String)
+    fun addCartItem(item: CartItem, userId: String)
+    fun changeItemQuantity(item: CartItem, count: Int, userId: String)
+    fun deleteCartItem(item: CartItem, userId: String)
+    fun clear(userId: String)
 
 }
 
@@ -27,24 +26,24 @@ class CartRepositoryImpl(
     override val cartItems: StateFlow<List<CartItem>>
         get() = _cartItems.asStateFlow()
 
-    override suspend fun retrieveCartItems(userId: String) {
+    override fun retrieveCartItems(userId: String) {
         _cartItems.update {
             dataSource.load(userId)
         }
     }
 
-    private suspend fun saveCartItemsPersistent(userId: String) {
+    private fun saveCartItemsPersistent(userId: String) {
         dataSource.save(cartItems.value, userId)
     }
 
-    private suspend fun updateCartItems(items: List<CartItem>, userId: String) {
+    private fun updateCartItems(items: List<CartItem>, userId: String) {
         _cartItems.update {
             items
         }
         saveCartItemsPersistent(userId)
     }
 
-    override suspend fun addCartItem(item: CartItem, userId: String) {
+    override fun addCartItem(item: CartItem, userId: String) {
         updateCartItems(_cartItems.value.indexOfFirst {
             it.product == item.product
         }.takeIf {
@@ -57,7 +56,7 @@ class CartRepositoryImpl(
         } ?: _cartItems.value.toMutableList().apply { add(item) }, userId)
     }
 
-    override suspend fun changeItemQuantity(item: CartItem, count: Int, userId: String) {
+    override fun changeItemQuantity(item: CartItem, count: Int, userId: String) {
         updateCartItems(_cartItems.value.toMutableList().also {
             _cartItems.value.indexOf(item).let{index ->
                 if(count > 0){
@@ -70,7 +69,7 @@ class CartRepositoryImpl(
         }, userId)
     }
 
-    override suspend fun deleteCartItem(item: CartItem, userId: String) {
+    override fun deleteCartItem(item: CartItem, userId: String) {
         _cartItems.value.indexOfFirst {
             it.product == item.product
         }.takeIf {
@@ -83,7 +82,7 @@ class CartRepositoryImpl(
         }
     }
 
-    override suspend fun clear(userId: String) {
+    override fun clear(userId: String) {
         updateCartItems(emptyList(), userId)
     }
 

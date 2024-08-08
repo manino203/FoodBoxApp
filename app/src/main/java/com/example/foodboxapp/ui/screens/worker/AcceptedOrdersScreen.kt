@@ -1,7 +1,6 @@
 package com.example.foodboxapp.ui.screens.worker
 
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
@@ -37,7 +36,6 @@ fun AcceptedOrdersScreen(
 }
 
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun AcceptedOrdersScreen(
     uiState: AcceptedOrdersUiState,
@@ -50,6 +48,7 @@ private fun AcceptedOrdersScreen(
         isRefreshing = uiState.refreshing,
         isEmpty = uiState.orders.isEmpty(),
         actionRefresh = actionRefresh,
+        error = uiState.error
     ){
         items(uiState.orders) {
             OrderItem(order = it) {

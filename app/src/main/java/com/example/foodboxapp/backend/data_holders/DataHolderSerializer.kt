@@ -92,7 +92,8 @@ interface DataHolderSerializer{
             return mapOf(
                 Pair("items", order.items.map { serializeCartItem(it) }),
                 Pair("address", order.address),
-                Pair("workerId", null)
+                Pair("workerId", null),
+                Pair("timestamp", order.timestamp?.seconds)
             )
         }
     }

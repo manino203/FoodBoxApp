@@ -22,12 +22,14 @@ import com.example.foodboxapp.ui.composables.CheckoutBar
 import com.example.foodboxapp.ui.composables.FormComposable
 import com.example.foodboxapp.ui.composables.OrderSummary
 import com.example.foodboxapp.ui.composables.PaymentMethodSelector
+import com.example.foodboxapp.ui.composables.ShowErrorToast
 import com.example.foodboxapp.ui.composables.rememberFormState
 import com.example.foodboxapp.ui.composables.updateToolbarLoading
 import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.CheckoutUiState
 import com.example.foodboxapp.viewmodels.CheckoutViewModel
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
+import com.google.firebase.Timestamp
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -102,6 +104,9 @@ private fun CheckoutScreen(
             Pair(store.title, uiState.cartItems.filter { store.title == it.store.title })
         })
     }
+
+    ShowErrorToast(error = uiState.error)
+
     Scaffold(bottomBar = {
         CheckoutBar(total = uiState.total, buttonTitle = stringResource(id = R.string.pay)) {
             actionPay(
@@ -110,6 +115,7 @@ private fun CheckoutScreen(
                     "",
                     address,
                     uiState.cartItems.map { it.store }.toSet().toList(),
+                    Timestamp.now(),
                     uiState.total
                 )
             )

@@ -1,7 +1,6 @@
 package com.example.foodboxapp.ui.screens.worker
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,17 +10,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -31,6 +25,9 @@ import com.example.foodboxapp.ui.composables.AddressComposable
 import com.example.foodboxapp.ui.composables.CheckoutBar
 import com.example.foodboxapp.ui.composables.OrderItemWithBottomSheet
 import com.example.foodboxapp.ui.composables.OrderSummary
+import com.example.foodboxapp.ui.composables.RefreshableScreen
+import com.example.foodboxapp.ui.composables.ShowErrorToast
+import com.example.foodboxapp.ui.composables.UiStateError
 import com.example.foodboxapp.ui.composables.updateToolbarLoading
 import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
@@ -69,11 +66,11 @@ private fun AvailableOrdersScreen(
     actionRefresh: () -> Unit,
     actionAcceptOrder: (Order) -> Unit
 ){
-
     OrderListScreen(
         isEmpty = uiState.orders.isEmpty(),
         isRefreshing = uiState.refreshing,
         actionRefresh = { actionRefresh() },
+        error = uiState.error
     ){
         items(uiState.orders) {
             OrderItemWithBottomSheet(order = it) {
@@ -134,35 +131,27 @@ fun OrderListScreen(
     isRefreshing: Boolean,
     isEmpty: Boolean,
     actionRefresh: () -> Unit,
+    error: UiStateError? = null,
     items: LazyListScope.() -> Unit
 ){
-    val refreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { actionRefresh()})
-    Box(
-        Modifier
-            .fillMaxSize()
-            .pullRefresh(refreshState),
-        contentAlignment = Alignment.Center
-    ){
+    ShowErrorToast(error = error)
+    RefreshableScreen(isRefreshing = isRefreshing, isEmpty = isEmpty, actionRefresh = actionRefresh){
         LazyColumn(
             Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item{
+            item {
                 Spacer(modifier = Modifier.height(8.dp))
             }
             items()
-            item{
+            item {
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
-
-        PullRefreshIndicator(refreshing = isRefreshing, state = refreshState, modifier = Modifier.align(
-            Alignment.TopCenter))
-        if(isEmpty){
-            Text(text = stringResource(id = R.string.no_orders))
-        }
     }
+
+
 }
 

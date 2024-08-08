@@ -61,6 +61,7 @@ class AccountRepositoryImpl(
                 SessionState.LOGGED_IN
             }
         }.onFailure{
+            _account.update { null }
             _state.update {
                 SessionState.LOGGED_OUT
             }

@@ -11,8 +11,10 @@ import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.backend.repositories.CartRepository
 import com.example.foodboxapp.backend.repositories.OrderRepository
 import com.example.foodboxapp.ui.composables.UiStateError
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 data class CheckoutUiState(
@@ -32,7 +34,7 @@ class CheckoutViewModel(
     val uiState = mutableStateOf(CheckoutUiState())
 
     fun loadAccount(){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Main) {
             accountRepository.account.collect{
                 uiState.value = uiState.value.copy(account = it, paymentMethod = it?.paymentMethod)
             }
@@ -40,12 +42,18 @@ class CheckoutViewModel(
     }
     fun sendOrder(order: Order, navigateToOrderSent: () -> Unit){
         uiState.value = uiState.value.copy(loading = true)
-        viewModelScope.launch(Dispatchers.Default) {
-            orderRepo.sendOrder(order).onFailure { uiState.value = uiState.value.copy(error = UiStateError(it)) }
-            uiState.value.account?.id?.let { cartRepo.clear(it) }
-        }.invokeOnCompletion {
-            uiState.value = uiState.value.copy(loading = false)
-            navigateToOrderSent()
+        viewModelScope.launch(IO) {
+            orderRepo.sendOrder(order)
+                .onSuccessWithContext {
+                    uiState.value.account?.id?.let { cartRepo.clear(it) }
+                    navigateToOrderSent()
+                }
+                .onFailureWithContext {
+                uiState.value = uiState.value.copy(error = UiStateError(it))
+            }
+            withContext(Main){
+                uiState.value = uiState.value.copy(loading = false)
+            }
         }
     }
 
@@ -53,7 +61,7 @@ class CheckoutViewModel(
         uiState.value = uiState.value.copy(paymentMethod = method)
     }
     fun loadCartItems(){
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Main) {
             cartRepo.cartItems.collect{ items ->
                 uiState.value = uiState.value.copy(cartItems = items, total = items.sumOf { it.totalPrice.toDouble() }.toFloat())
             }

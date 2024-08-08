@@ -7,7 +7,8 @@ import com.example.foodboxapp.backend.data_holders.Account
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.backend.repositories.SessionState
 import com.example.foodboxapp.ui.composables.UiStateError
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -26,24 +27,28 @@ class MainViewModel(
     val uiState = mutableStateOf(MainUiState())
 
     fun logout(){
-        viewModelScope.launch(Dispatchers.IO) {
-            sessionRepo.logout().onFailure { uiState.value = uiState.value.copy(error = UiStateError(it)) }
+        viewModelScope.launch(IO) {
+            sessionRepo.logout().onFailureWithContext {
+                uiState.value = uiState.value.copy(error = UiStateError(it))
+            }
         }
     }
 
     fun resumeSession(){
-        viewModelScope.launch(Dispatchers.IO){
-            sessionRepo.resumeSession().onFailure { uiState.value = uiState.value.copy(error = UiStateError(it)) }
+        viewModelScope.launch(IO){
+            sessionRepo.resumeSession().onFailureWithContext {
+                uiState.value = uiState.value.copy(error = UiStateError(it))
+            }
         }
     }
 
     fun collectChanges(){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Main) {
             accountRepo.account.collect{
                 uiState.value = uiState.value.copy(account = it)
             }
         }
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Main) {
             sessionRepo.state.collectLatest {
                 uiState.value = uiState.value.copy(sessionState = it)
             }

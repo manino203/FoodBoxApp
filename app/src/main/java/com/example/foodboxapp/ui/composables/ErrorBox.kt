@@ -1,6 +1,7 @@
 package com.example.foodboxapp.ui.composables
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,7 +49,9 @@ fun ErrorBox(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.padding(start = 20.dp, end = 10.dp).fillMaxWidth()
+                modifier = Modifier
+                    .padding(start = 20.dp, end = 10.dp)
+                    .fillMaxWidth()
             ) {
                 Text(message, Modifier.padding(vertical = 20.dp), fontWeight = FontWeight.Medium)
 
@@ -73,6 +77,28 @@ fun AutoErrorBox(message: String?, dismissible: Boolean = false) {
     }
 }
 
+@Composable
+fun ShowErrorToast(error: UiStateError?){
+    val context = LocalContext.current
+    val toastMessage = error?.localize()
+    LaunchedEffect(error) {
+        toastMessage?.let{
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+        }
+    }
+}
+
+@Composable
+fun DisplayError(
+    displayErrorBox: Boolean,
+    error: UiStateError?
+){
+    if (displayErrorBox){
+        AutoErrorBox(error)
+    }else{
+        ShowErrorToast(error = error)
+    }
+}
 
 data class UiStateError(
     val exception: Throwable

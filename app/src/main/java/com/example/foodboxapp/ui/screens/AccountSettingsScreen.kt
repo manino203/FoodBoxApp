@@ -18,6 +18,7 @@ import com.example.foodboxapp.ui.composables.Category
 import com.example.foodboxapp.ui.composables.CenteredLoading
 import com.example.foodboxapp.ui.composables.FormComposable
 import com.example.foodboxapp.ui.composables.PaymentMethodSelector
+import com.example.foodboxapp.ui.composables.ShowErrorToast
 import com.example.foodboxapp.ui.composables.rememberFormState
 import com.example.foodboxapp.ui.composables.updateToolbarLoading
 import com.example.foodboxapp.ui.composables.updateToolbarTitle
@@ -79,6 +80,10 @@ private fun AccountSettingsScreen(
             ))
         }
     )
+
+    ShowErrorToast(error = uiState.error)
+
+
     LazyColumn(Modifier.fillMaxSize()) {
         item{
             AutoErrorBox(uiState.error)

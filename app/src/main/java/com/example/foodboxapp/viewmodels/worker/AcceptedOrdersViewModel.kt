@@ -7,9 +7,11 @@ import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.backend.repositories.AcceptedOrdersRepository
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.ui.composables.UiStateError
-import kotlinx.coroutines.Dispatchers.Default
+import com.example.foodboxapp.viewmodels.onFailureWithContext
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class AcceptedOrdersUiState(
     val loading: Boolean = false,
@@ -25,17 +27,15 @@ class AcceptedOrdersViewModel(
 ): ViewModel(){
     val uiState = mutableStateOf(AcceptedOrdersUiState())
     fun collectChanges(){
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(Main) {
             accountRepo.account.collect{ acc ->
                 acc?.id?.let { id ->
                     uiState.value = uiState.value.copy(userId = id)
-                    uiState.value = uiState.value.copy(loading = true)
-                    fetch(id)
-                    uiState.value = uiState.value.copy(loading = false)
+                    update(id)
                 }
             }
         }
-        viewModelScope.launch(Default) {
+        viewModelScope.launch(Main) {
             repo.orders.collect{
                 uiState.value = uiState.value.copy(orders = it)
             }
@@ -45,22 +45,22 @@ class AcceptedOrdersViewModel(
     fun refresh(){
         uiState.value.userId?.let {
             uiState.value = uiState.value.copy(refreshing = true)
-            update(it) {
-                uiState.value = uiState.value.copy(refreshing = false)
+            viewModelScope.launch(Main){
+                update(it) {
+                    uiState.value = uiState.value.copy(refreshing = false)
+                }
             }
         }
     }
 
-    private suspend fun fetch(id: String) = repo.fetch(id).onFailure {
-        uiState.value = uiState.value.copy(error = UiStateError(it))
-    }
-
-    private fun update(id: String, onComplete: () -> Unit){
+    private suspend fun update(id: String, onComplete: () -> Unit = {}){
         uiState.value = uiState.value.copy(loading = true)
-
-        viewModelScope.launch(IO) {
-            fetch(id)
-        }.invokeOnCompletion {
+        withContext(IO) {
+            repo.fetch(id).onFailureWithContext {
+                uiState.value = uiState.value.copy(error = UiStateError(it))
+            }
+        }
+        withContext(Main){
             uiState.value = uiState.value.copy(loading = false)
             onComplete()
         }

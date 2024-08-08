@@ -21,6 +21,8 @@ import com.example.foodboxapp.backend.data_sources.StoreDataSource
 import com.example.foodboxapp.backend.data_sources.StoreDataSourceImpl
 import com.example.foodboxapp.backend.network.FoodBoxService
 import com.example.foodboxapp.backend.network.FoodBoxServiceImpl
+import com.example.foodboxapp.backend.network.NetworkAvailabilityChecker
+import com.example.foodboxapp.backend.network.NetworkAvailabilityCheckerImpl
 import com.example.foodboxapp.backend.repositories.AcceptedOrdersRepository
 import com.example.foodboxapp.backend.repositories.AcceptedOrdersRepositoryImpl
 import com.example.foodboxapp.backend.repositories.AccountRepository
@@ -51,6 +53,7 @@ import com.example.foodboxapp.viewmodels.worker.AcceptedOrdersViewModel
 import com.example.foodboxapp.viewmodels.worker.AvailableOrdersViewModel
 import com.example.foodboxapp.viewmodels.worker.OrderViewModel
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -65,7 +68,8 @@ val sharedPrefsModule = module {
 }
 
 val serviceModule = module {
-    single<FoodBoxService>{ FoodBoxServiceImpl() }
+    single<NetworkAvailabilityChecker> { NetworkAvailabilityCheckerImpl(androidContext()) }
+    single<FoodBoxService>{ FoodBoxServiceImpl(get()) }
 }
 
 val dataSourceModule = module {

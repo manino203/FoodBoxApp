@@ -27,6 +27,7 @@ import com.example.foodboxapp.backend.data_holders.AccountType
 import com.example.foodboxapp.backend.repositories.SessionState
 import com.example.foodboxapp.navigation.ScreenDestination
 import com.example.foodboxapp.ui.composables.NavigationDrawer
+import com.example.foodboxapp.ui.composables.ShowErrorToast
 import com.example.foodboxapp.ui.composables.Toolbar
 import com.example.foodboxapp.ui.screens.DestinationScreen
 import com.example.foodboxapp.ui.ui.theme.FoodBoxThemeWithSurface
@@ -142,6 +143,8 @@ private fun MainActivityContent(
     actionLogout: () -> Unit
 ){
     val scope = rememberCoroutineScope()
+
+    ShowErrorToast(error = uiState.error)
 
     ModalNavigationDrawer(
         drawerState = drawerState,

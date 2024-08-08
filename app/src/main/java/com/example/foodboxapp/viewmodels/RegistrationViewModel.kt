@@ -6,7 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.form.FilledRegistrationForm
 import com.example.foodboxapp.ui.composables.UiStateError
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class RegistrationUiState(
     val loading: Boolean = false,
@@ -23,17 +26,16 @@ class RegistrationViewModel(
     val uiState = mutableStateOf(RegistrationUiState())
 
     fun register(form: FilledRegistrationForm){
-        viewModelScope.launch {
+        viewModelScope.launch(Main) {
             uiState.value = uiState.value.copy(loading = true)
-                sessionRepo.register(form.email, form.password).onFailure{
+            withContext(IO){
+                sessionRepo.register(form.email, form.password).onFailureWithContext {
                     uiState.value = uiState.value.copy(error = UiStateError(it))
                 }
-        }.invokeOnCompletion {
+            }
             uiState.value = uiState.value.copy(loading = false)
         }
-
     }
-
 }
 
 

@@ -23,7 +23,9 @@ class AcceptedOrdersRepositoryImpl(
 
     private val _orders = MutableStateFlow<List<Order>>(emptyList())
     override suspend fun fetch(uid: String): Result<List<Order>> {
-        return dataSource.fetch(uid).onSuccess { _orders.update { it }  }
+        return dataSource.fetch(uid).onSuccess { o ->
+            _orders.update { o }
+        }
     }
 
     override suspend fun completeOrder(order: Order): Result<Unit> {

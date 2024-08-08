@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.foodboxapp.backend.data_holders.AccountType
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.backend.repositories.CartRepository
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 data class ToolbarUiState(
@@ -34,13 +36,17 @@ class ToolbarViewModel(
     }
 
     fun collectCart(){
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Main){
             accountRepo.account.collect {
-                it?.id?.let { id -> cartRepo.retrieveCartItems(id) }
+                it?.id?.let { id ->
+                    withContext(IO){
+                        cartRepo.retrieveCartItems(id)
+                    }
+                }
                 uiState.value = uiState.value.copy(showActions = it?.type == AccountType.Client)
             }
         }
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Main) {
             cartRepo.cartItems.collect {
                 uiState.value = uiState.value.copy(cartItemCount = it.size)
             }

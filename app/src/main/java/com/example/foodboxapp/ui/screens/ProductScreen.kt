@@ -47,6 +47,8 @@ import com.example.foodboxapp.ui.composables.AsyncImageWithLoading
 import com.example.foodboxapp.ui.composables.BottomSheet
 import com.example.foodboxapp.ui.composables.Price
 import com.example.foodboxapp.ui.composables.ProductCount
+import com.example.foodboxapp.ui.composables.RefreshableScreen
+import com.example.foodboxapp.ui.composables.ShowErrorToast
 import com.example.foodboxapp.ui.composables.open
 import com.example.foodboxapp.ui.composables.updateToolbarLoading
 import com.example.foodboxapp.ui.composables.updateToolbarTitle
@@ -70,9 +72,10 @@ fun ProductScreen(
         viewModel.loadProducts(storeId)
     }
 
-
-
-    ProductScreen(viewModel.uiState.value){ product, quantity ->
+    ProductScreen(
+        viewModel.uiState.value,
+        { viewModel.refresh(storeId) }
+    ){ product, quantity ->
         viewModel.addProductToCart(product, quantity, storeId)
     }
 
@@ -81,11 +84,18 @@ fun ProductScreen(
 @Composable
 private fun ProductScreen(
     uiState: ProductUiState,
+    actionRefresh: () -> Unit,
     actionAddToCart: (Product, Int) -> Unit
 ){
     val listState = rememberLazyListState()
 
-    if (!uiState.loading){
+    ShowErrorToast(error = uiState.error)
+
+    RefreshableScreen(
+        isRefreshing = uiState.isRefreshing,
+        isEmpty = uiState.products.isEmpty(),
+        actionRefresh = actionRefresh
+    ){
         LazyColumn(
             Modifier
                 .fillMaxSize(),

@@ -10,6 +10,7 @@ import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.backend.data_holders.Product
 import com.example.foodboxapp.backend.data_holders.Store
 import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthEmailException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -20,6 +21,9 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.MemoryCacheSettings
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 
 interface FoodBoxService {
@@ -41,9 +45,16 @@ interface FoodBoxService {
     suspend fun completeOrder(orderId: String): Result<Unit>
 }
 
-class FoodBoxServiceImpl : FoodBoxService{
+class FoodBoxServiceImpl(
+    private val networkChecker: NetworkAvailabilityChecker
+) : FoodBoxService{
 
-    private val db = FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance().apply {
+        FirebaseFirestoreSettings.Builder().setLocalCacheSettings(
+            MemoryCacheSettings.newBuilder()
+                .build()
+        ).build()
+    }
     private val auth = FirebaseAuth.getInstance()
 
 
@@ -55,20 +66,19 @@ class FoodBoxServiceImpl : FoodBoxService{
 
     @Suppress("unused")
     override suspend fun updateAccount(acc: Account): Result<Account> {
-        return runWithExceptionHandling{
-            updateAccountInDb(acc)
+        return runWithExceptionHandling(true){
+            acc.also { updateAccountInDb(it) }
         }
     }
 
-    private suspend fun updateAccountInDb(acc: Account): Account{
+    private suspend fun updateAccountInDb(acc: Account){
         db.collection("accounts").document(acc.id).set(
             DataHolderSerializer.serializeAccount(acc)
         ).await()
-        return fetchAccount(acc.id)
     }
 
     override suspend fun login(email: String, password: String): Result<Account> {
-        return runWithExceptionHandling{
+        return runWithExceptionHandling(false){
             fetchAccount(
                 signIn(
                     auth.signInWithEmailAndPassword(email, password).await().user
@@ -78,25 +88,27 @@ class FoodBoxServiceImpl : FoodBoxService{
     }
 
     override suspend fun resumeSession(): Result<Account> {
-        return runWithExceptionHandling{ fetchAccount(signIn(auth.currentUser)) }
+        return runWithExceptionHandling(false){ fetchAccount(signIn(auth.currentUser)) }
 
     }
 
     override suspend fun register(email: String, password: String): Result<Account> {
-        return runWithExceptionHandling{
+        return runWithExceptionHandling(false){
             auth.createUserWithEmailAndPassword(email, password).await().user?.uid?.let { uid ->
-                updateAccountInDb(
-                    Account(
-                        id = uid,
-                        email = email
+                Account(
+                    id = uid,
+                    email = email
+                ).also{
+                    updateAccountInDb(
+                        it
                     )
-                )
+                }
             } ?: throw LocalizedException(R.string.failed_to_create_account)
         }
     }
 
     override suspend fun logout(): Result<Unit> {
-        return runWithExceptionHandling{
+        return runWithExceptionHandling(false){
             auth.signOut()
         }
     }
@@ -118,7 +130,7 @@ class FoodBoxServiceImpl : FoodBoxService{
     }
 
     override suspend fun sendOrder(order: Order): Result<Unit> {
-        return runWithExceptionHandling{
+        return runWithExceptionHandling(true){
             db.collection("orders").document().set(
                 DataHolderSerializer.serializeOrder(order)
             )
@@ -126,27 +138,37 @@ class FoodBoxServiceImpl : FoodBoxService{
     }
 
     override suspend fun fetchAvailableOrders(): Result<List<Order>> {
-        return runWithExceptionHandling{ fetchOrders(null) }
+        return runWithExceptionHandling{
+            fetchOrders(null)
+        }
     }
 
     override suspend fun fetchAcceptedOrders(uid: String): Result<List<Order>> {
-        return runWithExceptionHandling{ fetchOrders(uid) }
+        return runWithExceptionHandling{
+            fetchOrders(uid)
+        }
     }
 
     override suspend fun acceptOrder(orderId: String, uid: String): Result<Unit> {
-        return runWithExceptionHandling{
-            db.collection("orders").document(orderId).update("workerId", uid).await()
+        return runWithExceptionHandling(true){
+            db.collection("orders").document(orderId).update("workerId", uid)
+                .addOnFailureListener { Log.d("order_accept", "$it") }
+                .await()
         }
     }
 
     override suspend fun completeOrder(orderId: String): Result<Unit> {
-        return runWithExceptionHandling{
+        return runWithExceptionHandling(){
             db.collection("orders").document(orderId).delete().await()
         }
     }
 
     private suspend fun fetchOrders(workerId: String?): List<Order> {
-        return db.collection("orders").whereEqualTo("workerId", workerId).get().await()
+        return db.collection("orders")
+            .whereEqualTo("workerId", workerId)
+            .orderBy("timestamp", Query.Direction.ASCENDING)
+            .get()
+            .await()
                 .mapNotNull { document ->
                     DataHolderSerializer.log("Order", document)
                     @Suppress("UNCHECKED_CAST") val cartItems: List<CartItem>? =
@@ -172,6 +194,12 @@ class FoodBoxServiceImpl : FoodBoxService{
                             id = document.id,
                             address = Address.fromMap(document.get("address")),
                             stores = cartItems.map { it.store }.toSet().toList(),
+                            timestamp = document.get("timestamp")?.toString()?.toLong()?.let {
+                                Timestamp(
+                                    it,
+                                    0
+                                )
+                            },
                             total = cartItems.sumOf { it.totalPrice.toDouble() }.toFloat()
                         )
                     }
@@ -183,16 +211,20 @@ class FoodBoxServiceImpl : FoodBoxService{
         return user?.uid ?: throw LocalizedException(R.string.sign_in_error)
     }
 
-    private suspend fun <T>runWithExceptionHandling(block: suspend () -> T): Result<T>{
-        return try{
-            Result.success(block())
-        }catch(e: Exception){
-            Result.failure(groupExceptions(e))
+    private suspend fun <T>runWithExceptionHandling(checkNetwork: Boolean = true, block: suspend () -> T): Result<T>{
+        return if (checkNetwork && !networkChecker.isAvailable()) {
+            Result.failure(LocalizedException(R.string.network_error))
+        } else {
+            try {
+                Result.success(block())
+            } catch (e: Exception) {
+                Result.failure(groupExceptions(e))
+            }
         }
     }
 
     private fun groupExceptions(exception: Exception): Exception{
-        Log.d("service_exception", "$exception")
+        Log.d("service_exception", "${if(exception is LocalizedException) exception.originalException else exception}")
         return when(exception){
             is LocalizedException -> exception.messageId
             // Auth Errors

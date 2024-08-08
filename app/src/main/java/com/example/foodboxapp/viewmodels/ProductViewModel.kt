@@ -11,12 +11,15 @@ import com.example.foodboxapp.backend.repositories.CartRepository
 import com.example.foodboxapp.backend.repositories.ProductRepository
 import com.example.foodboxapp.backend.repositories.StoreRepository
 import com.example.foodboxapp.ui.composables.UiStateError
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 data class ProductUiState(
     val loading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val store: Store? = null,
     val products: List<Product> = emptyList(),
     val title: String? = null,
@@ -32,7 +35,7 @@ class ProductViewModel(
     val uiState = mutableStateOf(ProductUiState())
 
     fun loadProducts(storeId: String){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Main) {
             productRepo.products.collect {
                 uiState.value =
                     uiState.value.copy(products = it)
@@ -40,30 +43,41 @@ class ProductViewModel(
         }
 
         uiState.value = uiState.value.copy(loading = true)
-        viewModelScope.launch(Dispatchers.Default) {
-            productRepo.fetchProducts(storeId).onFailure {
-                uiState.value = uiState.value.copy(error = UiStateError(it))
-            }
-        }.invokeOnCompletion {
+        viewModelScope.launch(Main) {
+            update(storeId)
             uiState.value = uiState.value.copy(loading = false)
         }
     }
 
     fun addProductToCart(product: Product, quantity: Int, storeId: String){
-        viewModelScope.launch(Dispatchers.Default){
-            storeRepo.getStore(storeId).onSuccess{ store ->
-                accountRepo.account.value?.id?.let {
-                    cartRepo.addCartItem(
-                        CartItem(
-                            product,
-                            quantity,
-                            store,
-                            product.price * quantity
-                        ),
-                        it
-                    )
-                }
-            }.onFailure {
+        storeRepo.getStore(storeId).onSuccess{ store ->
+            accountRepo.account.value?.id?.let {
+                cartRepo.addCartItem(
+                    CartItem(
+                        product,
+                        quantity,
+                        store,
+                        product.price * quantity
+                    ),
+                    it
+                )
+            }
+        }.onFailure {
+            uiState.value = uiState.value.copy(error = UiStateError(it))
+        }
+    }
+
+    fun refresh(storeId: String){
+        uiState.value = uiState.value.copy(loading = true, isRefreshing = true)
+        viewModelScope.launch(Main) {
+            update(storeId)
+            uiState.value = uiState.value.copy(loading = false, isRefreshing = false)
+        }
+    }
+
+    private suspend fun update(storeId: String){
+        withContext(IO){
+            productRepo.fetchProducts(storeId).onFailureWithContext {
                 uiState.value = uiState.value.copy(error = UiStateError(it))
             }
         }

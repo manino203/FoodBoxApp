@@ -9,7 +9,9 @@ import com.example.foodboxapp.backend.data_holders.PaymentMethod
 import com.example.foodboxapp.backend.repositories.AccountRepository
 import com.example.foodboxapp.ui.composables.UiStateError
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class AccountSettingsUiState(
     val account: Account? = null,
@@ -23,7 +25,7 @@ class AccountSettingsViewModel(
     val uiState = mutableStateOf(AccountSettingsUiState())
 
     fun collectAccount(){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Main) {
             accountRepo.account.collect{
                 uiState.value = uiState.value.copy(account = it)
             }
@@ -34,13 +36,12 @@ class AccountSettingsViewModel(
         uiState.value = uiState.value.copy(loading = true)
         viewModelScope.launch(Dispatchers.IO){
             accountRepo.update(Account(id, email, address, paymentMethod = paymentMethod))
-                .onFailure{
+                .onFailureWithContext{
                     uiState.value = uiState.value.copy(error = UiStateError(it))
                 }
-        }.invokeOnCompletion {
-            uiState.value = uiState.value.copy(loading = false)
+            withContext(Main){
+                uiState.value = uiState.value.copy(loading = false)
+            }
         }
     }
-
-
 }
