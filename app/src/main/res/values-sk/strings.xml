@@ -90,5 +90,10 @@
     <string name="generic_error">Niečo sa pokazilo.</string>
     <string name="image_error">Chyba pri načítaní obrázka</string>
 
+    <string name="remove_item">Odstránenie Položky</string>
+    <string name="item_removal">Ste si istý, že chcete odstrániť túto položku?</string>
+    <string name="yes">Áno</string>
+    <string name="no">Nie</string>
+
 
 </resources>

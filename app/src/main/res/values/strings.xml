@@ -91,6 +91,12 @@
     <string name="generic_error">Something went wrong.</string>
     <string name="image_error">Error loading image</string>
 
+    <string name="remove_item">Remove Item</string>
+    <string name="item_removal">Are you sure you want to remove this item?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+
 
 
 

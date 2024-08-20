@@ -48,7 +48,7 @@ fun AsyncImageWithLoading(
         AsyncImage(
             model = imageUrl,
             contentDescription = contentDescription,
-            modifier = modifier
+            modifier = Modifier
                 .width(width)
                 .height(height),
             contentScale = contentScale,

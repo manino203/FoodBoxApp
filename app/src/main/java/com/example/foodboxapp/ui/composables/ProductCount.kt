@@ -26,6 +26,7 @@ import androidx.core.text.isDigitsOnly
 fun ProductCount(
     modifier: Modifier = Modifier,
     count: Int,
+    minusButtonEnabled: Boolean = true,
     textFieldValue: String,
     actionChangeTextFieldValue: (String) -> Unit,
     actionChangeCount: (Int) -> Unit
@@ -40,7 +41,7 @@ fun ProductCount(
                 .weight(.3f)
                 .alpha(0.8f),
             contentPadding = PaddingValues(0.dp),
-            enabled = count > 1,
+            enabled = minusButtonEnabled,
             onClick = { actionChangeCount(count - 1) },
         ) {
             Text(text = "-")

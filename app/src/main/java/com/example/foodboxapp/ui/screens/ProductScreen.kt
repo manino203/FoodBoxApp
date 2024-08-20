@@ -9,19 +9,24 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,11 +40,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import coil.compose.AsyncImage
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Product
@@ -134,7 +141,7 @@ private fun ProductItem(
         actionAddToCart(product, it)
     }
 
-
+    val imageSize = 120.dp
     Card(
         modifier = Modifier
             .padding(16.dp, 0.dp)
@@ -145,33 +152,34 @@ private fun ProductItem(
             },
         border = BorderStroke(1.dp, Color.Gray)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            Row(
-                Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AsyncImageWithLoading(
-                    modifier = Modifier.weight(0.5f),
-                    imageUrl = product.imageUrl ?: "",
-                    contentDescription = product.title,
-                    width = 100.dp,
-                    height = 100.dp
-                )
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = product.title
-                )
-                Price(
-                    product.price,
-                    modifier = Modifier.weight(0.5f),
-                    textAlign = TextAlign.Center
-                )
-            }
+        Row(
+            Modifier
+                .wrapContentHeight()
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImageWithLoading(
+                imageUrl = product.imageUrl ?: "",
+                contentDescription = product.title,
+                width = imageSize,
+                height = imageSize,
+                contentScale = ContentScale.FillBounds
+            )
+            VerticalDivider(Modifier.height(imageSize), color = Color.Gray)
+
+            Text(
+                modifier = Modifier.weight(0.5f),
+                text = product.title,
+                textAlign = TextAlign.Center,
+            )
+            VerticalDivider(Modifier.height(imageSize - 2 * 8.dp))
+            Price(
+                product.price,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(8.dp)
+            )
         }
     }
 }
@@ -198,33 +206,55 @@ private fun AddToCartSheet(
         showSheet = sheetOpen,
         coroScope = coroScope
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+        Column{
             AsyncImage(
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .heightIn(0.dp, 300.dp)
+                    .fillMaxWidth()
+                ,
                 model = product.imageUrl,
-                contentDescription = product.title
+                contentDescription = product.title,
+                alignment = Alignment.Center
             )
-            Text(text = product.title)
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(250.dp),
-                contentAlignment = Alignment.Center) {
-                Text(text = "Details")
+            Text(
+                modifier = Modifier.padding(vertical = 8.dp),
+                text = product.title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+            product.details?.ifEmpty { null }?.let{
+                HorizontalDivider(
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(0.dp, 240.dp)
+                        .verticalScroll(rememberScrollState()),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(text = it.replace ("\\n", "\n"))
+                }
+                HorizontalDivider(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
             }
             Price(
+                modifier = Modifier.padding(vertical = 8.dp),
                 price = product.price,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
             Row(
-                Modifier.padding(bottom = 20.dp),
+                Modifier.padding(bottom = 20.dp, top = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ){
                 ProductCount(
                     Modifier.weight(.4f),
                     count = quantity,
                     textFieldValue = tfValue,
+                    minusButtonEnabled = quantity > 1,
                     actionChangeTextFieldValue = {tfValue = it}
                 ) {
                     quantity = it

@@ -25,7 +25,8 @@ data class ProductUiState(
     val products: List<Product> = emptyList(),
     val title: String? = null,
     val error: UiStateError? = null
-    )
+)
+
 class ProductViewModel(
     private val productRepo: ProductRepository,
     private val cartRepo: CartRepository,
@@ -36,11 +37,10 @@ class ProductViewModel(
     val uiState = mutableStateOf(ProductUiState())
 
     fun loadProducts(storeId: String){
-        uiState.value = uiState.value.copy(products = emptyList())
         viewModelScope.launch(Main) {
-            productRepo.products.collectLatest {
+            productRepo.products.collectLatest { products ->
                 uiState.value =
-                    uiState.value.copy(products = it)
+                    uiState.value.copy(products = products.filter { it.storeId == storeId })
             }
         }
 
@@ -68,7 +68,6 @@ class ProductViewModel(
             uiState.value = uiState.value.copy(error = UiStateError(it))
         }
     }
-
     fun refresh(storeId: String){
         uiState.value = uiState.value.copy(loading = true, isRefreshing = true)
         viewModelScope.launch(Main) {
@@ -76,7 +75,6 @@ class ProductViewModel(
             uiState.value = uiState.value.copy(loading = false, isRefreshing = false)
         }
     }
-
     private suspend fun update(storeId: String){
         withContext(IO){
             productRepo.fetchProducts(storeId).onFailureWithContext {
