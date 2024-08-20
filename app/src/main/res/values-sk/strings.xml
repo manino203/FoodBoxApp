@@ -88,5 +88,7 @@
     <string name="database_error">Pri prístupe do databázy došlo k chybe. Skúste to prosím neskôr.</string>
     <string name="network_error">Nepodarilo sa pripojiť k sieti. Skontrolujte prosím svoje internetové pripojenie.</string>
     <string name="generic_error">Niečo sa pokazilo.</string>
+    <string name="image_error">Chyba pri načítaní obrázka</string>
+
 
 </resources>

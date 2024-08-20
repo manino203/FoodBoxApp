@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -31,6 +32,16 @@ fun BottomSheet(
         }
     }
 
+    LaunchedEffect(showSheet.value) {
+        coroScope.launch {
+            if(showSheet.value){
+                sheetState.expand()
+            }else{
+                sheetState.hide()
+            }
+        }
+    }
+
     if(showSheet.value){
         ModalBottomSheet(
             modifier = modifier,
@@ -43,13 +54,5 @@ fun BottomSheet(
                 content(dismiss)
             }
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-fun SheetState.open(showSheet: MutableState<Boolean>, scope: CoroutineScope){
-    showSheet.value = true
-    scope.launch {
-        show()
     }
 }

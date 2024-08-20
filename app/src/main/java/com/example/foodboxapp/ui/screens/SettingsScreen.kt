@@ -35,7 +35,6 @@ import com.example.foodboxapp.backend.repositories.SettingsRepositoryImpl.Compan
 import com.example.foodboxapp.backend.repositories.SettingsState
 import com.example.foodboxapp.ui.composables.BottomSheet
 import com.example.foodboxapp.ui.composables.Category
-import com.example.foodboxapp.ui.composables.open
 import com.example.foodboxapp.ui.composables.updateToolbarLoading
 import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.SettingsViewModel
@@ -178,7 +177,7 @@ private fun ChoiceSetting(
     SettingItem(
         title = title,
         actionClick = {
-            sheetState.open(sheetOpen, coroScope)
+           sheetOpen.value = true
         }
     ) {
         Text(text = stringResource(value.label))

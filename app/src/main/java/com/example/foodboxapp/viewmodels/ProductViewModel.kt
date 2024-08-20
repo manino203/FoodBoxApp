@@ -13,6 +13,7 @@ import com.example.foodboxapp.backend.repositories.StoreRepository
 import com.example.foodboxapp.ui.composables.UiStateError
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -35,8 +36,9 @@ class ProductViewModel(
     val uiState = mutableStateOf(ProductUiState())
 
     fun loadProducts(storeId: String){
+        uiState.value = uiState.value.copy(products = emptyList())
         viewModelScope.launch(Main) {
-            productRepo.products.collect {
+            productRepo.products.collectLatest {
                 uiState.value =
                     uiState.value.copy(products = it)
             }

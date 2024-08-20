@@ -91,6 +91,6 @@ fun OrderItemWithBottomSheet(
         }
     }
     OrderItem(order = order) {
-        sheetState.open(sheetOpen, coroScope)
+        sheetOpen.value = true
     }
 }

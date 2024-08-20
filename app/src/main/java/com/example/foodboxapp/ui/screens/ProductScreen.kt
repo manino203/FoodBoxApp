@@ -49,7 +49,6 @@ import com.example.foodboxapp.ui.composables.Price
 import com.example.foodboxapp.ui.composables.ProductCount
 import com.example.foodboxapp.ui.composables.RefreshableScreen
 import com.example.foodboxapp.ui.composables.ShowErrorToast
-import com.example.foodboxapp.ui.composables.open
 import com.example.foodboxapp.ui.composables.updateToolbarLoading
 import com.example.foodboxapp.ui.composables.updateToolbarTitle
 import com.example.foodboxapp.viewmodels.ProductUiState
@@ -122,7 +121,8 @@ private fun ProductItem(
         mutableStateOf(false)
     }
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true, )
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     val coroScope = rememberCoroutineScope()
 
     AddToCartSheet(
@@ -134,13 +134,14 @@ private fun ProductItem(
         actionAddToCart(product, it)
     }
 
+
     Card(
         modifier = Modifier
             .padding(16.dp, 0.dp)
             .fillMaxWidth()
             .wrapContentHeight()
             .clickable {
-                sheetState.open(sheetOpen, coroScope)
+                sheetOpen.value = true
             },
         border = BorderStroke(1.dp, Color.Gray)
     ) {
