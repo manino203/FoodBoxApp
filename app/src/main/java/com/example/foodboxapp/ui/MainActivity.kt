@@ -1,7 +1,6 @@
 package com.example.foodboxapp.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -48,8 +47,6 @@ class MainActivity: AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("activity recreated", "kotko")
-
         setContent{
             val toolbarViewModel: ToolbarViewModel = koinViewModel()
             val viewModel: MainViewModel = koinViewModel()
@@ -60,8 +57,6 @@ class MainActivity: AppCompatActivity(){
             }
 
             val startDestination = remember (viewModel.uiState.value.sessionState) {
-                Log.d("sessionState change in remember", "$viewModel.uiState.value.sessionState")
-
                 when (viewModel.uiState.value.sessionState) {
                     SessionState.NOT_LOADED -> {
                         viewModel.resumeSession()

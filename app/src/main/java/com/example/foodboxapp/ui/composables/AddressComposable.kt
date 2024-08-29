@@ -17,6 +17,7 @@ import com.example.foodboxapp.backend.data_holders.Address
 fun AddressComposable(address: Address){
     AddressComposable(street = address.street, city = address.city, zipCode = address.zipCode, country = address.country)
 }
+
 @Composable
 fun AddressComposable(
     street: String,

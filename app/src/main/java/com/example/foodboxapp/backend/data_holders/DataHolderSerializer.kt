@@ -1,13 +1,13 @@
 package com.example.foodboxapp.backend.data_holders
 
-import android.util.Log
+import com.example.foodboxapp.util.Logger
 import com.google.firebase.firestore.DocumentSnapshot
 
 interface DataHolderSerializer{
     companion object{
 
         fun log(tag: String, document: DocumentSnapshot){
-            Log.d(
+            Logger.logDebug(
                 "Deserializing: $tag",
                 buildString {
                     append("$tag{\n")
@@ -31,7 +31,6 @@ interface DataHolderSerializer{
 
         fun deserializeAccount(uid: String, documentSnapshot: DocumentSnapshot): Account {
             log("Account", documentSnapshot)
-            Log.d("address", "${documentSnapshot.get("address") as? Address ?: Address()}")
             return Account(
                 id = uid,
                 email = documentSnapshot.get("email").toString(),

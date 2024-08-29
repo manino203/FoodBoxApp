@@ -1,6 +1,5 @@
 package com.example.foodboxapp.ui.composables
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.foodboxapp.backend.network.LocalizedException
+import com.example.foodboxapp.util.Logger
 
 
 @Composable
@@ -110,10 +110,10 @@ fun UiStateError.localize(): String {
     val context = LocalContext.current
     return remember(exception, context) {
         if (exception is LocalizedException) {
-            Log.d("Exception", "${exception.originalException}: ${exception.originalException?.message}")
+            Logger.logDebug("Exception", "${exception.originalException}: ${exception.originalException?.message}")
             context.resources.getString(exception.messageId)
         }else{
-            Log.d("Exception", "$exception: ${exception.message}")
+            Logger.logDebug("Exception", "$exception: ${exception.message}")
             exception.message ?: ""
         }
     }

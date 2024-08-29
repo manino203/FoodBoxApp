@@ -6,4 +6,5 @@ plugins {
     alias(libs.plugins.parcelize) apply false
     alias(libs.plugins.googleServices) apply false
     alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
 }

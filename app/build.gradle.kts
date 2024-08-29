@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.parcelize)
     alias(libs.plugins.googleServices)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.firebase.crashlytics)
+
     kotlin("kapt")
 }
 
@@ -68,8 +70,11 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.koin)
     implementation(libs.coil)
+
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.crashlytics)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

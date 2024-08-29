@@ -1,6 +1,5 @@
 package com.example.foodboxapp.backend.network
 
-import android.util.Log
 import com.example.foodboxapp.R
 import com.example.foodboxapp.backend.data_holders.Account
 import com.example.foodboxapp.backend.data_holders.Address
@@ -9,6 +8,7 @@ import com.example.foodboxapp.backend.data_holders.DataHolderSerializer
 import com.example.foodboxapp.backend.data_holders.Order
 import com.example.foodboxapp.backend.data_holders.Product
 import com.example.foodboxapp.backend.data_holders.Store
+import com.example.foodboxapp.util.Logger
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -152,7 +152,7 @@ class FoodBoxServiceImpl(
     override suspend fun acceptOrder(orderId: String, uid: String): Result<Unit> {
         return runWithExceptionHandling(true){
             db.collection("orders").document(orderId).update("workerId", uid)
-                .addOnFailureListener { Log.d("order_accept", "$it") }
+                .addOnFailureListener { Logger.logDebug("order_accept", "$it") }
                 .await()
         }
     }
@@ -224,7 +224,7 @@ class FoodBoxServiceImpl(
     }
 
     private fun groupExceptions(exception: Exception): Exception{
-        Log.d("service_exception", "${if(exception is LocalizedException) exception.originalException else exception}")
+
         return when(exception){
             is LocalizedException -> exception.messageId
             // Auth Errors
@@ -235,11 +235,21 @@ class FoodBoxServiceImpl(
             is FirebaseAuthInvalidUserException -> R.string.invalid_email
             is FirebaseAuthUserCollisionException -> R.string.email_already_exists
             //Data Errors
-            is ClassCastException -> R.string.issue_retrieving_data
-            is FirebaseFirestoreException -> R.string.database_error
+            is ClassCastException -> {
+                Logger.logError("service_exception", exception)
+                R.string.issue_retrieving_data
+            }
+            is FirebaseFirestoreException -> {
+                Logger.logError("service_exception", exception)
+                R.string.database_error
+            }
             //General Errors
-            is FirebaseNetworkException -> R.string.network_error
+            is FirebaseNetworkException -> {
+                Logger.logError("service_exception", exception)
+                R.string.network_error
+            }
             else -> {
+                Logger.logError("service_exception", exception)
                 R.string.generic_error
             }
         }.let {

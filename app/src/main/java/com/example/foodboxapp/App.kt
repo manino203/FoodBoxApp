@@ -1,11 +1,15 @@
 package com.example.foodboxapp
 
 import android.app.Application
+import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import com.example.foodboxapp.backend.repositories.SettingsRepository
 import com.example.foodboxapp.di.appModule
+import com.google.firebase.BuildConfig
 import com.google.firebase.FirebaseApp
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.setCustomKeys
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -19,6 +23,13 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
+        FirebaseCrashlytics.getInstance().apply {
+            setUserId(Build.MODEL)
+            setCustomKeys {
+                key("app_version", BuildConfig.VERSION_NAME)
+                key("device_os", Build.VERSION.RELEASE)
+            }
+        }
         startKoin{
             androidContext(this@App)
             modules(

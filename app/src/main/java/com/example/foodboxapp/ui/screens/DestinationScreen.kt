@@ -1,12 +1,12 @@
 package com.example.foodboxapp.ui.screens
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.example.foodboxapp.navigation.ScreenDestination
 import com.example.foodboxapp.ui.screens.worker.AcceptedOrdersScreen
 import com.example.foodboxapp.ui.screens.worker.AvailableOrdersScreen
 import com.example.foodboxapp.ui.screens.worker.OrderScreen
+import com.example.foodboxapp.util.Logger
 import com.example.foodboxapp.viewmodels.ToolbarViewModel
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.navigate
@@ -24,7 +24,7 @@ fun DestinationScreen(
             @Composable { it() }
         }
         toolbarViewModel.updateVisibility(destination != ScreenDestination.Splash)
-        Log.d("destination", destination.toString())
+        Logger.logDebug("destination", destination.toString())
 
         return@remember when (destination){
             is ScreenDestination.Login -> factory{
